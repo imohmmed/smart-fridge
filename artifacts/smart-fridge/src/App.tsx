@@ -1,4 +1,4 @@
-import { type Dispatch, type FormEvent, type ReactNode, type SetStateAction, useEffect, useState } from 'react';
+import { type CSSProperties, type Dispatch, type FormEvent, type ReactNode, type SetStateAction, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
@@ -206,10 +206,34 @@ function AddFoodModal({ onClose, onAdd }: { onClose: () => void; onAdd: (item: O
 }
 
 function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; selected: FridgeItem | undefined; onSelect: (item: FridgeItem) => void }) {
-  const categories = ['ألبان', 'فواكه', 'خضروات', 'لحوم'];
-  return <div className="card fridge-card"><div className="fridge-head"><div className="card-title"><div><h3>داخل الثلاجة</h3><p>{items.length} أصناف مرتبة في مكانها</p></div><span className="status-pill"><CheckCircle2 size={13} /> كل شيء تحت السيطرة</span></div></div>
-    <div className="fridge-scene"><span className="scene-label">تحديث اليوم</span>{categories.map(category => <div className="shelf" key={category}>{items.filter(item => item.category === category).slice(0, 5).map(item => <button key={item.id} className={`food-badge ${selected?.id === item.id ? 'selected' : ''}`} onClick={() => onSelect(item)} data-testid={`button-food-${item.id}`}><FoodArt item={item} size={40} />{daysUntil(item.expiry) <= 2 && <i className="food-dot" />}<span>{item.name}</span><small>{item.quantity} {item.unit}</small></button>)}{items.filter(item => item.category === category).length === 0 && <span className="muted" style={{ fontSize: 12 }}>المكان ينتظر صنفاً جديداً</span>}</div>)}</div>
-    {selected && <div className="selected-detail"><FoodArt item={selected} size={47} /><div style={{ flex: 1 }}><strong data-testid="text-selected-food">{selected.name}</strong><div className="detail-meta"><span>متبقي {selected.quantity} {selected.unit}</span><span>{selected.calories} سعرة / وحدة</span><span style={{ color: daysUntil(selected.expiry) <= 2 ? 'hsl(var(--destructive))' : undefined }}>ينتهي خلال {Math.max(0, daysUntil(selected.expiry))} أيام</span></div></div></div>}
+  const categories = [
+    { name: 'البروتينات', match: 'لحوم', tint: 'meat' },
+    { name: 'الخضروات', match: 'خضروات', tint: 'greens' },
+    { name: 'الفواكه', match: 'فواكه', tint: 'fruit' },
+    { name: 'الألبان والمشروبات', match: 'ألبان', tint: 'dairy' },
+  ];
+  const doorItems = items.filter(item => ['مشروبات', 'جاهز'].includes(item.category));
+  return <div className="fridge-card">
+    <div className="fridge-temperature"><span><Refrigerator size={15} /> الثلاجة</span><strong>4°C</strong><span><Zap size={14} /> الفريزر</span><strong>-18°C</strong></div>
+    <div className="fridge-body">
+      <div className="fridge-door">
+        <span className="fridge-door-handle" />
+        <div className="door-section"><h4>الألبان والمشروبات</h4>{items.filter(item => item.category === 'ألبان').slice(0, 3).map(item => <button key={item.id} className="door-food" onClick={() => onSelect(item)} data-testid={`button-food-door-${item.id}`}><FoodArt item={item} size={30} /><span>{item.name}</span></button>)}</div>
+        <div className="door-section"><h4>المشروبات والعصائر</h4>{doorItems.slice(0, 3).map(item => <button key={item.id} className="door-food" onClick={() => onSelect(item)} data-testid={`button-food-door-${item.id}`}><FoodArt item={item} size={30} /><span>{item.name}</span></button>)}</div>
+        <div className="door-section door-note"><Pencil size={13} /><span>لا تنسَ شراء<br />العسل</span></div>
+      </div>
+      <div className="fridge-cabinet">
+        <div className="fridge-glow" />
+        <div className="cabinet-shelves">{categories.map(category => {
+          const categoryItems = items.filter(item => item.category === category.match).slice(0, 5);
+          return <div className={`cabinet-shelf ${category.tint}`} key={category.name}>
+            <div className="shelf-title">{category.name}</div>
+            <div className="shelf-items">{categoryItems.map(item => <button key={item.id} className={`food-badge ${selected?.id === item.id ? 'selected' : ''}`} onClick={() => onSelect(item)} data-testid={`button-food-${item.id}`}><FoodArt item={item} size={44} />{daysUntil(item.expiry) <= 2 && <i className="food-dot" />}<span>{item.name}</span><small>{item.quantity} {item.unit}</small></button>)}{!categoryItems.length && <span className="muted shelf-empty">أضيفي صنفاً جديداً</span>}</div>
+          </div>;
+        })}</div>
+        <div className="freezer-section"><div className="shelf-title">الفريزر</div><div className="freezer-tray"><div /><div /><div /></div></div>
+      </div>
+    </div>
   </div>;
 }
 
@@ -227,18 +251,28 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
     const quantity = window.prompt('عدّلي الكمية', String(selected.quantity));
     if (quantity !== null && Number(quantity) > 0) setData(prev => ({ ...prev, items: prev.items.map(item => item.id === selected.id ? { ...item, quantity: Number(quantity) } : item) }));
   };
-  return <main className="app-main"><PageHeading title={`صباح الخير يا ${userName}`} description="خلّينا نشوف ماذا تخبئ ثلاجتك ليوم جميل." action={<div className="date-chip" data-testid="text-current-date">{formatArabicDate()}</div>} />
-    <div className="dashboard-grid">
-      <div className="stack"><FridgeVisual items={data.items} selected={selected} onSelect={item => setSelectedId(item.id)} /><div className="card card-pad"><div className="card-title"><div><h3>وصفة على ذوق ثلاجتك</h3><p>مقترحة من {data.items.length} أصناف موجودة</p></div><Link href="/recipes" className="secondary-btn" style={{ padding: '8px 11px', fontSize: 12 }} data-testid="link-dashboard-recipes">كل الوصفات<ChevronLeft size={15} /></Link></div><RecipeCard recipe={recipes[0]} favorite={data.favorites.includes('r1')} onFavorite={() => setData(prev => ({ ...prev, favorites: prev.favorites.includes('r1') ? prev.favorites.filter(id => id !== 'r1') : [...prev.favorites, 'r1'] }))} compact /></div></div>
-      <div className="stack">
-        <div className="card card-pad"><div className="card-title"><div><h3>تفاصيل الصنف</h3><p>اختاري طعاماً من الثلاجة</p></div><button className="icon-btn" onClick={editSelected} data-testid="button-edit-selected"><Pencil size={15} /></button></div>{selected ? <><div style={{ display: 'flex', gap: 12, alignItems: 'center' }}><FoodArt item={selected} size={54} /><div><strong style={{ fontSize: 18 }}>{selected.name}</strong><div className="muted" style={{ fontSize: 12, marginTop: 5 }}>{selected.category} · {selected.quantity} {selected.unit}</div></div></div><div className="metric-row" style={{ marginTop: 16 }}><div className="metric"><Flame size={17} className="metric-icon" /><strong>{selected.calories}</strong><span>سعرة حرارية</span></div><div className="metric"><Bell size={17} className="metric-icon" /><strong>{Math.max(0, daysUntil(selected.expiry))}</strong><span>أيام حتى الانتهاء</span></div></div><button className="primary-btn" onClick={consume} style={{ width: '100%', marginTop: 13 }} data-testid="button-consume-food"><Check size={17} />استهلاك وحدة</button></> : <div className="empty-state"><Package size={25} /><strong>الثلاجة فارغة</strong><span>أضيفي أول صنف لتبدئي.</span></div>}</div>
-        <div className="card card-pad water"><div className="card-title"><div><h3>ماء اليوم</h3><p>خطوة صغيرة، فرق كبير</p></div><Droplets size={21} color="hsl(196 48% 51%)" /></div><strong style={{ fontSize: 25 }} data-testid="text-water-intake">{data.water} <small className="muted" style={{ fontSize: 12 }}>من 8 أكواب</small></strong><div className="progress"><i style={{ width: `${Math.min(100, data.water / 8 * 100)}%` }} /></div><div className="water-actions">{Array.from({ length: 8 }).map((_, index) => <button key={index} className="round-add" style={{ opacity: index < data.water ? 1 : .25 }} onClick={() => setData(prev => ({ ...prev, water: index < prev.water ? Math.max(0, index) : index + 1 }))} data-testid={`button-water-${index + 1}`}><Droplets size={13} /></button>)}</div></div>
-        <div className="card card-pad note"><div className="card-title"><h3>ملاحظة اليوم</h3><Pencil size={17} /></div><textarea value={data.note} onChange={e => setData(prev => ({ ...prev, note: e.target.value }))} data-testid="textarea-daily-note" aria-label="ملاحظة اليوم" /><div style={{ textAlign: 'left', color: 'hsl(155 22% 17% / .5)', fontSize: 11 }}>تُحفظ تلقائياً</div></div>
-      </div>
-      <div className="card card-pad"><div className="card-title"><div><h3>قائمة التسوق</h3><p>{data.shopping.filter(item => !item.done).length} أشياء تنتظر رحلتك القادمة</p></div><Link href="/shopping" className="icon-btn" data-testid="link-dashboard-shopping"><ChevronLeft size={17} /></Link></div><ShoppingPreview data={data} setData={setData} /></div>
-      <div className="card card-pad"><div className="card-title"><div><h3>ملخص اليوم</h3><p>تغذية متوازنة بلا تعقيد</p></div><Link href="/daily-analysis" className="icon-btn" data-testid="link-dashboard-analysis"><ChevronLeft size={17} /></Link></div><div style={{ display: 'flex', alignItems: 'center', gap: 18 }}><div style={{ width: 100, height: 100, borderRadius: '50%', background: `conic-gradient(hsl(var(--primary)) ${Math.min(100, totalCalories / data.calorieGoal * 100)}%, hsl(var(--muted)) 0)`, display: 'grid', placeItems: 'center' }}><div style={{ width: 73, height: 73, borderRadius: '50%', background: 'hsl(var(--card))', display: 'grid', placeItems: 'center', textAlign: 'center' }}><strong style={{ fontSize: 18 }}>{Math.round(totalCalories / data.calorieGoal * 100)}%</strong><small className="muted">من الهدف</small></div></div><div><strong style={{ fontSize: 24 }}>{totalCalories.toLocaleString('ar-SA')}</strong><span className="muted"> / {data.calorieGoal.toLocaleString('ar-SA')} سعرة</span><div className="muted" style={{ fontSize: 12, marginTop: 8 }}>باقي لك {Math.max(0, data.calorieGoal - totalCalories)} سعرة اليوم</div></div></div></div>
-      <div className="card card-pad"><div className="card-title"><div><h3>لمسة صحية</h3><p>من تلاجتي، لك</p></div><Sparkles size={19} color="hsl(var(--accent-foreground))" /></div><p style={{ lineHeight: 1.8, margin: 0, fontSize: 14 }}>جرّبي استخدام الخضروات التي اقتربت من الانتهاء أولاً. طبق صغير من السلطة اليوم يقلل الهدر ويضيف لوناً جميلاً لمائدتك.</p></div>
-      <div className="card card-pad full-card"><div className="card-title"><div><h3>ابدئي من هنا</h3><p>أدوات صغيرة تجعل يومك أسهل</p></div><button className="primary-btn" onClick={onAdd} data-testid="button-add-food-dashboard"><Plus size={17} />إضافة طعام</button></div><div className="quick-grid"><Link className="quick-link" href="/meals" data-testid="link-quick-meals"><Utensils size={19} /><strong>خططي وجباتك</strong><span>لليوم والغد</span></Link><Link className="quick-link" href="/recipes" data-testid="link-quick-recipes"><BookOpen size={19} /><strong>اكتشفي وصفة</strong><span>من الموجود</span></Link><Link className="quick-link" href="/shopping" data-testid="link-quick-shopping"><ShoppingBasket size={19} /><strong>رتبي التسوق</strong><span>قبل أن تنقص الأشياء</span></Link></div></div>
+  const percentage = Math.min(100, Math.round(totalCalories / data.calorieGoal * 100));
+  return <main className="app-main dashboard-main">
+    <div className="dashboard-topbar">
+      <div className="dashboard-greeting"><span>مساء الخير،</span><strong>{userName}</strong><ChevronLeft size={15} /></div>
+      <div className="dashboard-stat"><Flame size={21} /><div><small>هدفك اليومي</small><strong>{data.calorieGoal.toLocaleString('ar-SA')} سعرة</strong></div></div>
+      <div className="dashboard-stat"><div className="mini-ring" style={{ '--ring-progress': `${percentage}%` } as CSSProperties}><strong>{percentage}%</strong></div><div><small>استهلاكك اليوم</small><strong>{totalCalories.toLocaleString('ar-SA')} سعرة</strong></div></div>
+      <button className="topbar-bell icon-btn" aria-label="التنبيهات"><Bell size={20} /></button>
+    </div>
+    <div className="reference-heading"><div><span className="eyebrow">مساحتي اليومية</span><h2>ثلاجتك جاهزة ليوم ألذ</h2></div><span className="date-chip" data-testid="text-current-date">{formatArabicDate()}</span></div>
+    <div className="reference-dashboard">
+      <section className="reference-fridge"><FridgeVisual items={data.items} selected={selected} onSelect={item => setSelectedId(item.id)} /></section>
+      <aside className="reference-rail">
+        <div className="item-detail-panel card card-pad"><div className="rail-title"><span>تفاصيل العنصر</span><X size={15} /></div>{selected ? <><div className="detail-hero"><FoodArt item={selected} size={92} /><h3>{selected.name}</h3><span>{selected.quantity} {selected.unit}</span></div><div className="detail-stats"><div><small>تاريخ الانتهاء</small><strong>{new Date(selected.expiry).toLocaleDateString('ar-SA')}</strong></div><div><small>إجمالي السعرات</small><strong>{selected.calories * selected.quantity} سعرة</strong></div><div><small>السعرات للوحدة</small><strong>{selected.calories} سعرة</strong></div></div><div className="detail-actions"><button className="primary-btn" onClick={consume} data-testid="button-consume-food"><Check size={16} />استهلكت</button><button className="secondary-btn" onClick={editSelected} data-testid="button-edit-selected"><Pencil size={15} />تعديل</button><button className="icon-btn" onClick={onAdd} data-testid="button-add-related"><Plus size={17} /></button></div></> : <div className="empty-state">الثلاجة فارغة</div>}</div>
+        <div className="shopping-panel card card-pad"><div className="rail-title"><span><ShoppingBasket size={17} /> قائمة التسوق <b>{data.shopping.filter(item => !item.done).length}</b></span><Link href="/shopping"><ChevronLeft size={16} /></Link></div><ShoppingPreview data={data} setData={setData} /><Link href="/shopping" className="export-list"><ClipboardCopy size={15} /> تصدير القائمة</Link></div>
+      </aside>
+    </div>
+    <div className="dashboard-footer">
+      <div className="footer-stat water-stat"><Droplets size={25} /><div><small>اشربي الماء</small><strong>{data.water} / 8 أكواب</strong><div className="footer-progress"><i style={{ width: `${data.water / 8 * 100}%` }} /></div></div></div>
+      <div className="footer-stat"><Flame size={24} /><div><small>السعرات المتبقية</small><strong>{Math.max(0, data.calorieGoal - totalCalories).toLocaleString('ar-SA')} سعرة</strong></div><div className="mini-ring small" style={{ '--ring-progress': `${percentage}%` } as CSSProperties}><strong>{percentage}%</strong></div></div>
+      <div className="macro-stat"><small>توزيع المغذيات</small><div className="macro-lines"><span><i className="macro-protein" />بروتين <b>35%</b></span><span><i className="macro-carb" />كربوهيدرات <b>40%</b></span><span><i className="macro-fat" />دهون <b>25%</b></span></div></div>
+      <div className="health-tip"><Leaf size={20} /><div><small>نصيحة اليوم</small><strong>تناولي الخضروات في كل وجبة<br />للحصول على صحة أفضل.</strong></div></div>
+      <button className="floating-add" onClick={onAdd} data-testid="button-add-food-dashboard"><Plus size={26} /><span>أضيفي طعام جديد</span></button>
     </div>
   </main>;
 }
