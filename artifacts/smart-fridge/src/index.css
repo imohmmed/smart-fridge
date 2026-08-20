@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
@@ -34,9 +34,9 @@
   --chart-3: 6 58% 58%;
   --chart-4: 196 48% 51%;
   --chart-5: 274 35% 61%;
-  --app-font-sans: 'Tajawal', sans-serif;
-  --app-font-serif: Georgia, serif;
-  --app-font-mono: 'Tajawal', sans-serif;
+  --app-font-sans: 'Noto Naskh Arabic', serif;
+  --app-font-serif: 'Noto Naskh Arabic', serif;
+  --app-font-mono: 'Noto Naskh Arabic', serif;
   --radius: 1.1rem;
 }
 
@@ -50,9 +50,11 @@ body {
     hsl(var(--background));
   color: hsl(var(--foreground));
   font-family: var(--app-font-sans);
+  direction: rtl;
+  text-align: right;
   -webkit-font-smoothing: antialiased;
 }
-button, input, select, textarea { font: inherit; }
+button, input, select, textarea { font: inherit; direction: rtl; }
 button { cursor: pointer; }
 ::selection { background: hsl(35 71% 65% / .45); }
 
@@ -107,6 +109,7 @@ button { cursor: pointer; }
 .food-badge { position: relative; min-width: 68px; padding: 9px 8px 7px; border: 1px solid hsl(155 20% 25% / .12); border-radius: 15px 15px 8px 8px; background: hsl(var(--card)); text-align: center; color: hsl(var(--foreground)); box-shadow: 0 5px 10px hsl(155 20% 25% / .09); transition: transform .2s, box-shadow .2s; }
 .food-badge:hover, .food-badge.selected { transform: translateY(-7px); box-shadow: 0 9px 16px hsl(155 20% 25% / .16); outline: 2px solid hsl(var(--accent)); outline-offset: 2px; }
 .food-art { width: 40px; height: 40px; margin: 0 auto 5px; border-radius: 50%; display: grid; place-items: center; color: hsl(var(--foreground)); }
+.food-emoji { font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif; font-size: 25px; line-height: 1; filter: drop-shadow(0 2px 2px hsl(155 20% 25% / .12)); }
 .food-badge span { display:block; font-size: 11px; font-weight: 700; white-space: nowrap; }
 .food-badge small { display:block; color:hsl(var(--muted-foreground)); font-size:9px; }
 .food-dot { position: absolute; top: -4px; left: -3px; width: 9px; height: 9px; background:hsl(var(--destructive)); border-radius:50%; border: 2px solid hsl(var(--card)); }
@@ -265,6 +268,47 @@ button { cursor: pointer; }
   .quick-link span { grid-column:2; }
   .form-grid { grid-template-columns:1fr; }
   .field.full, .calorie-preview, .form-actions { grid-column:auto; }
+}
+
+/* Soft UI details requested for the current design */
+:root {
+  --soft-surface: #F0EBE0;
+  --soft-shadow: 6px 6px 12px #d4cfc6, -6px -6px 12px #ffffff;
+  --soft-inset: inset 4px 4px 8px #d4cfc6, inset -4px -4px 8px #ffffff;
+}
+body { font-size: 14px; }
+.card, button, .nav-item, .icon-btn, .secondary-btn, .date-chip, .search-box, .food-badge {
+  border-radius: 16px;
+}
+.card, .icon-btn, .secondary-btn, .date-chip, .search-box, .food-badge {
+  background: var(--soft-surface);
+  border: 0;
+  box-shadow: var(--soft-shadow);
+}
+.primary-btn { background: #4A7C59; color: #fff; border: 0; border-radius: 16px; box-shadow: var(--soft-shadow); }
+.primary-btn:hover { background: #3d694a; box-shadow: var(--soft-shadow); }
+button:active, .nav-item:active, .icon-btn:active, .secondary-btn:active { box-shadow: var(--soft-inset); transform: none; }
+.nav-item.active { background: #4A7C59; color: #fff; box-shadow: none; }
+.nav-item { min-height: 46px; }
+.nav-item svg { order: 0; }
+.nav-label { text-align: right; }
+.card-title h3, .page-heading h2, .reference-heading h2, .rail-title, .detail-hero h3 { font-size: max(18px, 1em); }
+.app-main { padding-top: 16px; padding-bottom: 28px; }
+.dashboard-main { padding-inline: 16px; }
+.dashboard-topbar, .dashboard-footer { box-shadow: var(--soft-shadow); }
+.fridge-card { background: var(--soft-surface); box-shadow: var(--soft-shadow); border: 0; }
+.fridge-door, .fridge-cabinet { border-color: #bcb8af; }
+.cabinet-shelf { background: linear-gradient(180deg, hsl(0 0% 100% / .38), hsl(196 18% 83% / .52)); }
+.shelf-items .food-badge { background: #fff; box-shadow: 2px 3px 6px hsl(155 20% 25% / .12); }
+.detail-actions .secondary-btn, .shopping-panel .export-list { box-shadow: var(--soft-shadow); }
+.shopping-item { direction: ltr; }
+.shopping-item label { direction: rtl; text-align: right; }
+.field label, .field input, .field select, .field textarea { text-align: right; }
+.note { background: var(--soft-surface); box-shadow: var(--soft-shadow); transform: none; }
+.door-note { background: #ead796; }
+.food-emoji + * { font-family: var(--app-font-sans); }
+@media (max-width: 1050px) {
+  .sidebar { box-shadow: var(--soft-shadow); }
 }
 
 /* Reference dashboard composition */

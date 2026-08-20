@@ -80,6 +80,9 @@ function flash(setNotice: (value: string) => void, text: string) {
 
 function FoodArt({ item, size = 40 }: { item?: FridgeItem; size?: number }) {
   const art = item?.art || 'apple';
+  const emoji = art === 'milk' ? '🥛' : art === 'egg' ? '🥚' : art === 'cheese' ? '🧀' : art === 'apple' ? '🍎'
+    : art === 'orange' ? '🍊' : art === 'leaf' ? '🥦' : art === 'tomato' ? '🍅' : art === 'chicken' ? '🍗'
+    : art === 'hummus' ? '🥫' : art === 'package' ? '🧃' : '🥕';
   const style = art === 'apple' ? { background: 'hsl(6 58% 58% / .2)', color: 'hsl(6 58% 48%)' }
     : art === 'orange' ? { background: 'hsl(35 71% 65% / .32)', color: 'hsl(32 69% 44%)' }
     : art === 'leaf' ? { background: 'hsl(152 44% 29% / .16)', color: 'hsl(152 44% 29%)' }
@@ -87,9 +90,7 @@ function FoodArt({ item, size = 40 }: { item?: FridgeItem; size?: number }) {
     : art === 'chicken' ? { background: 'hsl(274 35% 61% / .2)', color: 'hsl(274 35% 48%)' }
     : art === 'egg' ? { background: 'hsl(39 43% 94%)', color: 'hsl(34 52% 40%)' }
     : { background: 'hsl(196 48% 51% / .17)', color: 'hsl(196 48% 40%)' };
-  const Icon = art === 'apple' || art === 'orange' || art === 'tomato' ? Apple
-    : art === 'leaf' ? Leaf : art === 'egg' ? Egg : art === 'chicken' ? Fish : art === 'milk' ? Droplets : Package;
-  return <div className="food-art" style={{ ...style, width: size, height: size }}><Icon size={size * .53} strokeWidth={1.8} /></div>;
+  return <div className="food-art" style={{ ...style, width: size, height: size }}><span className="food-emoji" aria-hidden="true">{emoji}</span></div>;
 }
 
 function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
@@ -220,7 +221,7 @@ function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; sele
         <span className="fridge-door-handle" />
         <div className="door-section"><h4>الألبان والمشروبات</h4>{items.filter(item => item.category === 'ألبان').slice(0, 3).map(item => <button key={item.id} className="door-food" onClick={() => onSelect(item)} data-testid={`button-food-door-${item.id}`}><FoodArt item={item} size={30} /><span>{item.name}</span></button>)}</div>
         <div className="door-section"><h4>المشروبات والعصائر</h4>{doorItems.slice(0, 3).map(item => <button key={item.id} className="door-food" onClick={() => onSelect(item)} data-testid={`button-food-door-${item.id}`}><FoodArt item={item} size={30} /><span>{item.name}</span></button>)}</div>
-        <div className="door-section door-note"><Pencil size={13} /><span>لا تنسَ شراء<br />العسل</span></div>
+        <div className="door-section door-note"><span>📝</span><span>لا تنسَ شراء<br />العسل</span></div>
       </div>
       <div className="fridge-cabinet">
         <div className="fridge-glow" />

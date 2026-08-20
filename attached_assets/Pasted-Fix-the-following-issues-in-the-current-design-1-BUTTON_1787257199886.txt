@@ -1,0 +1,49 @@
+Fix the following issues in the current design:
+
+=== 1. BUTTONS STYLE ===
+Apply Soft UI / Neumorphism ONLY to buttons and nav items that need it.
+Every button and card must have:
+- background: #F0EBE0
+- border-radius: 16px
+- No border
+- box-shadow: 6px 6px 12px #d4cfc6, -6px -6px 12px #ffffff
+Active/selected button:
+- box-shadow: inset 4px 4px 8px #d4cfc6, inset -4px -4px 8px #ffffff
+Active nav item (تلاجتي):
+- background: #4A7C59, color: white, no shadow
+
+=== 2. FRIDGE VISUAL ===
+The fridge must look like a REAL refrigerator:
+- Draw the fridge using CSS: metallic silver/white body, door handle,
+  rubber seal border, interior light glow at top (warm white gradient)
+- Inside the fridge show REAL food emoji or images in each shelf:
+  🥛🧃 on top shelf, 🍗🥩🐟 on protein shelf,
+  🥦🍅🥕🥒 on vegetable shelf, 🍌🍊🍇🍎 on fruit shelf,
+  🧈🧀 in drawer, 🧊 in freezer bottom
+- Each item has a small white badge with quantity overlaid on it
+- Shelves should have a subtle glass/transparent look
+- Add a sticky note 📝 on the fridge door
+
+=== 3. LAYOUT & SPACING ===
+- No large empty white spaces anywhere
+- Every section must be filled with content or reduced in size
+- Compact the layout so all sections are visible without excessive scrolling
+- Font size minimum 14px, headings 18px — no tiny unreadable text
+
+=== 4. ARABIC FONT ===
+Replace current font with "Noto Naskh Arabic" or "Amiri" from Google Fonts:
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+font-family: 'Noto Naskh Arabic', serif;
+Apply to ALL elements including buttons, inputs, and labels.
+
+=== 5. RTL LAYOUT - CRITICAL FIX ===
+The ENTIRE page must be RTL (right to left):
+- Add dir="rtl" to <html> tag
+- Add direction: rtl; text-align: right; to body CSS
+- ALL content starts from the RIGHT side
+- The "أضف طعام جديد" form fields must start from the RIGHT
+- Input labels appear on the RIGHT of their fields
+- Icons appear on the RIGHT of text in nav items
+- The sidebar must be on the LEFT (as it appears on the left in RTL layouts)
+- Shopping list items: text on RIGHT, checkbox on LEFT
+- Make sure NO element is left-aligned or LTR
