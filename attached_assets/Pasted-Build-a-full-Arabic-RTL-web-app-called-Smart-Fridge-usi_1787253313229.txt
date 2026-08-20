@@ -1,0 +1,83 @@
+Build a full Arabic RTL web app called "Smart Fridge / تلاجتي الذكية"
+using HTML, CSS, and vanilla JavaScript only (no frameworks).
+Use localStorage to save all user data.
+
+=== AUTHENTICATION ===
+- Login / Register page (Arabic UI, RTL)
+- Each user has their own fridge data saved separately in localStorage
+- Show user name in the header after login
+
+=== MAIN LAYOUT (3 columns) ===
+
+LEFT SIDEBAR:
+- App logo + name
+- Navigation links: تلاجتي / وجباتي / تحليل يومي / قائمة التسوق / وصفات مقترحة / المفضلة / الإعدادات / تسجيل خروج
+- Shopping list badge showing item count
+
+CENTER (Fridge Visual):
+- Realistic fridge image split into sections:
+  • الألبان والمشروبات (top shelf)
+  • البروتينات (second shelf)
+  • الخضروات (third shelf)
+  • الفواكه (fourth shelf)
+  • المشروبات والعصائر (door)
+  • الصلصات والمربيات (door)
+  • زبدة وجبن (drawer)
+  • خضروات طازجة (drawer)
+  • جذور وبطاطا (drawer)
+  • الفريزر (bottom section) ❄️
+- Each food item shows as a badge with quantity on the fridge image
+- Click any item → opens detail panel on the right
+- Temperature display: 4°C fridge / -18°C freezer
+- Sticky note on fridge door (user can write a reminder)
+- Fridge light glow effect at top
+
+RIGHT PANEL:
+- Default: shows item detail when clicked
+  • Food image, name, quantity, expiry date
+  • Total calories, calories per serving
+  • Buttons: تعديل / استهلكت / إضافة +
+- Below detail: Shopping List panel
+  • Checkbox list of missing items
+  • Export list button (copy to clipboard)
+
+=== TOP HEADER ===
+- Daily calorie goal (user sets it)
+- Today's consumed calories + percentage ring chart
+- User avatar + name + notification bell
+
+=== BOTTOM BAR ===
+- Water intake tracker (cups / 8 goal)
+- Remaining calories today
+- Macros distribution bar (protein / carbs / fat %)
+- Today's health tip
+- "+ أضف طعام جديد" floating button
+
+=== ADD FOOD MODAL ===
+Before adding any food, show a popup with:
+- Food name input
+- Quantity + unit (g / ml / pieces / liters)
+- Category selector (which fridge section)
+- Expiry date
+- Calories input (manual) OR auto-fetch from Open Food Facts API by name
+- Calorie preview before confirming
+- Confirm button adds it to the fridge visually
+
+=== DATA & STORAGE ===
+- Save everything in localStorage under the logged-in user's key:
+  • fridge items list
+  • daily calorie log
+  • water intake
+  • shopping list
+  • user goal settings
+- Auto-generate shopping list when item quantity reaches zero or low
+
+=== STYLE ===
+- Warm beige/cream background (#F5F0E8)
+- Green accent color (#4A7C59) for buttons and active states
+- Arabic font: Tajawal from Google Fonts
+- Full RTL layout (dir="rtl")
+- Smooth animations on item add/remove
+- Responsive for tablet and desktop
+- The fridge center image should look realistic with food items
+  overlaid as interactive badges

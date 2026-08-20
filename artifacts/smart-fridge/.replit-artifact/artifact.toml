@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Smart Fridge"
+description = "An Arabic RTL smart fridge dashboard for tracking food inventory, expiry dates, calories, water intake, shopping needs, and personalized meal ideas."
+version = "1.0.0"
+id = "artifacts/smart-fridge"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22656
+
+[services.development]
+run = "pnpm --filter @workspace/smart-fridge run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/smart-fridge", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/smart-fridge/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22656"
+BASE_PATH = "/"
