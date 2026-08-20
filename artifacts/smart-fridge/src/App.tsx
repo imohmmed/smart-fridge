@@ -208,33 +208,55 @@ function AddFoodModal({ onClose, onAdd }: { onClose: () => void; onAdd: (item: O
 
 function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; selected: FridgeItem | undefined; onSelect: (item: FridgeItem) => void }) {
   const categories = [
-    { name: 'البروتينات', match: 'لحوم', tint: 'meat' },
-    { name: 'الخضروات', match: 'خضروات', tint: 'greens' },
-    { name: 'الفواكه', match: 'فواكه', tint: 'fruit' },
-    { name: 'الألبان والمشروبات', match: 'ألبان', tint: 'dairy' },
+    { name: 'البروتينات', match: 'لحوم', tint: 'meat', note: 'جاهز للطبخ' },
+    { name: 'الخضروات الطازجة', match: 'خضروات', tint: 'greens', note: 'درج الرطوبة' },
+    { name: 'الفواكه', match: 'فواكه', tint: 'fruit', note: 'بارد ومنعش' },
+    { name: 'الألبان', match: 'ألبان', tint: 'dairy', note: '4° م' },
   ];
-  const doorItems = items.filter(item => ['مشروبات', 'جاهز'].includes(item.category));
-  return <div className="fridge-card">
+  const doorDairy = items.filter(item => item.category === 'ألبان').slice(0, 3);
+  const doorDrinks = items.filter(item => ['مشروبات', 'جاهز'].includes(item.category)).slice(0, 4);
+  const renderFood = (item: FridgeItem, size = 43, door = false) => <button key={item.id} className={`${door ? 'door-food' : 'food-badge'} ${selected?.id === item.id ? 'selected' : ''}`} onClick={() => onSelect(item)} data-testid={`button-food-${door ? 'door-' : ''}${item.id}`}>
+    <span className="food-visual"><FoodArt item={item} size={size} /><b className="quantity-badge">{item.quantity}</b></span>
+    <span className="food-name">{item.name}</span>
+    {!door && <small>{item.quantity} {item.unit}</small>}
+    {daysUntil(item.expiry) <= 2 && <i className="food-dot" />}
+  </button>;
+  return <div className="fridge-card real-fridge-card">
     <div className="fridge-temperature"><span><Refrigerator size={15} /> الثلاجة</span><strong>4°C</strong><span><Zap size={14} /> الفريزر</span><strong>-18°C</strong></div>
-    <div className="fridge-body">
-      <div className="fridge-door">
+    <div className="fridge-body real-fridge-body">
+      <div className="fridge-door real-fridge-door">
+        <span className="door-edge-shadow" />
         <span className="fridge-door-handle" />
-        <div className="door-section"><h4>الألبان والمشروبات</h4>{items.filter(item => item.category === 'ألبان').slice(0, 3).map(item => <button key={item.id} className="door-food" onClick={() => onSelect(item)} data-testid={`button-food-door-${item.id}`}><FoodArt item={item} size={30} /><span>{item.name}</span></button>)}</div>
-        <div className="door-section"><h4>المشروبات والعصائر</h4>{doorItems.slice(0, 3).map(item => <button key={item.id} className="door-food" onClick={() => onSelect(item)} data-testid={`button-food-door-${item.id}`}><FoodArt item={item} size={30} /><span>{item.name}</span></button>)}</div>
-        <div className="door-section door-note"><span>📝</span><span>لا تنسَ شراء<br />العسل</span></div>
+        <div className="door-status"><span>FRESH&nbsp; ZONE</span><i /></div>
+        <div className="door-rack rack-dairy"><h4>الألبان والصلصات</h4>{doorDairy.map(item => renderFood(item, 30, true))}</div>
+        <div className="door-rack rack-drinks"><h4>المشروبات والعصائر</h4>{doorDrinks.map(item => renderFood(item, 28, true))}</div>
+        <div className="door-rack rack-low"><h4>مساحة إضافية</h4><div className="door-bottles"><span /><span /><span /></div></div>
+        <div className="door-note"><span className="note-pin" /><span>ملاحظة اليوم<br /><strong>حضّري شيئاً طازجاً</strong></span></div>
       </div>
-      <div className="fridge-cabinet">
-        <div className="fridge-glow" />
+      <div className="fridge-cabinet real-fridge-cabinet">
+        <div className="cabinet-side cabinet-side-left" />
+        <div className="cabinet-side cabinet-side-right" />
+        <div className="fridge-glow"><span /></div>
+        <div className="interior-light"><i /><i /><i /></div>
         <div className="cabinet-shelves">{categories.map(category => {
           const categoryItems = items.filter(item => item.category === category.match).slice(0, 5);
           return <div className={`cabinet-shelf ${category.tint}`} key={category.name}>
-            <div className="shelf-title">{category.name}</div>
-            <div className="shelf-items">{categoryItems.map(item => <button key={item.id} className={`food-badge ${selected?.id === item.id ? 'selected' : ''}`} onClick={() => onSelect(item)} data-testid={`button-food-${item.id}`}><FoodArt item={item} size={44} />{daysUntil(item.expiry) <= 2 && <i className="food-dot" />}<span>{item.name}</span><small>{item.quantity} {item.unit}</small></button>)}{!categoryItems.length && <span className="muted shelf-empty">أضيفي صنفاً جديداً</span>}</div>
+            <div className="shelf-title"><span>{category.name}</span><small>{category.note}</small></div>
+            <div className="shelf-items">{categoryItems.map(item => renderFood(item))}{!categoryItems.length && <span className="muted shelf-empty">أضيفي صنفاً جديداً</span>}</div>
+            <div className="glass-front" />
           </div>;
         })}</div>
-        <div className="freezer-section"><div className="shelf-title">الفريزر</div><div className="freezer-tray"><div /><div /><div /></div></div>
+        <div className="produce-drawers">
+          <div className="crisper-drawer"><span>خضروات مقرمشة</span><small>{items.filter(item => item.category === 'خضروات').length || 0} أصناف</small><div className="drawer-handle" /></div>
+          <div className="crisper-drawer"><span>فواكه موسمية</span><small>{items.filter(item => item.category === 'فواكه').length || 0} أصناف</small><div className="drawer-handle" /></div>
+        </div>
+        <div className="freezer-section">
+          <div className="shelf-title"><span>الفريزر السفلي</span><small>-18° م</small></div>
+          <div className="freezer-tray"><div className="freezer-bin"><i /><span>لحوم</span></div><div className="freezer-bin"><i /><span>ثلج</span></div><div className="freezer-bin"><i /><span>جاهز</span></div></div>
+        </div>
       </div>
     </div>
+    <div className="fridge-foot"><span>SMART COOLING</span><b>تعمل بكفاءة</b><i /></div>
   </div>;
 }
 
