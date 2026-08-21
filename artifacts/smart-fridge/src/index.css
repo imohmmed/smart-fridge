@@ -1077,7 +1077,8 @@ button:active, .nav-item:active, .icon-btn:active, .secondary-btn:active { box-s
 .rail-title > span { font-size: 11px; }
 .detail-close { display: grid; place-items: center; padding: 0; border: 0; background: transparent; color: hsl(var(--foreground)); }
 .detail-hero { padding: 0 0 11px; }
-.detail-hero .food-art { margin: -10px auto 15px; transform: translateY(-3px); }
+.detail-hero .food-art { width: 108px !important; height: 112px !important; margin: -8px auto 13px; transform: translateY(-2px); }
+.detail-hero .food-photo { width: 118px !important; height: 118px !important; }
 .detail-hero h3 { font-size: 20px; margin-bottom: 4px; }
 .detail-hero span { background: hsl(152 44% 29% / .10); padding: 3px 10px; }
 .detail-stats { grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 10px 0; text-align: center; }
