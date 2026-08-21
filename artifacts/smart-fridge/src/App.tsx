@@ -122,13 +122,13 @@ function FoodArt({ item, size = 40 }: { item?: FridgeItem; size?: number }) {
   const emoji = art === 'milk' ? '🥛' : art === 'egg' ? '🥚' : art === 'cheese' ? '🧀' : art === 'apple' ? '🍎'
     : art === 'orange' ? '🍊' : art === 'leaf' ? '🥦' : art === 'tomato' ? '🍅' : art === 'chicken' ? '🍗'
     : art === 'hummus' ? '🥫' : art === 'package' ? '🧃' : '🥕';
-  const style = art === 'apple' ? { background: 'hsl(6 58% 58% / .2)', color: 'hsl(6 58% 48%)' }
-    : art === 'orange' ? { background: 'hsl(35 71% 65% / .32)', color: 'hsl(32 69% 44%)' }
-    : art === 'leaf' ? { background: 'hsl(152 44% 29% / .16)', color: 'hsl(152 44% 29%)' }
-    : art === 'tomato' ? { background: 'hsl(4 65% 53% / .18)', color: 'hsl(4 65% 48%)' }
-    : art === 'chicken' ? { background: 'hsl(274 35% 61% / .2)', color: 'hsl(274 35% 48%)' }
-    : art === 'egg' ? { background: 'hsl(39 43% 94%)', color: 'hsl(34 52% 40%)' }
-    : { background: 'hsl(196 48% 51% / .17)', color: 'hsl(196 48% 40%)' };
+  const style = art === 'apple' ? { color: 'hsl(6 58% 48%)' }
+    : art === 'orange' ? { color: 'hsl(32 69% 44%)' }
+    : art === 'leaf' ? { color: 'hsl(152 44% 29%)' }
+    : art === 'tomato' ? { color: 'hsl(4 65% 48%)' }
+    : art === 'chicken' ? { color: 'hsl(274 35% 48%)' }
+    : art === 'egg' ? { color: 'hsl(34 52% 40%)' }
+    : { color: 'hsl(196 48% 40%)' };
   return <div className="food-art" style={{ ...style, width: size, height: size }}><TransparentFoodImage src={photo} alt="" width={size * 1.5} height={size * 1.5} /><span className="food-emoji" aria-hidden="true">{emoji}</span></div>;
 }
 
