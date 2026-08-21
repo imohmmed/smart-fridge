@@ -1552,3 +1552,72 @@ textarea:focus-visible, [tabindex]:focus-visible {
   color: var(--text-primary) !important;
   border-color: var(--shadow-dark) !important;
 }
+
+/* Individual food cards: the item's name determines its emoji. */
+.real-fridge-cabinet .food-badge {
+  position: relative;
+  width: 80px;
+  min-width: 80px;
+  height: 90px;
+  padding: 8px 5px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px;
+  overflow: visible;
+  background: rgba(255, 255, 255, .8) !important;
+  border-radius: 12px;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, .1);
+}
+.food-emoji-card {
+  display: block;
+  height: 40px;
+  font-size: 2.2rem;
+  line-height: 1;
+}
+.real-fridge-cabinet .food-badge .food-name {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #2C2C2C;
+  font-size: 11px;
+  line-height: 1.3;
+  text-align: center;
+}
+.real-fridge-cabinet .food-badge small {
+  color: #7A7A7A;
+  font-size: 10px;
+  line-height: 1.2;
+}
+.real-fridge-cabinet .food-badge .quantity-badge {
+  top: -5px;
+  left: -5px;
+  z-index: 2;
+}
+.real-fridge-door .door-food {
+  position: relative;
+}
+.real-fridge-door .door-food .food-emoji-card {
+  font-size: 1.65rem;
+  height: 30px;
+}
+.real-fridge-door .door-food .food-name {
+  color: #2C2C2C;
+  font-size: 9px;
+  line-height: 1.2;
+}
+.real-fridge-door .door-food .quantity-badge {
+  top: -3px;
+  left: -4px;
+}
+.theme-dark .real-fridge-cabinet .food-badge,
+.theme-dark .real-fridge-door .door-food {
+  background: rgba(255, 255, 255, .8) !important;
+}
+.theme-dark .real-fridge-cabinet .food-badge .food-name,
+.theme-dark .real-fridge-cabinet .food-badge small,
+.theme-dark .real-fridge-door .door-food .food-name {
+  color: #2C2C2C !important;
+}

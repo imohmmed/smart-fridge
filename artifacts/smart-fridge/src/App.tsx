@@ -114,6 +114,19 @@ function flash(setNotice: (value: string) => void, text: string) {
   setNotice(text); window.setTimeout(() => setNotice(''), 2400);
 }
 
+const foodEmojiMap: Record<string, string> = {
+  برتقال: '🍊', موز: '🍌', تفاح: '🍎', 'تفاح أحمر': '🍎', عنب: '🍇', فراولة: '🍓', بطيخ: '🍉',
+  مانجو: '🥭', كمثرى: '🍐', خوخ: '🍑', أناناس: '🍍', توت: '🫐', ليمون: '🍋', كيوي: '🥝',
+  رمان: '🍎', تمر: '🌴', طماطم: '🍅', 'طماطم كرزية': '🍅', خس: '🥬', 'خس طازج': '🥬',
+  جزر: '🥕', بروكلي: '🥦', فلفل: '🫑', خيار: '🥒', بصل: '🧅', ثوم: '🧄', بطاطس: '🥔',
+  ذرة: '🌽', باذنجان: '🍆', أفوكادو: '🥑', فطر: '🍄', دجاج: '🍗', 'صدور دجاج': '🍗',
+  لحم: '🥩', سمك: '🐟', بيض: '🥚', روبيان: '🦐', حليب: '🥛', جبن: '🧀', زبدة: '🧈',
+  زبادي: '🥛', كريمة: '🥛', 'عصير برتقال': '🍊', 'عصير تفاح': '🍎', ماء: '💧', default: '🍽️',
+};
+function getFoodEmoji(foodName: string) {
+  return foodEmojiMap[foodName] || Object.keys(foodEmojiMap).find(key => key !== 'default' && foodName.includes(key)) && foodEmojiMap[Object.keys(foodEmojiMap).find(key => key !== 'default' && foodName.includes(key)) as string] || foodEmojiMap.default;
+}
+
 function FoodArt({ item, size = 40 }: { item?: FridgeItem; size?: number }) {
   const art = item?.art || 'apple';
   const photo = art === 'milk' ? milkPhoto : art === 'egg' ? eggsPhoto : art === 'chicken' ? proteinPhoto
@@ -296,17 +309,18 @@ function AddFoodModal({ onClose, onAdd }: { onClose: () => void; onAdd: (item: O
 
 function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; selected: FridgeItem | undefined; onSelect: (item: FridgeItem) => void }) {
   const categories = [
-    { name: 'البروتينات', match: 'لحوم', tint: 'meat', note: 'طازج وجاهز' },
-    { name: 'الخضروات', match: 'خضروات', tint: 'greens', note: 'خضروات طازجة' },
-    { name: 'الفواكه', match: 'فواكه', tint: 'fruit', note: 'بارد ومنعش' },
-    { name: 'الألبان والمشروبات', match: 'ألبان', tint: 'dairy', note: '4° م' },
+    { name: '🍗 البروتينات', match: 'لحوم', tint: 'meat', note: 'طازج وجاهز' },
+    { name: '🥗 الخضروات', match: 'خضروات', tint: 'greens', note: 'خضروات طازجة' },
+    { name: '🍎 الفواكه', match: 'فواكه', tint: 'fruit', note: 'بارد ومنعش' },
+    { name: '🥛 الألبان والمشروبات', match: 'ألبان', tint: 'dairy', note: '4° م' },
   ];
   const doorDairy = items.filter(item => item.category === 'ألبان').slice(0, 3);
   const doorDrinks = items.filter(item => ['مشروبات', 'جاهز'].includes(item.category)).slice(0, 4);
   const renderFood = (item: FridgeItem, size = 43, door = false) => <button key={item.id} className={`${door ? 'door-food' : 'food-badge'} ${selected?.id === item.id ? 'selected' : ''}`} onClick={() => onSelect(item)} data-testid={`button-food-${door ? 'door-' : ''}${item.id}`}>
-    <span className="food-visual"><FoodArt item={item} size={size} /><b className="quantity-badge">{item.quantity}</b></span>
+    <span className="food-emoji-card" aria-hidden="true">{getFoodEmoji(item.name)}</span>
     <span className="food-name">{item.name}</span>
     {!door && <small>{item.quantity} {item.unit}</small>}
+    <b className="quantity-badge">{item.quantity}</b>
     {daysUntil(item.expiry) <= 2 && <i className="food-dot" />}
   </button>;
   return <div className="fridge-card real-fridge-card">
