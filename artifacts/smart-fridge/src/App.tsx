@@ -7,7 +7,7 @@ import {
   Apple, ArrowLeft, Bell, BookOpen, Check, CheckCircle2, ChevronLeft, CircleHelp,
   ClipboardCopy, Droplets, Egg, Fish, Flame, Heart, Home, Leaf, LogOut, Minus,
   Package, Pencil, Plus, Refrigerator, Search, Settings, ShoppingBasket, Sparkles,
-  Trash2, UserRound, Utensils, X, Zap,
+  Trash2, UserRound, Utensils, X, Zap, Eye, EyeOff, Globe2, LockKeyhole, Mail,
 } from 'lucide-react';
 import { Link, Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
 import NotFound from '@/pages/not-found';
@@ -136,12 +136,22 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [name, setName] = useState('');
   const [gender, setGender] = useState<'female' | 'male'>('female');
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(() => localStorage.getItem('smart_fridge_email') || '');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(() => localStorage.getItem('smart_fridge_remember') === 'true');
+  const [language, setLanguage] = useState<'ar' | 'en'>('ar');
   const submit = (event: FormEvent) => {
     event.preventDefault(); setError('');
     const users: User[] = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+    if (remember) {
+      localStorage.setItem('smart_fridge_remember', 'true');
+      localStorage.setItem('smart_fridge_email', email.trim());
+    } else {
+      localStorage.removeItem('smart_fridge_remember');
+      localStorage.removeItem('smart_fridge_email');
+    }
     if (mode === 'register') {
       if (!name.trim() || !email.trim() || password.length < 4) { setError('أكملي البيانات، وكلمة المرور 4 أحرف على الأقل.'); return; }
       if (users.some(user => user.email === email.trim().toLowerCase())) { setError('هذا البريد مسجل مسبقاً.'); return; }
@@ -159,28 +169,65 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
     if (!users.some(item => item.id === user.id)) localStorage.setItem(USERS_KEY, JSON.stringify([...users, user]));
     onLogin(user);
   };
-  return <main className="auth-shell">
-    <section className="auth-art">
-      <div className="auth-copy">
-        <div className="brand"><div className="brand-mark"><Refrigerator size={25} /></div><div><h1>ثلاجتي</h1><small>رفيق البيت الطازج</small></div></div>
-        <h1>كل ما في ثلاجتك،<br /><span style={{ color: 'hsl(35 71% 65%)' }}>في بالك.</span></h1>
-        <p>مساحة شخصية دافئة تساعدك على معرفة طعامك، اختيار وجبتك، والعناية بيومك بهدوء.</p>
-        <div className="auth-orbit"><div className="orbit-plate"><Apple /></div><Leaf className="orbit-leaf" size={42} /><Sparkles size={27} color="hsl(35 71% 65%)" /></div>
+  const forgotPassword = () => setError('سنرسل لك رابط استعادة كلمة المرور قريباً.');
+  return <main className="auth-shell auth-redesign">
+    <section className="auth-art auth-visual-panel">
+      <div className="auth-visual-inner">
+        <div className="visual-topline"><span><i className="live-dot" /> نظام ثلاجتي الذكي</span><small>SMART / FRESH SYSTEM</small></div>
+        <div className="auth-visual-content">
+          <div className="fridge-stage" aria-label="رسم توضيحي لثلاجة ذكية">
+            <div className="fridge-halo" />
+            <div className="smart-fridge-illustration">
+              <div className="fridge-top-cap" />
+              <div className="fridge-freezer">
+                <span className="fridge-display"><b>4°</b><small>FRESH</small></span>
+                <span className="fridge-handle handle-freezer" />
+              </div>
+              <div className="fridge-fresh">
+                <div className="fridge-interior">
+                  <span className="interior-lamp" />
+                  <div className="fridge-shelf-row"><i className="fridge-food food-jar" /><i className="fridge-food food-leaf" /><i className="fridge-food food-milk" /></div>
+                  <div className="fridge-shelf-row"><i className="fridge-food food-orange" /><i className="fridge-food food-apple" /><i className="fridge-food food-bottle" /></div>
+                  <div className="fridge-shelf-row low"><i className="fridge-food food-greens" /><i className="fridge-food food-box" /></div>
+                </div>
+                <span className="fridge-handle handle-fresh" />
+              </div>
+              <div className="fridge-base" />
+            </div>
+            <span className="stage-shadow" />
+          </div>
+          <div className="auth-copy">
+            <div className="brand auth-brand"><div className="brand-mark"><Refrigerator size={22} /></div><div><h1>ثلاجتي</h1><small>رفيق البيت الطازج</small></div></div>
+            <div className="copy-kicker"><Sparkles size={14} /> طازج، مرتب، على طريقتك</div>
+            <h2>Smart today,<br /><em>fresh tomorrow</em></h2>
+            <p>إدارة ذكية لمحتويات ثلاجتك، للحفاظ على طعامك طازجًا وحياتك أسهل.</p>
+            <div className="auth-benefits">
+              <div className="benefit-item"><span><Leaf size={17} /></span><div><strong>Fresh Tracking</strong><small>تتبّع الصلاحية والطزاجة</small></div></div>
+              <div className="benefit-item"><span><ShoppingBasket size={17} /></span><div><strong>Smart Shopping</strong><small>قائمة تسوق أذكى وأسرع</small></div></div>
+              <div className="benefit-item"><span><Bell size={17} /></span><div><strong>Instant Alerts</strong><small>تنبيهات قبل انتهاء الطعام</small></div></div>
+            </div>
+          </div>
+        </div>
+        <div className="visual-footer"><span><LockKeyhole size={13} /> بياناتك محفوظة على هذا الجهاز</span><span>ثلاجتك، بإيقاع يومك</span></div>
       </div>
     </section>
     <section className="auth-form-wrap">
-      <form className="auth-form" onSubmit={submit}>
-        <div className="auth-tabs"><button type="button" className={`auth-tab ${mode === 'login' ? 'active' : ''}`} onClick={() => setMode('login')} data-testid="tab-login">تسجيل الدخول</button><button type="button" className={`auth-tab ${mode === 'register' ? 'active' : ''}`} onClick={() => setMode('register')} data-testid="tab-register">حساب جديد</button></div>
-        <h2>{mode === 'login' ? 'أهلاً بعودتك' : 'لنبدأ معاً'}</h2>
-        <p>{mode === 'login' ? 'ثلاجتك رتبت لك شيئاً جميلاً اليوم.' : 'أنشئي مساحتك الخاصة في دقائق.'}</p>
-        {mode === 'register' && <div className="field"><label htmlFor="auth-name">الاسم</label><input id="auth-name" data-testid="input-auth-name" value={name} onChange={e => setName(e.target.value)} placeholder="مثال: سارة" /></div>}
-        <div className="field"><label htmlFor="auth-email">البريد الإلكتروني</label><input id="auth-email" type="email" data-testid="input-auth-email" value={email} onChange={e => setEmail(e.target.value)} placeholder="name@example.com" /></div>
-        <div className="field"><label htmlFor="auth-password">كلمة المرور</label><input id="auth-password" type="password" data-testid="input-auth-password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" /></div>
-        {error && <p style={{ color: 'hsl(var(--destructive))', fontSize: 12, margin: '3px 0' }} data-testid="status-auth-error">{error}</p>}
-        {mode === 'register' && <div className="field"><label htmlFor="auth-gender">الجنس</label><select id="auth-gender" value={gender} onChange={e => setGender(e.target.value as 'female' | 'male')} data-testid="select-auth-gender"><option value="female">أنثى</option><option value="male">ذكر</option></select></div>}
-        <button className="primary-btn" type="submit" data-testid="button-auth-submit">{mode === 'login' ? 'دخول إلى ثلاجتي' : 'إنشاء مساحتي'}<ArrowLeft size={17} /></button>
-        <button className="secondary-btn" type="button" style={{ width: '100%', marginTop: 10 }} onClick={demo} data-testid="button-demo-login">تجربة ثلاجتي الآن</button>
-        <div className="auth-note">بياناتك تبقى في هذا الجهاز، ومساحتك لك وحدك.</div>
+      <form className="auth-form auth-card" onSubmit={submit}>
+        <div className="language-switcher" aria-label="اختيار اللغة"><Globe2 size={15} /><button type="button" className={language === 'ar' ? 'active' : ''} onClick={() => setLanguage('ar')} aria-pressed={language === 'ar'}>العربية</button><span>/</span><button type="button" className={language === 'en' ? 'active' : ''} onClick={() => setLanguage('en')} aria-pressed={language === 'en'}>English</button></div>
+        <div className="auth-card-logo"><div className="brand-mark"><Refrigerator size={20} /></div><span>ثلاجتي الذكية</span></div>
+        <div className="auth-card-heading"><h2>{mode === 'login' ? 'أهلاً بعودتك' : 'لنبدأ معاً'}</h2><p>{mode === 'login' ? 'سجّلي الدخول إلى مساحتك الطازجة.' : 'أنشئي مساحتك الخاصة في دقائق.'}</p></div>
+        <div className="auth-tabs"><button type="button" className={`auth-tab ${mode === 'login' ? 'active' : ''}`} onClick={() => { setMode('login'); setError(''); }} data-testid="tab-login">تسجيل الدخول</button><button type="button" className={`auth-tab ${mode === 'register' ? 'active' : ''}`} onClick={() => { setMode('register'); setError(''); }} data-testid="tab-register">حساب جديد</button></div>
+        {mode === 'register' && <div className="field auth-field"><label htmlFor="auth-name">الاسم</label><input id="auth-name" data-testid="input-auth-name" value={name} onChange={e => setName(e.target.value)} placeholder="مثال: سارة" /></div>}
+        <div className="field auth-field"><label htmlFor="auth-email">البريد الإلكتروني</label><div className="input-with-icon"><Mail size={17} /><input id="auth-email" type="email" dir="ltr" data-testid="input-auth-email" value={email} onChange={e => setEmail(e.target.value)} placeholder="name@example.com" /></div></div>
+        <div className="field auth-field"><label htmlFor="auth-password">كلمة المرور</label><div className="input-with-icon password-control"><LockKeyhole size={17} /><input id="auth-password" type={showPassword ? 'text' : 'password'} dir="ltr" data-testid="input-auth-password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" /><button type="button" className="password-toggle" onClick={() => setShowPassword(value => !value)} aria-label={showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'}>{showPassword ? <EyeOff size={17} /> : <Eye size={17} />}</button></div></div>
+        {error && <p className="auth-error" data-testid="status-auth-error">{error}</p>}
+        {mode === 'register' && <div className="field auth-field"><label htmlFor="auth-gender">الجنس</label><select id="auth-gender" value={gender} onChange={e => setGender(e.target.value as 'female' | 'male')} data-testid="select-auth-gender"><option value="female">أنثى</option><option value="male">ذكر</option></select></div>}
+        <div className="auth-options"><label><input type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} /> <span>تذكريني</span></label><button type="button" className="link-btn" onClick={forgotPassword}>نسيت كلمة المرور؟</button></div>
+        <button className="primary-btn auth-submit" type="submit" data-testid="button-auth-submit">{mode === 'login' ? 'دخول إلى ثلاجتي' : 'إنشاء مساحتي'}<ArrowLeft size={17} /></button>
+        <div className="auth-divider"><span>أو</span></div>
+        <button className="secondary-btn auth-demo" type="button" onClick={demo} data-testid="button-demo-login"><Sparkles size={16} /> تجربة ثلاجتي الآن</button>
+        <p className="create-account">{mode === 'login' ? 'ليس لديك حساب؟' : 'لديك حساب بالفعل؟'} <button type="button" className="link-btn" onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(''); }}>{mode === 'login' ? 'أنشئي حساباً' : 'تسجيل الدخول'}</button></p>
+        <div className="auth-note"><LockKeyhole size={12} /> بياناتك تبقى في هذا الجهاز، ومساحتك لك وحدك.</div>
       </form>
     </section>
   </main>;

@@ -1,0 +1,29 @@
+Use the attached image as the main visual reference for the Smart Fridge authentication page.
+Create a premium, elegant and modern login page for Smart Fridge — ثلاجتك الذكية.
+Keep the same overall composition and visual concept of the reference: a beautiful Smart Fridge visual section on one side and a clean authentication card on the other side.
+However, do NOT use the blue color palette from the reference. The page must match the Smart Fridge dashboard identity with these colors:
+Warm Ivory #F7F3EA — main background
+Soft White #FCFAF6 — cards and panels
+Sage Green #7FA66F — primary actions
+Deep Forest Green #2F4A35 — main text
+Warm Beige #D8C5AA — subtle elements
+Soft Ice Blue #79B4D8 — small refrigerator/cooling accents
+The overall feeling should be calm, fresh, natural, premium and sophisticated.
+On the visual side, show a realistic modern refrigerator with a subtle Smart Fridge identity and soft lighting. Include a short brand message such as:
+Smart today, fresh tomorrow
+إدارة ذكية لمحتويات ثلاجتك، للحفاظ على طعامك طازجًا وحياتك أسهل.
+Include 3 short benefits with elegant icons:
+Fresh Tracking
+Smart Shopping
+Instant Alerts
+On the authentication side, create a beautiful rounded card containing:
+Smart Fridge logo
+Welcome back
+Sign in to your Smart Fridge account
+Email field Password field with show/hide icon Remember me Forgot password? Primary Sign In button Divider with “or” Create an account link
+Include a language selector at the top with العربية / English.
+Arabic and English must both look natural and polished. When Arabic is selected, the entire layout should properly switch to RTL.
+Use elegant rounded corners, subtle shadows, soft borders, generous spacing and refined micro-interactions. Animations should feel smooth and sophisticated, never excessive.
+The page must be fully responsive. On mobile, transform the split-screen layout into a clean single-column authentication experience while preserving the Smart Fridge branding.
+Do not copy the reference image exactly. Use it only as inspiration for the layout, hierarchy and overall experience.
+The final design should feel like a real premium product rather than a generic login template.
