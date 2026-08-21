@@ -59,7 +59,7 @@ button { cursor: pointer; }
 ::selection { background: hsl(35 71% 65% / .45); }
 
 .fridge-app { min-height: 100dvh; }
-.app-shell { display: grid; grid-template-columns: 250px minmax(0, 1fr); min-height: 100dvh; direction: ltr; }
+.app-shell { display: grid; grid-template-columns: 205px minmax(0, 1fr); min-height: 100dvh; direction: ltr; }
 .app-main { direction: rtl; min-width: 0; padding: 34px clamp(18px, 4vw, 58px) 48px; max-width: 1700px; width: 100%; margin: 0 auto; }
 .sidebar { direction: rtl; background: hsl(var(--sidebar)); color: hsl(var(--sidebar-foreground)); padding: 28px 20px; display: flex; flex-direction: column; gap: 30px; position: sticky; top: 0; height: 100dvh; }
 .brand-mark { width: 44px; height: 44px; border-radius: 15px 15px 5px 15px; display: grid; place-items: center; background: hsl(var(--accent)); color: hsl(var(--foreground)); box-shadow: 5px 5px 0 hsl(155 24% 12% / .25); }
@@ -977,14 +977,14 @@ button:active, .nav-item:active, .icon-btn:active, .secondary-btn:active { box-s
 .sidebar {
   position: sticky;
   z-index: 10;
-  padding: 24px 14px 17px;
-  gap: 28px;
+  padding: 16px 9px 12px;
+  gap: 16px;
   background: linear-gradient(180deg, hsl(42 48% 99%), hsl(39 34% 94%));
   border-right: 1px solid hsl(var(--sidebar-border));
   box-shadow: 8px 0 24px hsl(155 20% 26% / .06);
 }
 .sidebar .brand {
-  padding: 0 8px 18px;
+  padding: 0 6px 13px;
   border-bottom: 1px solid hsl(var(--sidebar-border));
 }
 .sidebar .brand-mark {
@@ -996,14 +996,14 @@ button:active, .nav-item:active, .icon-btn:active, .secondary-btn:active { box-s
   border: 1px solid hsl(var(--primary) / .34);
   box-shadow: none;
 }
-.sidebar .brand h1 { font-size: 20px; }
+.sidebar .brand h1 { font-size: 17px; }
 .sidebar .brand small { color: hsl(var(--muted-foreground)); font-size: 10px; }
-.nav-list { gap: 5px; }
+.nav-list { gap: 3px; }
 .nav-item {
-  min-height: 43px;
-  padding: 0 12px;
+  min-height: 39px;
+  padding: 0 9px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: 8px;
   color: hsl(var(--muted-foreground));
   transition: background .18s ease, color .18s ease, transform .18s ease, border-color .18s ease;
 }
@@ -1033,7 +1033,7 @@ button:active, .nav-item:active, .icon-btn:active, .secondary-btn:active { box-s
   line-height: 1;
 }
 .nav-item.active .nav-count { color: hsl(var(--primary)); background: hsl(var(--card)); }
-.sidebar-footer { gap: 10px; }
+.sidebar-footer { gap: 7px; }
 .profile-mini {
   margin-top: 7px;
   padding: 13px 7px 0;
@@ -1071,11 +1071,23 @@ button:active, .nav-item:active, .icon-btn:active, .secondary-btn:active { box-s
 
 .reference-dashboard { grid-template-columns: minmax(0, 1fr) 292px; gap: 15px; }
 .reference-rail { gap: 12px; }
-.item-detail-panel, .shopping-panel { padding: 17px; }
-.rail-title { color: hsl(var(--foreground)); font-weight: 700; }
-.rail-title > span { font-size: 12px; }
-.detail-hero h3 { font-size: 19px; }
-.detail-hero span { background: hsl(152 44% 29% / .10); }
+.item-detail-panel, .shopping-panel { padding: 10px; border-radius: 13px; }
+.item-detail-panel { background: linear-gradient(180deg, hsl(42 48% 99%), hsl(39 34% 96%)); }
+.rail-title { color: hsl(var(--foreground)); font-weight: 700; min-height: 22px; }
+.rail-title > span { font-size: 11px; }
+.detail-close { display: grid; place-items: center; padding: 0; border: 0; background: transparent; color: hsl(var(--foreground)); }
+.detail-hero { padding: 0 0 11px; }
+.detail-hero .food-art { margin: 0 auto 2px; }
+.detail-hero h3 { font-size: 20px; margin-bottom: 4px; }
+.detail-hero span { background: hsl(152 44% 29% / .10); padding: 3px 10px; }
+.detail-stats { grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 10px 0; text-align: center; }
+.detail-stats div:last-child { grid-column: auto; }
+.detail-stats small { font-size: 8px; white-space: nowrap; }
+.detail-stats strong { font-size: 9px; white-space: nowrap; }
+.detail-actions { gap: 5px; margin-top: 10px; }
+.detail-actions .primary-btn, .detail-actions .secondary-btn { min-height: 34px; padding: 6px 3px; font-size: 9px; }
+.detail-actions .icon-btn { flex: 1; min-height: 34px; gap: 3px; font-size: 9px; }
+.detail-actions .icon-btn span { display: inline; }
 
 .real-fridge-card {
   min-height: 682px;
