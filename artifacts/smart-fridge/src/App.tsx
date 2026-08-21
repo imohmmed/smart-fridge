@@ -11,6 +11,13 @@ import {
 } from 'lucide-react';
 import { Link, Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
 import NotFound from '@/pages/not-found';
+import milkPhoto from '@assets/generated_images/fridge-milk.png';
+import eggsPhoto from '@assets/generated_images/fridge-eggs.png';
+import proteinPhoto from '@assets/generated_images/fridge-protein.png';
+import vegetablesPhoto from '@assets/generated_images/fridge-vegetables.png';
+import fruitPhoto from '@assets/generated_images/fridge-fruit.png';
+import cheesePhoto from '@assets/generated_images/fridge-cheese.png';
+import freezerPhoto from '@assets/generated_images/fridge-freezer.png';
 
 type FridgeItem = {
   id: string; name: string; quantity: number; unit: string; category: string;
@@ -80,6 +87,9 @@ function flash(setNotice: (value: string) => void, text: string) {
 
 function FoodArt({ item, size = 40 }: { item?: FridgeItem; size?: number }) {
   const art = item?.art || 'apple';
+  const photo = art === 'milk' ? milkPhoto : art === 'egg' ? eggsPhoto : art === 'chicken' ? proteinPhoto
+    : art === 'leaf' || art === 'tomato' ? vegetablesPhoto : art === 'apple' || art === 'orange' ? fruitPhoto
+    : art === 'cheese' ? cheesePhoto : art === 'hummus' ? cheesePhoto : art === 'package' ? milkPhoto : freezerPhoto;
   const emoji = art === 'milk' ? '🥛' : art === 'egg' ? '🥚' : art === 'cheese' ? '🧀' : art === 'apple' ? '🍎'
     : art === 'orange' ? '🍊' : art === 'leaf' ? '🥦' : art === 'tomato' ? '🍅' : art === 'chicken' ? '🍗'
     : art === 'hummus' ? '🥫' : art === 'package' ? '🧃' : '🥕';
@@ -90,7 +100,7 @@ function FoodArt({ item, size = 40 }: { item?: FridgeItem; size?: number }) {
     : art === 'chicken' ? { background: 'hsl(274 35% 61% / .2)', color: 'hsl(274 35% 48%)' }
     : art === 'egg' ? { background: 'hsl(39 43% 94%)', color: 'hsl(34 52% 40%)' }
     : { background: 'hsl(196 48% 51% / .17)', color: 'hsl(196 48% 40%)' };
-  return <div className="food-art" style={{ ...style, width: size, height: size }}><span className="food-emoji" aria-hidden="true">{emoji}</span></div>;
+  return <div className="food-art" style={{ ...style, width: size, height: size }}><img className="food-photo" src={photo} alt="" style={{ width: size * 1.5, height: size * 1.5 }} /><span className="food-emoji" aria-hidden="true">{emoji}</span></div>;
 }
 
 function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {

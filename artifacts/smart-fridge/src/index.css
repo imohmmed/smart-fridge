@@ -109,7 +109,8 @@ button { cursor: pointer; }
 .food-badge { position: relative; min-width: 68px; padding: 9px 8px 7px; border: 1px solid hsl(155 20% 25% / .12); border-radius: 15px 15px 8px 8px; background: hsl(var(--card)); text-align: center; color: hsl(var(--foreground)); box-shadow: 0 5px 10px hsl(155 20% 25% / .09); transition: transform .2s, box-shadow .2s; }
 .food-badge:hover, .food-badge.selected { transform: translateY(-7px); box-shadow: 0 9px 16px hsl(155 20% 25% / .16); outline: 2px solid hsl(var(--accent)); outline-offset: 2px; }
 .food-art { width: 40px; height: 40px; margin: 0 auto 5px; border-radius: 50%; display: grid; place-items: center; color: hsl(var(--foreground)); }
-.food-emoji { font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif; font-size: 25px; line-height: 1; filter: drop-shadow(0 2px 2px hsl(155 20% 25% / .12)); }
+.food-photo { position: relative; z-index: 1; display: block; object-fit: contain; filter: drop-shadow(0 4px 4px hsl(155 20% 25% / .18)); }
+.food-emoji { display: none; font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif; font-size: 25px; line-height: 1; filter: drop-shadow(0 2px 2px hsl(155 20% 25% / .12)); }
 .food-badge span { display:block; font-size: 11px; font-weight: 700; white-space: nowrap; }
 .food-badge small { display:block; color:hsl(var(--muted-foreground)); font-size:9px; }
 .food-dot { position: absolute; top: -4px; left: -3px; width: 9px; height: 9px; background:hsl(var(--destructive)); border-radius:50%; border: 2px solid hsl(var(--card)); }
