@@ -962,3 +962,285 @@ button:active, .nav-item:active, .icon-btn:active, .secondary-btn:active { box-s
   .real-fridge-cabinet { padding-inline: 12px; }
   .real-fridge-card .fridge-temperature { right: 17px; }
 }
+
+/* Final dashboard polish: a quiet appliance showroom around a detailed fridge */
+:root {
+  --sidebar: 42 48% 98%;
+  --sidebar-foreground: 158 22% 17%;
+  --sidebar-border: 37 25% 84%;
+  --sidebar-primary: 152 44% 29%;
+  --sidebar-primary-foreground: 42 48% 98%;
+  --sidebar-accent: 39 38% 90%;
+  --sidebar-accent-foreground: 158 22% 17%;
+}
+
+.sidebar {
+  position: sticky;
+  z-index: 10;
+  padding: 24px 14px 17px;
+  gap: 28px;
+  background: linear-gradient(180deg, hsl(42 48% 99%), hsl(39 34% 94%));
+  border-right: 1px solid hsl(var(--sidebar-border));
+  box-shadow: 8px 0 24px hsl(155 20% 26% / .06);
+}
+.sidebar .brand {
+  padding: 0 8px 18px;
+  border-bottom: 1px solid hsl(var(--sidebar-border));
+}
+.sidebar .brand-mark {
+  width: 37px;
+  height: 37px;
+  border-radius: 10px;
+  background: transparent;
+  color: hsl(var(--primary));
+  border: 1px solid hsl(var(--primary) / .34);
+  box-shadow: none;
+}
+.sidebar .brand h1 { font-size: 20px; }
+.sidebar .brand small { color: hsl(var(--muted-foreground)); font-size: 10px; }
+.nav-list { gap: 5px; }
+.nav-item {
+  min-height: 43px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: hsl(var(--muted-foreground));
+  transition: background .18s ease, color .18s ease, transform .18s ease, border-color .18s ease;
+}
+.nav-item:hover {
+  color: hsl(var(--foreground));
+  background: hsl(var(--sidebar-accent));
+  border-color: hsl(var(--sidebar-border));
+  transform: translateX(-2px);
+}
+.nav-item.active {
+  background: hsl(var(--sidebar-primary));
+  color: hsl(var(--sidebar-primary-foreground));
+  border-color: hsl(var(--sidebar-primary));
+  box-shadow: 0 6px 12px hsl(152 44% 29% / .17);
+}
+.nav-item svg { stroke-width: 1.7; }
+.nav-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 99px;
+  color: hsl(var(--foreground));
+  background: hsl(var(--accent));
+  font-size: 10px;
+  line-height: 1;
+}
+.nav-item.active .nav-count { color: hsl(var(--primary)); background: hsl(var(--card)); }
+.sidebar-footer { gap: 10px; }
+.profile-mini {
+  margin-top: 7px;
+  padding: 13px 7px 0;
+  border-top: 1px solid hsl(var(--sidebar-border));
+}
+.profile-mini span { color: hsl(var(--muted-foreground)); }
+.avatar {
+  width: 32px;
+  height: 32px;
+  background: hsl(35 71% 79%);
+  color: hsl(var(--foreground));
+}
+.logout-btn {
+  width: 100%;
+  min-height: 38px;
+  padding: 0 8px;
+  border-radius: 9px;
+  color: hsl(var(--muted-foreground));
+  transition: background .18s ease, color .18s ease;
+}
+.logout-btn:hover { background: hsl(4 65% 53% / .08); color: hsl(var(--destructive)); }
+
+.dashboard-main { padding-inline: clamp(16px, 2.5vw, 38px); }
+.dashboard-topbar {
+  min-height: 68px;
+  padding: 9px 15px;
+  border-color: hsl(var(--border));
+  box-shadow: 0 8px 22px hsl(155 20% 26% / .08);
+}
+.dashboard-greeting { gap: 6px; }
+.dashboard-stat { min-width: 158px; }
+.reference-heading { padding-top: 4px; }
+.reference-heading h2 { font-size: clamp(23px, 2.1vw, 31px); }
+.reference-heading .eyebrow { font-size: 11px; color: hsl(var(--muted-foreground)); }
+
+.reference-dashboard { grid-template-columns: minmax(0, 1fr) 292px; gap: 15px; }
+.reference-rail { gap: 12px; }
+.item-detail-panel, .shopping-panel { padding: 17px; }
+.rail-title { color: hsl(var(--foreground)); font-weight: 700; }
+.rail-title > span { font-size: 12px; }
+.detail-hero h3 { font-size: 19px; }
+.detail-hero span { background: hsl(152 44% 29% / .10); }
+
+.real-fridge-card {
+  min-height: 682px;
+  border-radius: 13px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.91), rgba(215,213,207,.94) 72%, rgba(183,181,175,.96)),
+    repeating-linear-gradient(100deg, rgba(255,255,255,.16) 0 1px, transparent 1px 5px);
+}
+.real-fridge-body {
+  min-height: 635px;
+  grid-template-columns: clamp(185px, 23%, 245px) minmax(0, 1fr);
+  gap: 14px;
+  padding: 31px 26px 16px;
+}
+.real-fridge-door {
+  min-height: 623px;
+  padding: 54px 17px 18px;
+  border-radius: 13px 5px 7px 13px;
+  border-right-width: 10px;
+}
+.real-fridge-door .fridge-door-handle {
+  right: 14px;
+  top: 73px;
+  bottom: 71px;
+  width: 12px;
+  border-radius: 9px;
+}
+.real-fridge-cabinet {
+  min-height: 623px;
+  padding: 29px 19px 14px;
+  border-width: 11px;
+}
+.real-fridge-cabinet .cabinet-side {
+  width: 13px;
+  top: 11px;
+  bottom: 12px;
+}
+.real-fridge-cabinet .cabinet-side-left { left: 7px; }
+.real-fridge-cabinet .cabinet-side-right { right: 7px; }
+.real-fridge-cabinet .cabinet-shelf {
+  min-height: 104px;
+  padding-inline: 10px;
+}
+.real-fridge-cabinet .cabinet-shelf.meat { min-height: 101px; }
+.real-fridge-cabinet .cabinet-shelf.greens { min-height: 108px; }
+.real-fridge-cabinet .cabinet-shelf.fruit { min-height: 105px; }
+.real-fridge-cabinet .cabinet-shelf.dairy { min-height: 94px; }
+.real-fridge-cabinet .shelf-title {
+  font-size: 10px;
+  min-height: 21px;
+  color: #354443;
+}
+.real-fridge-cabinet .shelf-items { min-height: 67px; gap: 10px; padding-inline: 5px; }
+.real-fridge-cabinet .food-art,
+.real-fridge-cabinet .food-visual .food-art {
+  background: transparent !important;
+  border-radius: 4px;
+}
+.real-fridge-cabinet .food-photo {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain;
+  filter: drop-shadow(0 5px 4px rgba(42,50,48,.22));
+}
+.real-fridge-cabinet .food-badge {
+  min-width: 62px;
+  padding-inline: 4px;
+  background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(224,233,231,.68));
+}
+.real-fridge-cabinet .food-visual { width: 48px; height: 48px; }
+.real-fridge-cabinet .food-name { font-size: 8px; }
+.real-fridge-cabinet .quantity-badge {
+  top: -2px;
+  left: -5px;
+  min-width: 19px;
+  height: 18px;
+  color: #46534b;
+  background: rgba(255,255,255,.98);
+}
+.produce-drawers { gap: 9px; padding-top: 10px; }
+.crisper-drawer { min-height: 49px; }
+.real-fridge-cabinet .freezer-section {
+  min-height: 87px;
+  margin-top: 3px;
+}
+.fridge-foot { padding-inline: 29px; }
+
+/* Night mode keeps the appliance silhouette, but turns the interior into a cool-lit cabinet. */
+.theme-dark {
+  --sidebar: 151 18% 18%;
+  --sidebar-foreground: 45 35% 92%;
+  --sidebar-border: 151 12% 29%;
+  --sidebar-accent: 151 13% 24%;
+  --sidebar-accent-foreground: 45 35% 92%;
+}
+.theme-dark .sidebar {
+  background: linear-gradient(180deg, hsl(151 18% 19%), hsl(151 16% 14%));
+  border-right-color: hsl(var(--sidebar-border));
+  box-shadow: 8px 0 24px rgba(0,0,0,.2);
+}
+.theme-dark .sidebar .brand { border-bottom-color: hsl(var(--sidebar-border)); }
+.theme-dark .sidebar .brand-mark { color: hsl(152 55% 65%); border-color: hsl(152 55% 65% / .38); }
+.theme-dark .nav-item { color: hsl(150 10% 68%); }
+.theme-dark .nav-item:hover { color: hsl(var(--foreground)); background: hsl(var(--sidebar-accent)); }
+.theme-dark .nav-item.active { background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); }
+.theme-dark .profile-mini { border-top-color: hsl(var(--sidebar-border)); }
+.theme-dark .avatar { background: hsl(35 45% 58%); }
+.theme-dark .real-fridge-card {
+  background:
+    linear-gradient(180deg, rgba(74,82,77,.92), rgba(39,48,45,.97) 73%, rgba(24,31,29,.98)),
+    repeating-linear-gradient(100deg, rgba(255,255,255,.05) 0 1px, transparent 1px 5px);
+  box-shadow: 0 26px 34px rgba(0,0,0,.35), inset 0 2px rgba(255,255,255,.14);
+}
+.theme-dark .real-fridge-door {
+  background:
+    linear-gradient(90deg, rgba(20,25,23,.38), transparent 8%),
+    linear-gradient(96deg, #69716c, #c0c6c0 20%, #858f89 53%, #b6beb8 81%, #4f5953);
+  border-color: #4b5550;
+}
+.theme-dark .real-fridge-cabinet {
+  background:
+    radial-gradient(ellipse at 48% 5%, rgba(221,247,248,.74), transparent 22%),
+    linear-gradient(180deg, #3d5553, #203433 45%, #142321);
+  border-color: #394945;
+  box-shadow: inset 0 0 0 2px rgba(207,238,238,.28), inset 0 0 30px rgba(0,0,0,.55);
+}
+.theme-dark .real-fridge-cabinet .cabinet-shelf {
+  background: linear-gradient(180deg, rgba(147,177,177,.22), rgba(13,26,25,.46));
+  box-shadow: inset 0 12px 18px rgba(215,247,247,.08), 0 9px 11px rgba(0,0,0,.28);
+}
+.theme-dark .real-fridge-cabinet .shelf-title {
+  color: #e5efec;
+  background: linear-gradient(90deg, rgba(62,86,83,.86), rgba(42,62,61,.52));
+  border-color: rgba(196,225,222,.22);
+}
+.theme-dark .real-fridge-cabinet .shelf-title small { color: #bbd2cc; }
+.theme-dark .real-fridge-cabinet .food-badge {
+  color: #24332e;
+  background: linear-gradient(180deg, rgba(240,247,238,.95), rgba(186,205,195,.86));
+}
+.theme-dark .real-fridge-cabinet .quantity-badge { color: #26352d; background: #eef5eb; }
+.theme-dark .real-fridge-cabinet .freezer-section { background: linear-gradient(180deg, rgba(54,90,97,.85), rgba(24,48,54,.92)); }
+
+@media (max-width: 1120px) {
+  .app-shell { grid-template-columns: 214px minmax(0, 1fr); }
+  .real-fridge-body { grid-template-columns: clamp(168px, 24%, 220px) minmax(0, 1fr); }
+}
+@media (max-width: 1050px) {
+  .app-shell { grid-template-columns: 86px minmax(0, 1fr); }
+  .sidebar { padding: 24px 12px 17px; align-items: center; }
+  .sidebar .brand { justify-content: center; padding-inline: 0; }
+  .sidebar .brand-copy,
+  .sidebar .nav-label,
+  .sidebar .profile-mini > div:last-child,
+  .sidebar .logout-btn span { display: none; }
+  .sidebar .nav-item { width: 48px; padding-inline: 0; justify-content: center; }
+  .sidebar .sidebar-footer { justify-items: center; width: 100%; }
+  .sidebar .profile-mini { border-top: 0; padding-top: 0; }
+  .sidebar .logout-btn { justify-content: center; padding-inline: 0; }
+}
+@media (max-width: 800px) {
+  .real-fridge-body { grid-template-columns: 132px minmax(0, 1fr); }
+}
+@media (max-width: 560px) {
+  .real-fridge-card { min-width: 454px; }
+  .real-fridge-body { grid-template-columns: 137px minmax(285px, 1fr); padding-inline: 17px; }
+  .real-fridge-door { padding-inline: 10px; }
+}

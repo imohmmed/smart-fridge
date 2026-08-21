@@ -167,13 +167,13 @@ const navItems = [
   { href: '/favorites', label: 'المفضلة', icon: Heart },
 ];
 
-function AppShell({ user, children, onLogout }: { user: User; children: ReactNode; onLogout: () => void }) {
+function AppShell({ user, shoppingCount, children, onLogout }: { user: User; shoppingCount: number; children: ReactNode; onLogout: () => void }) {
   const [location] = useLocation();
   return <div className="app-shell">
     <aside className="sidebar">
       <div className="brand"><div className="brand-mark"><Refrigerator size={24} /></div><div className="brand-copy"><h1>ثلاجتي</h1><small>رفيق البيت الطازج</small></div></div>
       <nav className="nav-list" aria-label="التنقل الرئيسي">
-        {navItems.map(item => { const Icon = item.icon; return <Link key={item.href} href={item.href} className={`nav-item ${location === item.href ? 'active' : ''}`} data-testid={`link-nav-${item.label}`}><Icon size={18} /><span className="nav-label">{item.label}</span></Link>; })}
+        {navItems.map(item => { const Icon = item.icon; return <Link key={item.href} href={item.href} className={`nav-item ${location === item.href ? 'active' : ''}`} data-testid={`link-nav-${item.label}`}><Icon size={18} /><span className="nav-label">{item.label}</span>{item.href === '/shopping' && <b className="nav-count">{shoppingCount}</b>}</Link>; })}
       </nav>
       <div className="sidebar-footer">
         <Link href="/settings" className={`nav-item ${location === '/settings' ? 'active' : ''}`} data-testid="link-nav-settings"><Settings size={18} /><span className="nav-label">الإعدادات</span></Link>
@@ -221,10 +221,10 @@ function AddFoodModal({ onClose, onAdd }: { onClose: () => void; onAdd: (item: O
 
 function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; selected: FridgeItem | undefined; onSelect: (item: FridgeItem) => void }) {
   const categories = [
-    { name: 'البروتينات', match: 'لحوم', tint: 'meat', note: 'جاهز للطبخ' },
-    { name: 'الخضروات الطازجة', match: 'خضروات', tint: 'greens', note: 'درج الرطوبة' },
+    { name: 'البروتينات', match: 'لحوم', tint: 'meat', note: 'طازج وجاهز' },
+    { name: 'الخضروات', match: 'خضروات', tint: 'greens', note: 'خضروات طازجة' },
     { name: 'الفواكه', match: 'فواكه', tint: 'fruit', note: 'بارد ومنعش' },
-    { name: 'الألبان', match: 'ألبان', tint: 'dairy', note: '4° م' },
+    { name: 'الألبان والمشروبات', match: 'ألبان', tint: 'dairy', note: '4° م' },
   ];
   const doorDairy = items.filter(item => item.category === 'ألبان').slice(0, 3);
   const doorDrinks = items.filter(item => ['مشروبات', 'جاهز'].includes(item.category)).slice(0, 4);
@@ -240,10 +240,10 @@ function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; sele
       <div className="fridge-door real-fridge-door">
         <span className="door-edge-shadow" />
         <span className="fridge-door-handle" />
-        <div className="door-status"><span>FRESH&nbsp; ZONE</span><i /></div>
-        <div className="door-rack rack-dairy"><h4>الألبان والصلصات</h4>{doorDairy.map(item => renderFood(item, 30, true))}</div>
-        <div className="door-rack rack-drinks"><h4>المشروبات والعصائر</h4>{doorDrinks.map(item => renderFood(item, 28, true))}</div>
-        <div className="door-rack rack-low"><h4>مساحة إضافية</h4><div className="door-bottles"><span /><span /><span /></div></div>
+        <div className="door-status"><span>منطقة الطزاجة</span><i /></div>
+        <div className="door-rack rack-dairy"><h4>الألبان والمشروبات</h4>{doorDairy.map(item => renderFood(item, 30, true))}</div>
+        <div className="door-rack rack-drinks"><h4>الصلصات والمربيات</h4>{doorDrinks.map(item => renderFood(item, 28, true))}</div>
+        <div className="door-rack rack-low"><h4>المشروبات والعصائر</h4><div className="door-bottles"><span /><span /><span /></div></div>
         <div className="door-note"><span className="note-pin" /><span>ملاحظة اليوم<br /><strong>حضّري شيئاً طازجاً</strong></span></div>
       </div>
       <div className="fridge-cabinet real-fridge-cabinet">
@@ -260,16 +260,16 @@ function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; sele
           </div>;
         })}</div>
         <div className="produce-drawers">
-          <div className="crisper-drawer"><span>خضروات مقرمشة</span><small>{items.filter(item => item.category === 'خضروات').length || 0} أصناف</small><div className="drawer-handle" /></div>
-          <div className="crisper-drawer"><span>فواكه موسمية</span><small>{items.filter(item => item.category === 'فواكه').length || 0} أصناف</small><div className="drawer-handle" /></div>
+          <div className="crisper-drawer"><span>خضروات طازجة</span><small>{items.filter(item => item.category === 'خضروات').length || 0} أصناف</small><div className="drawer-handle" /></div>
+          <div className="crisper-drawer"><span>جذور وبطاطا</span><small>{items.filter(item => item.category === 'فواكه').length || 0} أصناف</small><div className="drawer-handle" /></div>
         </div>
         <div className="freezer-section">
-          <div className="shelf-title"><span>الفريزر السفلي</span><small>-18° م</small></div>
+          <div className="shelf-title"><span>الفريزر</span><small>-18° م</small></div>
           <div className="freezer-tray"><div className="freezer-bin"><i /><span>لحوم</span></div><div className="freezer-bin"><i /><span>ثلج</span></div><div className="freezer-bin"><i /><span>جاهز</span></div></div>
         </div>
       </div>
     </div>
-    <div className="fridge-foot"><span>SMART COOLING</span><b>تعمل بكفاءة</b><i /></div>
+    <div className="fridge-foot"><span>تبريد ذكي</span><b>تعمل بكفاءة</b><i /></div>
   </div>;
 }
 
@@ -295,7 +295,7 @@ function Dashboard({ userName, userGender, data, setData, onAdd, setNotice }: { 
       <div className="dashboard-stat"><div className="mini-ring" style={{ '--ring-progress': `${percentage}%` } as CSSProperties}><strong>{percentage}%</strong></div><div><small>استهلاكك اليوم</small><strong>{totalCalories.toLocaleString('ar-SA')} سعرة</strong></div></div>
       <button className="topbar-bell icon-btn" aria-label="التنبيهات"><Bell size={20} /></button>
     </div>
-    <div className="reference-heading"><div><span className="eyebrow">مساحتي اليومية</span><h2>ثلاجتك جاهزة ليوم ألذ</h2></div><span className="date-chip" data-testid="text-current-date">{formatArabicDate()}</span></div>
+     <div className="reference-heading"><div><span className="eyebrow">مساحتي اليومية</span><h2>محتويات ثلاجتك</h2></div><span className="date-chip" data-testid="text-current-date">{formatArabicDate()}</span></div>
     <div className="reference-dashboard">
       <section className="reference-fridge"><FridgeVisual items={data.items} selected={selected} onSelect={item => setSelectedId(item.id)} /></section>
       <aside className="reference-rail">
@@ -364,7 +364,7 @@ function SettingsPage({ user, data, setData, setNotice, onLogout }: { user: User
 
 function RoutedPages({ user, data, setData, onLogout, setNotice }: { user: User; data: UserData; setData: Dispatch<SetStateAction<UserData>>; onLogout: () => void; setNotice: (v: string) => void }) {
   const [addOpen, setAddOpen] = useState(false);
-  return <AppShell user={user} onLogout={onLogout}><Switch><Route path="/"><Dashboard userName={user.name} userGender={user.gender} data={data} setData={setData} onAdd={() => setAddOpen(true)} setNotice={setNotice} /></Route><Route path="/meals"><MealsPage data={data} setData={setData} setNotice={setNotice} /></Route><Route path="/daily-analysis"><DailyAnalysis data={data} /></Route><Route path="/shopping"><ShoppingPage data={data} setData={setData} setNotice={setNotice} onAdd={() => setAddOpen(true)} /></Route><Route path="/recipes"><RecipesPage data={data} setData={setData} /></Route><Route path="/favorites"><FavoritesPage data={data} setData={setData} /></Route><Route path="/settings"><SettingsPage user={user} data={data} setData={setData} setNotice={setNotice} onLogout={onLogout} /></Route><Route component={NotFound} /></Switch>{addOpen && <AddFoodModal onClose={() => setAddOpen(false)} onAdd={item => { setData(prev => ({ ...prev, items: [...prev.items, { ...item, id: `food-${Date.now()}` }] })); flash(setNotice, 'أضيف الطعام إلى ثلاجتك'); }} />}</AppShell>;
+  return <AppShell user={user} shoppingCount={data.shopping.filter(item => !item.done).length} onLogout={onLogout}><Switch><Route path="/"><Dashboard userName={user.name} userGender={user.gender} data={data} setData={setData} onAdd={() => setAddOpen(true)} setNotice={setNotice} /></Route><Route path="/meals"><MealsPage data={data} setData={setData} setNotice={setNotice} /></Route><Route path="/daily-analysis"><DailyAnalysis data={data} /></Route><Route path="/shopping"><ShoppingPage data={data} setData={setData} setNotice={setNotice} onAdd={() => setAddOpen(true)} /></Route><Route path="/recipes"><RecipesPage data={data} setData={setData} /></Route><Route path="/favorites"><FavoritesPage data={data} setData={setData} /></Route><Route path="/settings"><SettingsPage user={user} data={data} setData={setData} setNotice={setNotice} onLogout={onLogout} /></Route><Route component={NotFound} /></Switch>{addOpen && <AddFoodModal onClose={() => setAddOpen(false)} onAdd={item => { setData(prev => ({ ...prev, items: [...prev.items, { ...item, id: `food-${Date.now()}` }] })); flash(setNotice, 'أضيف الطعام إلى ثلاجتك'); }} />}</AppShell>;
 }
 
 function App() {
