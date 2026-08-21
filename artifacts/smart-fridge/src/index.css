@@ -384,8 +384,9 @@ button:active, .nav-item:active, .icon-btn:active, .secondary-btn:active { box-s
 .shopping-panel .shopping-item { padding: 8px 0; }
 .shopping-panel .shopping-item label { font-size: 11px; }
 .export-list { display: flex; align-items: center; justify-content: center; gap: 5px; width: 100%; margin-top: 11px; padding: 9px; border-radius: 9px; background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); text-decoration: none; font-size: 11px; font-weight: 700; }
-.dashboard-footer { display: grid; grid-template-columns: 1.1fr 1.15fr 1.45fr 1.25fr auto; gap: 10px; align-items: stretch; margin-top: 15px; }
+.dashboard-footer { display: grid; grid-template-columns: 1.1fr 1.15fr 1.45fr 1.25fr auto; gap: 10px; align-items: stretch; margin-top: 15px; direction: ltr; }
 .footer-stat, .macro-stat, .health-tip { min-height: 81px; display: flex; align-items: center; gap: 9px; padding: 12px 15px; border: 1px solid hsl(var(--border)); border-radius: 14px; background: hsl(var(--card)); }
+.footer-stat, .macro-stat, .health-tip, .floating-add { direction: rtl; }
 .footer-stat > svg { color: hsl(196 48% 51%); flex: 0 0 auto; }
 .footer-stat strong { display: block; font-size: 13px; }
 .footer-progress { width: 100px; height: 5px; margin-top: 9px; border-radius: 99px; background: hsl(var(--border)); overflow: hidden; }
