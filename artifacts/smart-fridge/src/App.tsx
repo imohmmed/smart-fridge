@@ -316,11 +316,10 @@ function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; sele
   ];
   const doorDairy = items.filter(item => item.category === 'ألبان').slice(0, 3);
   const doorDrinks = items.filter(item => ['مشروبات', 'جاهز'].includes(item.category)).slice(0, 4);
-  const renderFood = (item: FridgeItem, size = 43, door = false) => <button key={item.id} className={`${door ? 'door-food' : 'food-badge'} ${selected?.id === item.id ? 'selected' : ''}`} onClick={() => onSelect(item)} data-testid={`button-food-${door ? 'door-' : ''}${item.id}`}>
-    <span className="food-emoji-card" aria-hidden="true">{getFoodEmoji(item.name)}</span>
+  const renderFood = (item: FridgeItem, size = 43, door = false) => <button key={item.id} className={`${door ? 'door-food' : 'food-badge'} ${selected?.id === item.id ? 'selected' : ''}`} onClick={() => onSelect(item)} aria-pressed={selected?.id === item.id} data-testid={`button-food-${door ? 'door-' : ''}${item.id}`}>
+    <span className="food-visual"><FoodArt item={item} size={door ? size + 8 : size + 12} /><b className="quantity-badge">{item.quantity}</b></span>
     <span className="food-name">{item.name}</span>
     {!door && <small>{item.quantity} {item.unit}</small>}
-    <b className="quantity-badge">{item.quantity}</b>
     {daysUntil(item.expiry) <= 2 && <i className="food-dot" />}
   </button>;
   return <div className="fridge-card real-fridge-card">
