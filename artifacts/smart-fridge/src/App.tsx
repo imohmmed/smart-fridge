@@ -76,6 +76,34 @@ function saveData(userId: string, data: UserData) {
 }
 function initials(name: string) { return name.trim().slice(0, 1) || 'ت'; }
 function genderSticker(gender?: User['gender']) { return gender === 'male' ? '👨🏻‍🍳' : '👩🏻‍🍳'; }
+function TransparentFoodImage({ src, alt, width, height }: { src: string; alt: string; width: number; height: number }) {
+  const [transparentSrc, setTransparentSrc] = useState('');
+  useEffect(() => {
+    let cancelled = false;
+    const image = new Image();
+    image.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = image.naturalWidth;
+      canvas.height = image.naturalHeight;
+      const context = canvas.getContext('2d');
+      if (!context) return;
+      context.drawImage(image, 0, 0);
+      const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
+      for (let index = 0; index < pixels.data.length; index += 4) {
+        const red = pixels.data[index];
+        const green = pixels.data[index + 1];
+        const blue = pixels.data[index + 2];
+        const spread = Math.max(red, green, blue) - Math.min(red, green, blue);
+        if (Math.min(red, green, blue) > 216 && spread < 16) pixels.data[index + 3] = 0;
+      }
+      context.putImageData(pixels, 0, 0);
+      if (!cancelled) setTransparentSrc(canvas.toDataURL('image/png'));
+    };
+    image.src = src;
+    return () => { cancelled = true; };
+  }, [src]);
+  return <img className="food-photo" src={transparentSrc || src} alt={alt} style={{ width, height }} />;
+}
 function daysUntil(date: string) {
   return Math.ceil((new Date(date).getTime() - new Date().setHours(0, 0, 0, 0)) / 86400000);
 }
@@ -101,7 +129,7 @@ function FoodArt({ item, size = 40 }: { item?: FridgeItem; size?: number }) {
     : art === 'chicken' ? { background: 'hsl(274 35% 61% / .2)', color: 'hsl(274 35% 48%)' }
     : art === 'egg' ? { background: 'hsl(39 43% 94%)', color: 'hsl(34 52% 40%)' }
     : { background: 'hsl(196 48% 51% / .17)', color: 'hsl(196 48% 40%)' };
-  return <div className="food-art" style={{ ...style, width: size, height: size }}><img className="food-photo" src={photo} alt="" style={{ width: size * 1.5, height: size * 1.5 }} /><span className="food-emoji" aria-hidden="true">{emoji}</span></div>;
+  return <div className="food-art" style={{ ...style, width: size, height: size }}><TransparentFoodImage src={photo} alt="" width={size * 1.5} height={size * 1.5} /><span className="food-emoji" aria-hidden="true">{emoji}</span></div>;
 }
 
 function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
