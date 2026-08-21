@@ -24,10 +24,10 @@ type FridgeItem = {
   expiry: string; calories: number; art: string;
 };
 type ShoppingItem = { id: string; name: string; quantity: string; done: boolean };
-type User = { id: string; name: string; email: string; password: string };
+type User = { id: string; name: string; email: string; password: string; gender?: 'female' | 'male' };
 type UserData = {
   items: FridgeItem[]; shopping: ShoppingItem[]; note: string; water: number;
-  calorieGoal: number; favorites: string[]; reminders: boolean; notifications: boolean;
+  calorieGoal: number; favorites: string[]; reminders: boolean; notifications: boolean; darkMode: boolean;
 };
 type Recipe = { id: string; name: string; description: string; time: string; calories: number; color: string; tags: string[] };
 
@@ -53,7 +53,7 @@ const defaultData: UserData = {
     { id: 's2', name: 'موز', quantity: '6 حبات', done: false },
     { id: 's3', name: 'زيت زيتون', quantity: 'عبوة', done: true },
   ], note: 'لا تنسَ إخراج الدجاج للتتبيل قبل الغداء.', water: 4, calorieGoal: 2000,
-  favorites: ['r1'], reminders: true, notifications: true,
+  favorites: ['r1'], reminders: true, notifications: true, darkMode: false,
 };
 const recipes: Recipe[] = [
   { id: 'r1', name: 'سلطة الدجاج والحمص', description: 'طبق خفيف من مكونات ثلاجتك، غني ومقرمش.', time: '20 دقيقة', calories: 410, color: 'linear-gradient(135deg, #cadb95, #709657)', tags: ['غداء', 'غني بالبروتين'] },
@@ -75,6 +75,7 @@ function saveData(userId: string, data: UserData) {
   localStorage.setItem(DATA_KEY, JSON.stringify({ ...stored, [userId]: data }));
 }
 function initials(name: string) { return name.trim().slice(0, 1) || 'ت'; }
+function genderSticker(gender?: User['gender']) { return gender === 'male' ? '👨🏻‍🍳' : '👩🏻‍🍳'; }
 function daysUntil(date: string) {
   return Math.ceil((new Date(date).getTime() - new Date().setHours(0, 0, 0, 0)) / 86400000);
 }
@@ -106,6 +107,7 @@ function FoodArt({ item, size = 40 }: { item?: FridgeItem; size?: number }) {
 function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [name, setName] = useState('');
+  const [gender, setGender] = useState<'female' | 'male'>('female');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -115,7 +117,7 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
     if (mode === 'register') {
       if (!name.trim() || !email.trim() || password.length < 4) { setError('أكملي البيانات، وكلمة المرور 4 أحرف على الأقل.'); return; }
       if (users.some(user => user.email === email.trim().toLowerCase())) { setError('هذا البريد مسجل مسبقاً.'); return; }
-      const user = { id: `u-${Date.now()}`, name: name.trim(), email: email.trim().toLowerCase(), password };
+      const user = { id: `u-${Date.now()}`, name: name.trim(), email: email.trim().toLowerCase(), password, gender };
       localStorage.setItem(USERS_KEY, JSON.stringify([...users, user])); onLogin(user);
     } else {
       const user = users.find(candidate => candidate.email === email.trim().toLowerCase() && candidate.password === password);
@@ -124,7 +126,7 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
     }
   };
   const demo = () => {
-    const user: User = { id: 'demo-user', name: 'سارة', email: 'demo@talajati.local', password: 'demo' };
+    const user: User = { id: 'demo-user', name: 'سارة', email: 'demo@thalajati.local', password: 'demo', gender: 'female' };
     const users: User[] = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
     if (!users.some(item => item.id === user.id)) localStorage.setItem(USERS_KEY, JSON.stringify([...users, user]));
     onLogin(user);
@@ -132,7 +134,7 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
   return <main className="auth-shell">
     <section className="auth-art">
       <div className="auth-copy">
-        <div className="brand"><div className="brand-mark"><Refrigerator size={25} /></div><div><h1>تلاجتي</h1><small>رفيق البيت الطازج</small></div></div>
+        <div className="brand"><div className="brand-mark"><Refrigerator size={25} /></div><div><h1>ثلاجتي</h1><small>رفيق البيت الطازج</small></div></div>
         <h1>كل ما في ثلاجتك،<br /><span style={{ color: 'hsl(35 71% 65%)' }}>في بالك.</span></h1>
         <p>مساحة شخصية دافئة تساعدك على معرفة طعامك، اختيار وجبتك، والعناية بيومك بهدوء.</p>
         <div className="auth-orbit"><div className="orbit-plate"><Apple /></div><Leaf className="orbit-leaf" size={42} /><Sparkles size={27} color="hsl(35 71% 65%)" /></div>
@@ -147,8 +149,9 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
         <div className="field"><label htmlFor="auth-email">البريد الإلكتروني</label><input id="auth-email" type="email" data-testid="input-auth-email" value={email} onChange={e => setEmail(e.target.value)} placeholder="name@example.com" /></div>
         <div className="field"><label htmlFor="auth-password">كلمة المرور</label><input id="auth-password" type="password" data-testid="input-auth-password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" /></div>
         {error && <p style={{ color: 'hsl(var(--destructive))', fontSize: 12, margin: '3px 0' }} data-testid="status-auth-error">{error}</p>}
-        <button className="primary-btn" type="submit" data-testid="button-auth-submit">{mode === 'login' ? 'دخول إلى تلاجتي' : 'إنشاء مساحتي'}<ArrowLeft size={17} /></button>
-        <button className="secondary-btn" type="button" style={{ width: '100%', marginTop: 10 }} onClick={demo} data-testid="button-demo-login">تجربة تلاجتي الآن</button>
+        {mode === 'register' && <div className="field"><label htmlFor="auth-gender">الجنس</label><select id="auth-gender" value={gender} onChange={e => setGender(e.target.value as 'female' | 'male')} data-testid="select-auth-gender"><option value="female">أنثى</option><option value="male">ذكر</option></select></div>}
+        <button className="primary-btn" type="submit" data-testid="button-auth-submit">{mode === 'login' ? 'دخول إلى ثلاجتي' : 'إنشاء مساحتي'}<ArrowLeft size={17} /></button>
+        <button className="secondary-btn" type="button" style={{ width: '100%', marginTop: 10 }} onClick={demo} data-testid="button-demo-login">تجربة ثلاجتي الآن</button>
         <div className="auth-note">بياناتك تبقى في هذا الجهاز، ومساحتك لك وحدك.</div>
       </form>
     </section>
@@ -156,7 +159,7 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
 }
 
 const navItems = [
-  { href: '/', label: 'تلاجتي', icon: Home },
+  { href: '/', label: 'ثلاجتي', icon: Home },
   { href: '/meals', label: 'وجباتي', icon: Utensils },
   { href: '/daily-analysis', label: 'تحليل يومي', icon: Flame },
   { href: '/shopping', label: 'قائمة التسوق', icon: ShoppingBasket },
@@ -168,7 +171,7 @@ function AppShell({ user, children, onLogout }: { user: User; children: ReactNod
   const [location] = useLocation();
   return <div className="app-shell">
     <aside className="sidebar">
-      <div className="brand"><div className="brand-mark"><Refrigerator size={24} /></div><div className="brand-copy"><h1>تلاجتي</h1><small>رفيق البيت الطازج</small></div></div>
+      <div className="brand"><div className="brand-mark"><Refrigerator size={24} /></div><div className="brand-copy"><h1>ثلاجتي</h1><small>رفيق البيت الطازج</small></div></div>
       <nav className="nav-list" aria-label="التنقل الرئيسي">
         {navItems.map(item => { const Icon = item.icon; return <Link key={item.href} href={item.href} className={`nav-item ${location === item.href ? 'active' : ''}`} data-testid={`link-nav-${item.label}`}><Icon size={18} /><span className="nav-label">{item.label}</span></Link>; })}
       </nav>
@@ -179,7 +182,7 @@ function AppShell({ user, children, onLogout }: { user: User; children: ReactNod
       </div>
     </aside>
     <div style={{ minWidth: 0 }}>
-      <header className="mobile-topbar"><div className="brand"><div className="brand-mark"><Refrigerator size={19} /></div><h1>تلاجتي</h1></div><button className="icon-btn" onClick={onLogout} data-testid="button-mobile-logout"><LogOut size={17} /></button></header>
+      <header className="mobile-topbar"><div className="brand"><div className="brand-mark"><Refrigerator size={19} /></div><h1>ثلاجتي</h1></div><button className="icon-btn" onClick={onLogout} data-testid="button-mobile-logout"><LogOut size={17} /></button></header>
       {children}
     </div>
   </div>;
@@ -270,7 +273,7 @@ function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; sele
   </div>;
 }
 
-function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: string; data: UserData; setData: Dispatch<SetStateAction<UserData>>; onAdd: () => void; setNotice: (value: string) => void }) {
+function Dashboard({ userName, userGender, data, setData, onAdd, setNotice }: { userName: string; userGender?: User['gender']; data: UserData; setData: Dispatch<SetStateAction<UserData>>; onAdd: () => void; setNotice: (value: string) => void }) {
   const [selectedId, setSelectedId] = useState(data.items[0]?.id);
   const selected = data.items.find(item => item.id === selectedId) || data.items[0];
   const totalCalories = data.items.reduce((sum, item) => sum + item.calories * item.quantity, 0);
@@ -287,7 +290,7 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
   const percentage = Math.min(100, Math.round(totalCalories / data.calorieGoal * 100));
   return <main className="app-main dashboard-main">
     <div className="dashboard-topbar">
-      <div className="dashboard-greeting"><span>مساء الخير،</span><strong>{userName}</strong><ChevronLeft size={15} /></div>
+      <div className="dashboard-greeting"><span className="user-sticker" aria-label={userGender === 'male' ? 'مستخدم ذكر' : 'مستخدمة أنثى'}>{genderSticker(userGender)}</span><span>مساء الخير،</span><strong>{userName}</strong><ChevronLeft size={15} /></div>
       <div className="dashboard-stat"><Flame size={21} /><div><small>هدفك اليومي</small><strong>{data.calorieGoal.toLocaleString('ar-SA')} سعرة</strong></div></div>
       <div className="dashboard-stat"><div className="mini-ring" style={{ '--ring-progress': `${percentage}%` } as CSSProperties}><strong>{percentage}%</strong></div><div><small>استهلاكك اليوم</small><strong>{totalCalories.toLocaleString('ar-SA')} سعرة</strong></div></div>
       <button className="topbar-bell icon-btn" aria-label="التنبيهات"><Bell size={20} /></button>
@@ -356,12 +359,12 @@ function FavoritesPage({ data, setData }: { data: UserData; setData: Dispatch<Se
 function SettingsPage({ user, data, setData, setNotice, onLogout }: { user: User; data: UserData; setData: Dispatch<SetStateAction<UserData>>; setNotice: (v: string) => void; onLogout: () => void }) {
   const [section, setSection] = useState('عام'); const [goal, setGoal] = useState(String(data.calorieGoal));
   const saveGoal = () => { const number = Number(goal); if (number > 500) { setData(prev => ({ ...prev, calorieGoal: number })); flash(setNotice, 'تم تحديث هدف السعرات'); } };
-  return <main className="app-main"><PageHeading title="الإعدادات" description="اجعلي تلاجتي تشبه طريقتك أكثر." /><div className="settings-grid"><div className="card settings-nav">{['عام', 'التنبيهات', 'الخصوصية'].map(item => <button key={item} className={section === item ? 'active' : ''} onClick={() => setSection(item)} data-testid={`button-settings-${item}`}>{item}</button>)}</div><div className="card card-pad">{section === 'عام' && <><div className="card-title"><div><h3>تفضيلاتك</h3><p>بعض اللمسات الصغيرة لمساحتك</p></div><Settings size={20} color="hsl(var(--primary))" /></div><div className="setting-line"><div><strong>الاسم</strong><p>{user.name}</p></div><button className="secondary-btn" onClick={() => flash(setNotice, 'يمكن تعديل الاسم من صفحة الحساب قريباً')} data-testid="button-edit-name"><Pencil size={14} />تعديل</button></div><div className="setting-line"><div><strong>هدف السعرات اليومي</strong><p>الرقم الذي يساعدك على توازن يومك</p></div><div style={{ display: 'flex', gap: 7 }}><input className="search-box" style={{ width: 100, minWidth: 100, height: 38 }} type="number" value={goal} onChange={e => setGoal(e.target.value)} data-testid="input-calorie-goal" /><button className="primary-btn" style={{ padding: '7px 12px' }} onClick={saveGoal} data-testid="button-save-goal">حفظ</button></div></div><div className="setting-line"><div><strong>وحدات القياس</strong><p>السعرات والكميات تظهر بالعربية</p></div><span className="status-pill">عربي</span></div></>}{section === 'التنبيهات' && <><div className="card-title"><div><h3>تنبيهات لطيفة</h3><p>نذكّرك عندما يكون الوقت مناسباً</p></div><Bell size={20} color="hsl(var(--primary))" /></div><div className="setting-line"><div><strong>تذكير انتهاء الصلاحية</strong><p>قبل يومين من انتهاء الطعام</p></div><button className={`toggle ${data.reminders ? 'on' : ''}`} onClick={() => setData(prev => ({ ...prev, reminders: !prev.reminders }))} data-testid="toggle-reminders"><i /></button></div><div className="setting-line"><div><strong>ملخص نهاية اليوم</strong><p>لمحة عن الماء والسعرات</p></div><button className={`toggle ${data.notifications ? 'on' : ''}`} onClick={() => setData(prev => ({ ...prev, notifications: !prev.notifications }))} data-testid="toggle-notifications"><i /></button></div></>}{section === 'الخصوصية' && <><div className="card-title"><div><h3>خصوصيتك أولاً</h3><p>لا نرسل بياناتك إلى أي مكان</p></div><CircleHelp size={20} color="hsl(var(--primary))" /></div><div className="empty-state" style={{ padding: 30 }}><CheckCircle2 size={32} /><strong>بياناتك محلية تماماً</strong><span>يتم حفظ حسابك ومحتويات تلاجتك في هذا المتصفح فقط.</span></div><button className="danger-btn" onClick={onLogout} data-testid="button-settings-logout"><LogOut size={15} style={{ verticalAlign: 'middle', marginLeft: 5 }} />تسجيل الخروج من هذا الجهاز</button></>}</div></div></main>;
+  return <main className="app-main"><PageHeading title="الإعدادات" description="اجعلي ثلاجتي تشبه طريقتك أكثر." /><div className="settings-grid"><div className="card settings-nav">{['عام', 'المظهر', 'التنبيهات', 'الخصوصية'].map(item => <button key={item} className={section === item ? 'active' : ''} onClick={() => setSection(item)} data-testid={`button-settings-${item}`}>{item}</button>)}</div><div className="card card-pad">{section === 'عام' && <><div className="card-title"><div><h3>تفضيلاتك</h3><p>بعض اللمسات الصغيرة لمساحتك</p></div><Settings size={20} color="hsl(var(--primary))" /></div><div className="setting-line"><div><strong>الاسم</strong><p>{user.name}</p></div><button className="secondary-btn" onClick={() => flash(setNotice, 'يمكن تعديل الاسم من صفحة الحساب قريباً')} data-testid="button-edit-name"><Pencil size={14} />تعديل</button></div><div className="setting-line"><div><strong>هدف السعرات اليومي</strong><p>الرقم الذي يساعدك على توازن يومك</p></div><div style={{ display: 'flex', gap: 7 }}><input className="search-box" style={{ width: 100, minWidth: 100, height: 38 }} type="number" value={goal} onChange={e => setGoal(e.target.value)} data-testid="input-calorie-goal" /><button className="primary-btn" style={{ padding: '7px 12px' }} onClick={saveGoal} data-testid="button-save-goal">حفظ</button></div></div><div className="setting-line"><div><strong>وحدات القياس</strong><p>السعرات والكميات تظهر بالعربية</p></div><span className="status-pill">عربي</span></div></>}{section === 'المظهر' && <><div className="card-title"><div><h3>مظهر ثلاجتي</h3><p>اختاري الإضاءة التي تناسب وقتك</p></div><Sparkles size={20} color="hsl(var(--accent-foreground))" /></div><div className="setting-line"><div><strong>الوضع الليلي</strong><p>يخفف إضاءة الثلاجة ويجعل الداخل أكثر هدوءاً</p></div><button className={`toggle ${data.darkMode ? 'on' : ''}`} onClick={() => setData(prev => ({ ...prev, darkMode: !prev.darkMode }))} data-testid="toggle-dark-mode"><i /></button></div><div className={`theme-preview ${data.darkMode ? 'night' : ''}`}><span className="preview-light" /><strong>{data.darkMode ? 'إضاءة ليلية هادئة' : 'إضاءة نهارية مشرقة'}</strong></div></>}{section === 'التنبيهات' && <><div className="card-title"><div><h3>تنبيهات لطيفة</h3><p>نذكّرك عندما يكون الوقت مناسباً</p></div><Bell size={20} color="hsl(var(--primary))" /></div><div className="setting-line"><div><strong>تذكير انتهاء الصلاحية</strong><p>قبل يومين من انتهاء الطعام</p></div><button className={`toggle ${data.reminders ? 'on' : ''}`} onClick={() => setData(prev => ({ ...prev, reminders: !prev.reminders }))} data-testid="toggle-reminders"><i /></button></div><div className="setting-line"><div><strong>ملخص نهاية اليوم</strong><p>لمحة عن الماء والسعرات</p></div><button className={`toggle ${data.notifications ? 'on' : ''}`} onClick={() => setData(prev => ({ ...prev, notifications: !prev.notifications }))} data-testid="toggle-notifications"><i /></button></div></>}{section === 'الخصوصية' && <><div className="card-title"><div><h3>خصوصيتك أولاً</h3><p>لا نرسل بياناتك إلى أي مكان</p></div><CircleHelp size={20} color="hsl(var(--primary))" /></div><div className="empty-state" style={{ padding: 30 }}><CheckCircle2 size={32} /><strong>بياناتك محلية تماماً</strong><span>يتم حفظ حسابك ومحتويات ثلاجتك في هذا المتصفح فقط.</span></div><button className="danger-btn" onClick={onLogout} data-testid="button-settings-logout"><LogOut size={15} style={{ verticalAlign: 'middle', marginLeft: 5 }} />تسجيل الخروج من هذا الجهاز</button></>}</div></div></main>;
 }
 
 function RoutedPages({ user, data, setData, onLogout, setNotice }: { user: User; data: UserData; setData: Dispatch<SetStateAction<UserData>>; onLogout: () => void; setNotice: (v: string) => void }) {
   const [addOpen, setAddOpen] = useState(false);
-  return <AppShell user={user} onLogout={onLogout}><Switch><Route path="/"><Dashboard userName={user.name} data={data} setData={setData} onAdd={() => setAddOpen(true)} setNotice={setNotice} /></Route><Route path="/meals"><MealsPage data={data} setData={setData} setNotice={setNotice} /></Route><Route path="/daily-analysis"><DailyAnalysis data={data} /></Route><Route path="/shopping"><ShoppingPage data={data} setData={setData} setNotice={setNotice} onAdd={() => setAddOpen(true)} /></Route><Route path="/recipes"><RecipesPage data={data} setData={setData} /></Route><Route path="/favorites"><FavoritesPage data={data} setData={setData} /></Route><Route path="/settings"><SettingsPage user={user} data={data} setData={setData} setNotice={setNotice} onLogout={onLogout} /></Route><Route component={NotFound} /></Switch>{addOpen && <AddFoodModal onClose={() => setAddOpen(false)} onAdd={item => { setData(prev => ({ ...prev, items: [...prev.items, { ...item, id: `food-${Date.now()}` }] })); flash(setNotice, 'أضيف الطعام إلى ثلاجتك'); }} />}</AppShell>;
+  return <AppShell user={user} onLogout={onLogout}><Switch><Route path="/"><Dashboard userName={user.name} userGender={user.gender} data={data} setData={setData} onAdd={() => setAddOpen(true)} setNotice={setNotice} /></Route><Route path="/meals"><MealsPage data={data} setData={setData} setNotice={setNotice} /></Route><Route path="/daily-analysis"><DailyAnalysis data={data} /></Route><Route path="/shopping"><ShoppingPage data={data} setData={setData} setNotice={setNotice} onAdd={() => setAddOpen(true)} /></Route><Route path="/recipes"><RecipesPage data={data} setData={setData} /></Route><Route path="/favorites"><FavoritesPage data={data} setData={setData} /></Route><Route path="/settings"><SettingsPage user={user} data={data} setData={setData} setNotice={setNotice} onLogout={onLogout} /></Route><Route component={NotFound} /></Switch>{addOpen && <AddFoodModal onClose={() => setAddOpen(false)} onAdd={item => { setData(prev => ({ ...prev, items: [...prev.items, { ...item, id: `food-${Date.now()}` }] })); flash(setNotice, 'أضيف الطعام إلى ثلاجتك'); }} />}</AppShell>;
 }
 
 function App() {
@@ -375,7 +378,7 @@ function App() {
   const login = (nextUser: User) => { localStorage.setItem(SESSION_KEY, nextUser.id); setSession(nextUser.id); setData(loadData(nextUser.id)); };
   const logout = () => { localStorage.removeItem(SESSION_KEY); setSession(null); setNotice(''); };
   if (!session || !user) return <AuthScreen onLogin={login} />;
-  return <><RoutedPages user={user} data={data} setData={setData} onLogout={logout} setNotice={setNotice} />{notice && <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 60, padding: '12px 17px', borderRadius: 12, background: 'hsl(var(--sidebar))', color: 'hsl(var(--card))', boxShadow: '0 10px 25px hsl(155 22% 17% / .2)', animation: 'modal-in .2s ease-out' }} role="status" data-testid="status-notice"><CheckCircle2 size={16} style={{ verticalAlign: 'middle', marginLeft: 7, color: 'hsl(var(--accent))' }} />{notice}</div>}</>;
+  return <div className={data.darkMode ? 'theme-dark' : ''}><RoutedPages user={user} data={data} setData={setData} onLogout={logout} setNotice={setNotice} />{notice && <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 60, padding: '12px 17px', borderRadius: 12, background: 'hsl(var(--sidebar))', color: 'hsl(var(--card))', boxShadow: '0 10px 25px hsl(155 22% 17% / .2)', animation: 'modal-in .2s ease-out' }} role="status" data-testid="status-notice"><CheckCircle2 size={16} style={{ verticalAlign: 'middle', marginLeft: 7, color: 'hsl(var(--accent))' }} />{notice}</div>}</div>;
 }
 
 export default function AppWithProviders() {

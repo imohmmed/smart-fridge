@@ -322,6 +322,7 @@ button:active, .nav-item:active, .icon-btn:active, .secondary-btn:active { box-s
 .dashboard-greeting { display: flex; align-items: center; gap: 5px; margin-left: auto; font-size: 13px; }
 .dashboard-greeting span { color: hsl(var(--muted-foreground)); }
 .dashboard-greeting strong { font-size: 14px; }
+.user-sticker { display: inline-grid; place-items: center; width: 34px; height: 34px; margin-left: 3px; border-radius: 12px; background: linear-gradient(145deg, #f6d7b8, #e8aa82); box-shadow: 3px 3px 6px hsl(155 20% 25% / .13), -3px -3px 6px #fff; font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif; font-size: 22px; line-height: 1; }
 .dashboard-stat { display: flex; align-items: center; gap: 11px; min-width: 165px; padding: 7px 16px; border-right: 1px solid hsl(var(--border)); }
 .dashboard-stat > svg { color: hsl(var(--accent-foreground)); }
 .dashboard-stat small, .footer-stat small, .health-tip small, .macro-stat small { display: block; color: hsl(var(--muted-foreground)); font-size: 10px; margin-bottom: 3px; }
@@ -430,6 +431,40 @@ button:active, .nav-item:active, .icon-btn:active, .secondary-btn:active { box-s
   .door-food span { font-size: 8px; }
   .fridge-cabinet { padding-inline: 6px; }
 }
+
+.theme-preview { position: relative; overflow: hidden; min-height: 96px; display: flex; align-items: center; gap: 12px; margin-top: 18px; padding: 16px; border-radius: 16px; color: #315c42; background: linear-gradient(120deg, #eaf4e5, #fff8dd); }
+.theme-preview.night { color: #eef4ec; background: linear-gradient(120deg, #152822, #293f38); }
+.preview-light { display: block; width: 56px; height: 56px; border-radius: 50%; background: #fff8ce; box-shadow: 0 0 25px 10px #fff3a0; }
+.theme-preview.night .preview-light { width: 38px; height: 38px; background: #d7ebd6; box-shadow: 0 0 16px 4px #98c69f; }
+.theme-dark {
+  --background: 151 16% 13%;
+  --foreground: 45 35% 92%;
+  --card: 153 14% 19%;
+  --card-foreground: 45 35% 92%;
+  --border: 151 12% 28%;
+  --input: 151 12% 28%;
+  --muted: 151 13% 24%;
+  --muted-foreground: 150 10% 68%;
+  --popover: 153 14% 19%;
+  --popover-foreground: 45 35% 92%;
+  --secondary: 151 13% 24%;
+  --secondary-foreground: 45 35% 92%;
+  min-height: 100dvh;
+  background: hsl(var(--background));
+}
+.theme-dark .app-shell, .theme-dark .mobile-topbar { background: hsl(var(--background)); }
+.theme-dark .dashboard-topbar, .theme-dark .dashboard-footer, .theme-dark .card,
+.theme-dark .icon-btn, .theme-dark .secondary-btn, .theme-dark .date-chip, .theme-dark .search-box,
+.theme-dark .food-badge { background: #202c28; color: hsl(var(--foreground)); box-shadow: 5px 5px 12px #111916, -4px -4px 10px #304039; }
+.theme-dark .fridge-card { background: linear-gradient(180deg, #26312e, #131b19); }
+.theme-dark .fridge-door { background: linear-gradient(90deg, #5b625d, #b8beb8 70%, #4a514d); }
+.theme-dark .fridge-cabinet { border-color: #46514c; background: linear-gradient(180deg, #263e3a, #101918); box-shadow: inset 0 0 30px #0b1110, inset 0 0 0 2px #63716b; }
+.theme-dark .cabinet-shelf { background: linear-gradient(180deg, hsl(161 25% 25% / .55), hsl(161 18% 14% / .68)); border-bottom-color: hsl(156 17% 46% / .55); }
+.theme-dark .shelf-items .food-badge { background: #dce4d9; color: #26352d; }
+.theme-dark .fridge-glow { opacity: .45; filter: blur(13px); box-shadow: 0 0 20px #d9f0da; }
+.theme-dark .fridge-temperature { background: #0e1715; }
+.theme-dark .note, .theme-dark .door-note { background: #554d32; color: #fff5cb; }
+.theme-dark .floating-add, .theme-dark .primary-btn { box-shadow: 5px 5px 10px #111916; }
 
 /* Real refrigerator composition — a lit, dimensional appliance rather than a card grid */
 .real-fridge-card {
