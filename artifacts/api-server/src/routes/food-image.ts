@@ -17,7 +17,7 @@ router.get("/food-image", async (req, res) => {
     url.searchParams.set("apiKey", apiKey);
     const response = await fetch(url);
     if (!response.ok) {
-      res.status(502).json({ image: null, fallback: spoonacularFallback, providerStatus: response.status });
+      res.status(502).json({ image: null, fallback: spoonacularFallback });
       return;
     }
     const data = await response.json() as { results?: Array<{ id?: number }> };
