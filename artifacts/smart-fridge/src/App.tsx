@@ -62,9 +62,13 @@ const recipes: Recipe[] = [
   { id: 'r4', name: 'كوب الفواكه المنعش', description: 'برتقال وتفاح مع زبادي بارد.', time: '8 دقائق', calories: 205, color: 'linear-gradient(135deg, #f0b47f, #db725d)', tags: ['سناك', 'منعش'] },
   { id: 'r5', name: 'راب الدجاج الأخضر', description: 'لفافة عملية من الدجاج والخس والصلصة.', time: '25 دقيقة', calories: 390, color: 'linear-gradient(135deg, #b4cf9b, #477e62)', tags: ['غداء', 'للعمل'] },
   { id: 'r6', name: 'حمص بالليمون', description: 'طبق جانبي كريمي يرافق كل شيء.', time: '12 دقيقة', calories: 240, color: 'linear-gradient(135deg, #e5d59d, #ad9352)', tags: ['جانبي', 'نباتي'] },
+  { id: 'r7', name: 'رز ودجاج', description: 'طبق دافئ ومشبع من الأرز المتبّل وقطع الدجاج الطرية.', time: '35 دقيقة', calories: 560, color: 'linear-gradient(135deg, #e8c58e, #a66d42)', tags: ['غداء', 'مشبع'] },
 ];
 const defaultFoodImage = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=300';
 const mealImageMap: Record<string, string> = {
+  'رز ودجاج': 'https://images.unsplash.com/photo-1516684732162-798a0062be99?w=200',
+  'سلطة الدجاج والحمص': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200',
+  'توست الجبن والخضار': 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=200',
   فطور: 'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=200',
   غداء: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=200',
   عشاء: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200',
@@ -76,6 +80,7 @@ const mealImageMap: Record<string, string> = {
   default: defaultFoodImage,
 };
 const recipeImageMap: Record<string, string> = {
+  'رز ودجاج': 'https://images.unsplash.com/photo-1516684732162-798a0062be99?w=300',
   سلطة: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=300',
   شوربة: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=300',
   'دجاج مشوي': 'https://images.unsplash.com/photo-1598103442097-8b74394b95c2?w=300',
@@ -86,6 +91,7 @@ const recipeImageMap: Record<string, string> = {
   default: defaultFoodImage,
 };
 function findMappedImage(name: string, map: Record<string, string>) {
+  if (map[name]) return map[name];
   const key = Object.keys(map).find(item => item !== 'default' && name.includes(item));
   return key ? map[key] : map.default;
 }
@@ -446,7 +452,7 @@ function MealsPage({ data, setData, setNotice }: { data: UserData; setData: Disp
   const [meal, setMeal] = useState('الفطور'); const [planned, setPlanned] = useState<{id: string; title: string; time: string; recipe: string}[]>([
     { id: 'm1', title: 'فطور خفيف', time: '08:00', recipe: 'بيض بلدي مع خضار' }, { id: 'm2', title: 'غداء اليوم', time: '13:30', recipe: 'سلطة الدجاج والحمص' },
   ]);
-  const suggestions = meal === 'الفطور' ? ['بيض بلدي مع خضار', 'توست الجبن والخضار'] : meal === 'الغداء' ? ['سلطة الدجاج والحمص', 'راب الدجاج الأخضر'] : ['كوب الفواكه المنعش', 'حمص بالليمون'];
+  const suggestions = meal === 'الفطور' ? ['بيض بلدي مع خضار', 'توست الجبن والخضار'] : meal === 'الغداء' ? ['رز ودجاج', 'سلطة الدجاج والحمص'] : ['كوب الفواكه المنعش', 'حمص بالليمون'];
   const addMeal = () => { setPlanned(prev => [...prev, { id: `m-${Date.now()}`, title: meal, time: meal === 'العشاء' ? '20:00' : '16:00', recipe: suggestions[0] }]); flash(setNotice, 'أضيفت الوجبة إلى يومك'); };
   return <main className="app-main"><PageHeading title="وجباتي" description="خطة مرنة، تترك مساحة لما يشتهيه يومك." action={<button className="primary-btn" onClick={addMeal} data-testid="button-add-meal"><Plus size={17} />إضافة وجبة</button>} /><div className="card card-pad"><div className="toolbar">{['الفطور', 'الغداء', 'العشاء', 'سناك'].map(tab => <button key={tab} className={meal === tab ? 'primary-btn' : 'secondary-btn'} onClick={() => setMeal(tab)} data-testid={`button-meal-tab-${tab}`}>{tab}</button>)}</div><div className="recipe-grid">{suggestions.map(name => { const recipe = recipes.find(item => item.name === name) || recipes[0]; const mealKey = meal === 'سناك' ? name : meal.replace(/^ال/, ''); return <RecipeCard key={recipe.id} recipe={recipe} favorite={data.favorites.includes(recipe.id)} imageOverride={findMappedImage(`${mealKey} ${name}`, mealImageMap)} onFavorite={() => setData(prev => ({ ...prev, favorites: prev.favorites.includes(recipe.id) ? prev.favorites.filter(id => id !== recipe.id) : [...prev.favorites, recipe.id] }))} />; })}</div></div><div className="card card-pad" style={{ marginTop: 21 }}><div className="card-title"><div><h3>خطة اليوم</h3><p>تعديلاتك محفوظة على هذا الجهاز</p></div><span className="status-pill">{planned.length} وجبات</span></div><div className="table-list">{planned.map(item => <div className="data-row" key={item.id}><strong><Utensils size={15} style={{ verticalAlign: 'middle', marginLeft: 7, color: 'hsl(var(--primary))' }} />{item.title}</strong><span>{item.recipe}</span><span>{item.time}</span><button className="icon-btn" onClick={() => setPlanned(prev => prev.filter(row => row.id !== item.id))} data-testid={`button-remove-meal-${item.id}`}><Trash2 size={15} /></button></div>)}</div></div></main>;
 }
