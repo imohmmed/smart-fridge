@@ -332,7 +332,7 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
     </section>
     <section className="auth-form-wrap">
       <form className="auth-form auth-card" onSubmit={submit}>
-        <div className="language-switcher" aria-label="اختيار اللغة"><Globe2 size={15} /><button type="button" className={language === 'ar' ? 'active' : ''} onClick={() => setLanguage('ar')} aria-pressed={language === 'ar'}>العربية</button><span>/</span><button type="button" className={language === 'en' ? 'active' : ''} onClick={() => setLanguage('en')} aria-pressed={language === 'en'}>English</button></div>
+         <LanguageSwitcher />
         <div className="auth-card-heading"><h2>{mode === 'login' ? 'أهلاً بعودتك' : 'لنبدأ معاً'}</h2><p>{mode === 'login' ? 'سجّل دخولك لثلاجتك الذكية' : 'أنشئ مساحتك الخاصة في دقائق.'}</p></div>
         <div className="auth-tabs"><button type="button" className={`auth-tab ${mode === 'login' ? 'active' : ''}`} onClick={() => { setMode('login'); setError(''); }} data-testid="tab-login">تسجيل الدخول</button><button type="button" className={`auth-tab ${mode === 'register' ? 'active' : ''}`} onClick={() => { setMode('register'); setError(''); }} data-testid="tab-register">حساب جديد</button></div>
         {mode === 'register' && <div className="field auth-field"><label htmlFor="auth-name">الاسم</label><input id="auth-name" data-testid="input-auth-name" value={name} onChange={e => setName(e.target.value)} /></div>}
@@ -362,14 +362,16 @@ const navItems = [
 
 function AppShell({ user, shoppingCount, children, onLogout }: { user: User; shoppingCount: number; children: ReactNode; onLogout: () => void }) {
   const [location] = useLocation();
+  const { language } = useLanguage();
   return <div className="app-shell">
-    <aside className="sidebar">
+     <aside className="sidebar">
       <div className="brand"><div className="brand-mark"><Refrigerator size={24} /></div><div className="brand-copy"><h1>ثلاجتي</h1><small>رفيق البيت الطازج</small></div></div>
       <nav className="nav-list" aria-label="التنقل الرئيسي">
         {navItems.map(item => { const Icon = item.icon; return <Link key={item.href} href={item.href} className={`nav-item ${location === item.href ? 'active' : ''}`} data-testid={`link-nav-${item.label}`}><Icon size={18} /><span className="nav-label">{item.label}</span>{item.href === '/shopping' && <b className="nav-count">{shoppingCount}</b>}</Link>; })}
       </nav>
       <div className="sidebar-footer">
         <Link href="/settings" className={`nav-item ${location === '/settings' ? 'active' : ''}`} data-testid="link-nav-settings"><Settings size={18} /><span className="nav-label">الإعدادات</span></Link>
+         <LanguageSwitcher />
         <div className="profile-mini"><div className="avatar">{initials(user.name)}</div><div><strong>{user.name}</strong><span>مساحتي الشخصية</span></div></div>
         <button className="logout-btn" onClick={onLogout} data-testid="button-logout"><LogOut size={15} /><span>تسجيل الخروج</span></button>
       </div>
@@ -593,6 +595,7 @@ function RoutedPages({ user, data, setData, onLogout, setNotice }: { user: User;
 
 function App() {
   const [session, setSession] = useState<string | null>(() => localStorage.getItem(SESSION_KEY));
+  const [language, setLanguage] = useState<Language>(() => localStorage.getItem('smart_fridge_language') === 'en' ? 'en' : 'ar');
   const [notice, setNotice] = useState('');
   const [data, setData] = useState<UserData>(() => loadData(session || ''));
   const users: User[] = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
@@ -601,10 +604,16 @@ function App() {
   useEffect(() => { if (session) saveData(session, data); }, [data, session]);
   const login = (nextUser: User) => { localStorage.setItem(SESSION_KEY, nextUser.id); setSession(nextUser.id); setData(loadData(nextUser.id)); };
   const logout = () => { localStorage.removeItem(SESSION_KEY); setSession(null); setNotice(''); };
+  useEffect(() => {
+    localStorage.setItem('smart_fridge_language', language);
+    document.documentElement.lang = language;
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+    document.body.dir = language === 'ar' ? 'rtl' : 'ltr';
+  }, [language]);
   if (!session || !user) return <AuthScreen onLogin={login} />;
-  return <div className={data.darkMode ? 'theme-dark' : ''} data-theme={data.darkMode ? 'dark' : undefined}><RoutedPages user={user} data={data} setData={setData} onLogout={logout} setNotice={setNotice} />{notice && <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 60, padding: '12px 17px', borderRadius: 12, background: 'hsl(var(--sidebar))', color: 'hsl(var(--card))', boxShadow: '0 10px 25px hsl(155 22% 17% / .2)', animation: 'modal-in .2s ease-out' }} role="status" data-testid="status-notice"><CheckCircle2 size={16} style={{ verticalAlign: 'middle', marginLeft: 7, color: 'hsl(var(--accent))' }} />{notice}</div>}</div>;
+  return <LanguageContext.Provider value={{ language, setLanguage }}><div className={data.darkMode ? 'theme-dark' : ''} data-theme={data.darkMode ? 'dark' : undefined}><RoutedPages user={user} data={data} setData={setData} onLogout={logout} setNotice={setNotice} />{notice && <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 60, padding: '12px 17px', borderRadius: 12, background: 'hsl(var(--sidebar))', color: 'hsl(var(--card))', boxShadow: '0 10px 25px hsl(155 22% 17% / .2)', animation: 'modal-in .2s ease-out' }} role="status" data-testid="status-notice"><CheckCircle2 size={16} style={{ verticalAlign: 'middle', marginLeft: 7, color: 'hsl(var(--accent))' }} />{notice}</div>}</div></LanguageContext.Provider>;
 }
 
 export default function AppWithProviders() {
-  return <QueryClientProvider client={queryClient}><TooltipProvider><WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}><ErrorBoundary resetKey={location.pathname}><App /></ErrorBoundary></WouterRouter><Toaster /></TooltipProvider></QueryClientProvider>;
+  return <QueryClientProvider client={queryClient}><TooltipProvider><LanguageContext.Provider value={{ language: 'ar', setLanguage: () => undefined }}><WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}><ErrorBoundary resetKey={location.pathname}><App /></ErrorBoundary></WouterRouter><Toaster /></LanguageContext.Provider></TooltipProvider></QueryClientProvider>;
 }
