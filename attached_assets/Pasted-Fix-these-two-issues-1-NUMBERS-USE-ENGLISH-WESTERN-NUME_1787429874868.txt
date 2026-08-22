@@ -1,0 +1,110 @@
+Fix these two issues:
+
+=== 1. NUMBERS - USE ENGLISH/WESTERN NUMERALS ===
+
+Replace ALL Arabic-Indic numerals (٠١٢٣٤٥٦٧٨٩) 
+with Western Arabic numerals (0123456789) everywhere.
+
+Add this to your CSS:
+* {
+  font-variant-numeric: normal;
+}
+
+Add this to your JavaScript - run it on all displayed numbers:
+function toWesternNums(str) {
+  return String(str).replace(/[٠-٩]/g, 
+    d => '0123456789'['٠١٢٣٤٥٦٧٨٩'.indexOf(d)]
+  );
+}
+
+Apply toWesternNums() to EVERY number before displaying it:
+- Calories numbers
+- Water cups counter
+- Quantity badges on fridge items
+- Shopping list quantities
+- Date fields
+- Percentage numbers
+- Temperature display (4°C / -18°C)
+- Progress bars values
+- Any input that shows numbers
+
+Also add to HTML head tag:
+<meta charset="UTF-8">
+
+=== 2. FULLY RESPONSIVE DESIGN ===
+
+Make the entire app responsive for ALL screen sizes:
+
+/* Mobile - phones */
+@media (max-width: 768px) {
+  .main-layout {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 8px;
+  }
+  .sidebar .nav-item span {
+    display: none;
+  }
+  .sidebar .nav-item {
+    min-width: 48px;
+    justify-content: center;
+  }
+  .fridge-section {
+    width: 100%;
+  }
+  .right-panel {
+    width: 100%;
+  }
+  .bottom-bar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .sidebar {
+    width: 70px;
+  }
+  .sidebar .nav-item span {
+    display: none;
+  }
+  .fridge-section {
+    flex: 1;
+  }
+  .right-panel {
+    width: 260px;
+  }
+}
+
+/* Laptop / Desktop */
+@media (min-width: 1025px) {
+  .sidebar { width: 220px; }
+  .fridge-section { flex: 1; }
+  .right-panel { width: 300px; }
+}
+
+/* Large screens */
+@media (min-width: 1440px) {
+  .main-layout {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+}
+
+RULES:
+- No horizontal scroll on any screen size
+- All text readable on mobile (minimum 14px)
+- Fridge scales down gracefully on small screens
+- Bottom bar wraps to 2 rows on mobile
+- Touch-friendly tap targets: minimum 44px height
+- The + add food button stays fixed bottom-right on mobile

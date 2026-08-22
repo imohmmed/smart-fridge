@@ -1,0 +1,1 @@
+- [Recipe image provider](recipe-image-provider.md) — keep the temporary Unsplash source until Spoonacular credentials return a valid response.
