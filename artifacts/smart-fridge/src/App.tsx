@@ -250,8 +250,8 @@ function daysUntil(date: string) {
 function toWesternNums(value: string | number) {
   return String(value).replace(/[٠-٩]/g, digit => '0123456789'['٠١٢٣٤٥٦٧٨٩'.indexOf(digit)]);
 }
-function formatArabicDate() {
-  return toWesternNums(new Intl.DateTimeFormat('ar-SA', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date()));
+function formatArabicDate(language: Language = 'ar') {
+  return toWesternNums(new Intl.DateTimeFormat(language === 'ar' ? 'ar-SA' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date()));
 }
 function flash(setNotice: (value: string) => void, text: string) {
   setNotice(text); window.setTimeout(() => setNotice(''), 2400);
@@ -571,7 +571,7 @@ function Dashboard({ userName, userGender, data, setData, onAdd, setNotice }: { 
        </div>
         <LanguageSwitcher />
     </div>
-      <div className="reference-heading"><div><span className="eyebrow">{text(language, 'مساحتي اليومية', 'My daily space')}</span><h2>{text(language, 'محتويات ثلاجتك', 'Your fridge contents')}</h2></div><span className="date-chip" data-testid="text-current-date">{formatArabicDate()}</span></div>
+      <div className="reference-heading"><div><span className="eyebrow">{text(language, 'مساحتي اليومية', 'My daily space')}</span><h2>{text(language, 'محتويات ثلاجتك', 'Your fridge contents')}</h2></div><span className="date-chip" data-testid="text-current-date">{formatArabicDate(language)}</span></div>
     <div className="reference-dashboard">
       <section className="reference-fridge"><FridgeVisual items={data.items} selected={selected} onSelect={item => setSelectedId(item.id)} /></section>
       <aside className="reference-rail">
