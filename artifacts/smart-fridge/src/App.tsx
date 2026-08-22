@@ -30,6 +30,7 @@ type UserData = {
   calorieGoal: number; favorites: string[]; reminders: boolean; notifications: boolean; darkMode: boolean;
 };
 type Recipe = { id: string; name: string; description: string; time: string; calories: number; color: string; tags: string[] };
+type AppNotification = { id: string; type: 'danger' | 'warning' | 'success' | 'info'; icon: string; title: string; message: string; time: string };
 
 const queryClient = new QueryClient();
 const USERS_KEY = 'smart_fridge_users';
@@ -196,6 +197,19 @@ function formatArabicDate() {
 }
 function flash(setNotice: (value: string) => void, text: string) {
   setNotice(text); window.setTimeout(() => setNotice(''), 2400);
+}
+function checkAndGenerateNotifications(data: UserData): AppNotification[] {
+  const notifications: AppNotification[] = [];
+  data.items.forEach(item => {
+    const daysLeft = daysUntil(item.expiry);
+    if (daysLeft <= 0) notifications.push({ id: `expired_${item.id}`, type: 'danger', icon: '⚠️', title: 'طعام منتهي الصلاحية', message: `${item.name} انتهت صلاحيته!`, time: 'الآن' });
+    else if (daysLeft <= 3) notifications.push({ id: `expiring_${item.id}`, type: 'warning', icon: '🕐', title: 'قريب انتهاء الصلاحية', message: `${item.name} ينتهي خلال ${toWesternNums(daysLeft)} أيام`, time: `${toWesternNums(daysLeft)} أيام` });
+    if (item.quantity <= 1) notifications.push({ id: `low_${item.id}`, type: 'info', icon: '📦', title: 'كمية منخفضة', message: `${item.name} كميته منخفضة، أضفه لقائمة التسوق`, time: 'اليوم' });
+  });
+  const calories = data.items.reduce((sum, item) => sum + item.calories * item.quantity, 0);
+  if (calories >= data.calorieGoal) notifications.push({ id: 'calorie_goal', type: 'success', icon: '🎯', title: 'وصلت هدفك!', message: `أكملت ${toWesternNums(data.calorieGoal)} سعرة حرارية اليوم`, time: 'اليوم' });
+  if (data.water < 4) notifications.push({ id: 'water_reminder', type: 'info', icon: '💧', title: 'تذكير شرب الماء', message: `شربت ${toWesternNums(data.water)} أكواب فقط، هدفك 8 أكواب`, time: 'اليوم' });
+  return notifications;
 }
 
 const foodEmojiMap: Record<string, string> = {
@@ -458,12 +472,35 @@ function Dashboard({ userName, userGender, data, setData, onAdd, setNotice }: { 
     if (quantity !== null && Number(quantity) > 0) setData(prev => ({ ...prev, items: prev.items.map(item => item.id === selected.id ? { ...item, quantity: Number(quantity) } : item) }));
   };
   const percentage = Math.min(100, Math.round(totalCalories / data.calorieGoal * 100));
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [readIds, setReadIds] = useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem(`smart_fridge_read_notifications_${data.items.length}`) || '[]'); } catch { return []; }
+  });
+  const refreshNotifications = () => setNotifications(checkAndGenerateNotifications(data));
+  useEffect(() => {
+    refreshNotifications();
+    const timer = window.setInterval(refreshNotifications, 60000);
+    return () => window.clearInterval(timer);
+  }, [data]);
+  const unreadCount = notifications.filter(item => !readIds.includes(item.id)).length;
+  const markAllRead = () => {
+    const ids = notifications.map(item => item.id);
+    setReadIds(ids);
+    localStorage.setItem(`smart_fridge_read_notifications_${data.items.length}`, JSON.stringify(ids));
+  };
   return <main className="app-main dashboard-main">
     <div className="dashboard-topbar">
       <div className="dashboard-greeting"><span className="user-sticker" aria-label={userGender === 'male' ? 'مستخدم ذكر' : 'مستخدمة أنثى'}>{genderSticker(userGender)}</span><span>مساء الخير،</span><strong>{userName}</strong><ChevronLeft size={15} /></div>
        <div className="dashboard-stat"><Flame size={21} /><div><small>هدفك اليومي</small><strong>{toWesternNums(data.calorieGoal.toLocaleString('en-US'))} سعرة</strong></div></div>
        <div className="dashboard-stat"><div className="mini-ring" style={{ '--ring-progress': `${percentage}%` } as CSSProperties}><strong>{toWesternNums(percentage)}%</strong></div><div><small>استهلاكك اليوم</small><strong>{toWesternNums(totalCalories.toLocaleString('en-US'))} سعرة</strong></div></div>
-      <button className="topbar-bell icon-btn" aria-label="التنبيهات"><Bell size={20} /></button>
+       <div className="notification-wrap">
+         <button className="topbar-bell icon-btn" aria-label={`التنبيهات${unreadCount ? `، ${toWesternNums(unreadCount)} جديدة` : ''}`} aria-expanded={notificationsOpen} onClick={() => setNotificationsOpen(value => !value)} data-testid="button-notifications"><Bell size={20} />{unreadCount > 0 && <b className="notification-count">{toWesternNums(unreadCount)}</b>}</button>
+         {notificationsOpen && <div className="notification-dropdown" role="region" aria-label="قائمة التنبيهات">
+           <div className="notification-head"><strong>التنبيهات</strong>{notifications.length > 0 && <button className="link-btn" onClick={markAllRead}>تعليم الكل كمقروء</button>}</div>
+           {notifications.length ? notifications.map(item => <div className={`notification-item notification-${item.type}`} key={item.id}><span className="notification-icon" aria-hidden="true">{item.icon}</span><div><strong>{item.title}</strong><p>{item.message}</p><small>{item.time}</small></div></div>) : <div className="notification-empty">لا توجد إشعارات جديدة 🎉</div>}
+         </div>}
+       </div>
     </div>
      <div className="reference-heading"><div><span className="eyebrow">مساحتي اليومية</span><h2>محتويات ثلاجتك</h2></div><span className="date-chip" data-testid="text-current-date">{formatArabicDate()}</span></div>
     <div className="reference-dashboard">
