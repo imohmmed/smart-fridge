@@ -64,7 +64,7 @@ const recipes: Recipe[] = [
   { id: 'r6', name: 'حمص بالليمون', description: 'طبق جانبي كريمي يرافق كل شيء.', time: '12 دقيقة', calories: 240, color: 'linear-gradient(135deg, #e5d59d, #ad9352)', tags: ['جانبي', 'نباتي'] },
   { id: 'r7', name: 'رز ودجاج', description: 'طبق دافئ ومشبع من الأرز المتبّل وقطع الدجاج الطرية.', time: '35 دقيقة', calories: 560, color: 'linear-gradient(135deg, #e8c58e, #a66d42)', tags: ['غداء', 'مشبع'] },
 ];
-const defaultFoodImage = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=300';
+const defaultFoodImage = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 600 400%22%3E%3Crect width=%22600%22 height=%22400%22 fill=%22%23F0EBE0%22/%3E%3Cellipse cx=%22300%22 cy=%22208%22 rx=%22135%22 ry=%2278%22 fill=%22%23FFFFFF%22 stroke=%22%23D4CFC6%22 stroke-width=%2212%22/%3E%3Ccircle cx=%22300%22 cy=%22208%22 r=%2240%22 fill=%22%23E8F2EC%22/%3E%3C/svg%3E';
 const mealImageMap: Record<string, string> = {
   'رز ودجاج': 'https://images.unsplash.com/photo-1516684732162-798a0062be99?w=200',
   'سلطة الدجاج والحمص': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200',
@@ -104,6 +104,52 @@ function findMappedImage(name: string, map: Record<string, string>) {
   if (map[name]) return map[name];
   const key = Object.keys(map).find(item => item !== 'default' && name.includes(item));
   return key ? map[key] : map.default;
+}
+const translateToEnglish: Record<string, string> = {
+  حمص: 'hummus', فلافل: 'falafel', شاورما: 'shawarma', سلطة: 'salad', 'شوربة دجاج': 'chicken soup',
+  مندي: 'mandi rice', كبسة: 'kabsa', 'دجاج مشوي': 'grilled chicken', 'سمك مشوي': 'grilled fish',
+  بيض: 'eggs', معكرونة: 'pasta', أرز: 'rice', رز: 'rice', برياني: 'biryani', تبولة: 'tabbouleh',
+  فتوش: 'fattoush', كباب: 'kebab', شوكولاتة: 'chocolate cake', بيتزا: 'pizza', برغر: 'burger',
+  دجاج: 'chicken', 'رز ودجاج': 'rice and chicken',
+};
+function getEnglishName(arabicName: string) {
+  if (translateToEnglish[arabicName]) return translateToEnglish[arabicName];
+  return Object.keys(translateToEnglish)
+    .sort((a, b) => b.length - a.length)
+    .reduce((name, arabic) => name.replaceAll(arabic, translateToEnglish[arabic]), arabicName);
+}
+async function getFoodImage(foodName: string): Promise<string | null> {
+  const cacheKey = 'smart_fridge_spoonacular_images';
+  let cache: Record<string, string | null> = {};
+  try { cache = JSON.parse(localStorage.getItem(cacheKey) || '{}'); } catch { cache = {}; }
+  const englishName = getEnglishName(foodName);
+  if (Object.prototype.hasOwnProperty.call(cache, englishName)) return cache[englishName];
+  try {
+    const response = await fetch(`/api/food-image?name=${encodeURIComponent(englishName)}`);
+    if (!response.ok) throw new Error('Image search failed');
+    const result = await response.json() as { image?: string | null };
+    const image = result.image || null;
+    localStorage.setItem(cacheKey, JSON.stringify({ ...cache, [englishName]: image }));
+    return image;
+  } catch {
+    return null;
+  }
+}
+function RemoteFoodImage({ foodName, alt }: { foodName: string; alt: string }) {
+  const [image, setImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true); setFailed(false);
+    getFoodImage(foodName).then(result => {
+      if (!cancelled) { setImage(result); setLoading(false); }
+    });
+    return () => { cancelled = true; };
+  }, [foodName]);
+  if (loading) return <div className="recipe-image-placeholder is-loading" aria-label="جار تحميل صورة الطبق"><span /></div>;
+  if (!image || failed) return <img className="recipe-card-image" src={defaultFoodImage} alt="صورة طبق محايد" loading="lazy" />;
+  return <img className="recipe-card-image" src={image} alt={alt} loading="lazy" onError={() => setFailed(true)} />;
 }
 
 function loadData(userId: string): UserData {
