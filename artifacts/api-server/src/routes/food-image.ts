@@ -7,7 +7,7 @@ router.get("/food-image", async (req, res) => {
   const name = typeof req.query.name === "string" ? req.query.name.trim() : "";
   const apiKey = process.env.SPOONACULAR_API_KEY;
   if (!name || !apiKey) {
-    res.json({ image: null, fallback: spoonacularFallback });
+    res.status(name ? 503 : 400).json({ image: null, fallback: spoonacularFallback });
     return;
   }
   try {
@@ -17,7 +17,7 @@ router.get("/food-image", async (req, res) => {
     url.searchParams.set("apiKey", apiKey);
     const response = await fetch(url);
     if (!response.ok) {
-      res.json({ image: null, fallback: spoonacularFallback });
+      res.status(502).json({ image: null, fallback: spoonacularFallback });
       return;
     }
     const data = await response.json() as { results?: Array<{ id?: number }> };
