@@ -480,6 +480,7 @@ function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; sele
 }
 
 function Dashboard({ userName, userGender, data, setData, onAdd, setNotice }: { userName: string; userGender?: User['gender']; data: UserData; setData: Dispatch<SetStateAction<UserData>>; onAdd: () => void; setNotice: (value: string) => void }) {
+  const { language } = useLanguage();
   const [selectedId, setSelectedId] = useState(data.items.find(item => item.id === 'eggs')?.id || data.items[0]?.id);
   const selected = data.items.find(item => item.id === selectedId) || data.items[0];
   const totalCalories = data.items.reduce((sum, item) => sum + item.calories * item.quantity, 0);
@@ -513,9 +514,9 @@ function Dashboard({ userName, userGender, data, setData, onAdd, setNotice }: { 
   };
   return <main className="app-main dashboard-main">
     <div className="dashboard-topbar">
-      <div className="dashboard-greeting"><span className="user-sticker" aria-label="مستخدم">{genderSticker(userGender)}</span><span>مساء الخير،</span><strong>{userName}</strong><ChevronLeft size={15} /></div>
-       <div className="dashboard-stat"><Flame size={21} /><div><small>هدفك اليومي</small><strong>{toWesternNums(data.calorieGoal.toLocaleString('en-US'))} سعرة</strong></div></div>
-       <div className="dashboard-stat"><div className="mini-ring" style={{ '--ring-progress': `${percentage}%` } as CSSProperties}><strong>{toWesternNums(percentage)}%</strong></div><div><small>استهلاكك اليوم</small><strong>{toWesternNums(totalCalories.toLocaleString('en-US'))} سعرة</strong></div></div>
+       <div className="dashboard-greeting"><span className="user-sticker" aria-label={text(language, 'مستخدم', 'User')}>{genderSticker(userGender)}</span><span>{text(language, 'مساء الخير،', 'Good evening,')}</span><strong>{userName}</strong><ChevronLeft size={15} /></div>
+        <div className="dashboard-stat"><Flame size={21} /><div><small>{text(language, 'هدفك اليومي', 'Daily goal')}</small><strong>{toWesternNums(data.calorieGoal.toLocaleString('en-US'))} {text(language, 'سعرة', 'kcal')}</strong></div></div>
+        <div className="dashboard-stat"><div className="mini-ring" style={{ '--ring-progress': `${percentage}%` } as CSSProperties}><strong>{toWesternNums(percentage)}%</strong></div><div><small>{text(language, 'استهلاكك اليوم', 'Today’s intake')}</small><strong>{toWesternNums(totalCalories.toLocaleString('en-US'))} {text(language, 'سعرة', 'kcal')}</strong></div></div>
        <div className="notification-wrap">
          <button className="topbar-bell icon-btn" aria-label={`التنبيهات${unreadCount ? `، ${toWesternNums(unreadCount)} جديدة` : ''}`} aria-expanded={notificationsOpen} onClick={() => setNotificationsOpen(value => !value)} data-testid="button-notifications"><Bell size={20} />{unreadCount > 0 && <b className="notification-count">{toWesternNums(unreadCount)}</b>}</button>
          {notificationsOpen && <div className="notification-dropdown" role="region" aria-label="قائمة التنبيهات">
