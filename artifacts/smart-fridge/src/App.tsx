@@ -35,6 +35,16 @@ type Language = 'ar' | 'en';
 const LanguageContext = createContext<{ language: Language; setLanguage: (language: Language) => void }>({ language: 'ar', setLanguage: () => undefined });
 const useLanguage = () => useContext(LanguageContext);
 const text = (language: Language, ar: string, en: string) => language === 'ar' ? ar : en;
+function LanguageProvider({ children }: { children: ReactNode }) {
+  const [language, setLanguage] = useState<Language>(() => localStorage.getItem('smart_fridge_language') === 'en' ? 'en' : 'ar');
+  useEffect(() => {
+    localStorage.setItem('smart_fridge_language', language);
+    document.documentElement.lang = language;
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+    document.body.dir = language === 'ar' ? 'rtl' : 'ltr';
+  }, [language]);
+  return <LanguageContext.Provider value={{ language, setLanguage }}>{children}</LanguageContext.Provider>;
+}
 
 const queryClient = new QueryClient();
 const USERS_KEY = 'smart_fridge_users';
@@ -352,12 +362,12 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
 }
 
 const navItems = [
-  { href: '/', label: 'ثلاجتي', icon: Home },
-  { href: '/meals', label: 'وجباتي', icon: Utensils },
-  { href: '/daily-analysis', label: 'تحليل يومي', icon: Flame },
-  { href: '/shopping', label: 'قائمة التسوق', icon: ShoppingBasket },
-  { href: '/recipes', label: 'وصفات مقترحة', icon: BookOpen },
-  { href: '/favorites', label: 'المفضلة', icon: Heart },
+  { href: '/', ar: 'ثلاجتي', en: 'My fridge', icon: Home },
+  { href: '/meals', ar: 'وجباتي', en: 'My meals', icon: Utensils },
+  { href: '/daily-analysis', ar: 'تحليل يومي', en: 'Daily analysis', icon: Flame },
+  { href: '/shopping', ar: 'قائمة التسوق', en: 'Shopping list', icon: ShoppingBasket },
+  { href: '/recipes', ar: 'وصفات مقترحة', en: 'Suggested recipes', icon: BookOpen },
+  { href: '/favorites', ar: 'المفضلة', en: 'Favorites', icon: Heart },
 ];
 
 function AppShell({ user, shoppingCount, children, onLogout }: { user: User; shoppingCount: number; children: ReactNode; onLogout: () => void }) {
@@ -365,12 +375,12 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
   const { language } = useLanguage();
   return <div className="app-shell">
      <aside className="sidebar">
-      <div className="brand"><div className="brand-mark"><Refrigerator size={24} /></div><div className="brand-copy"><h1>ثلاجتي</h1><small>رفيق البيت الطازج</small></div></div>
-      <nav className="nav-list" aria-label="التنقل الرئيسي">
-        {navItems.map(item => { const Icon = item.icon; return <Link key={item.href} href={item.href} className={`nav-item ${location === item.href ? 'active' : ''}`} data-testid={`link-nav-${item.label}`}><Icon size={18} /><span className="nav-label">{item.label}</span>{item.href === '/shopping' && <b className="nav-count">{shoppingCount}</b>}</Link>; })}
+       <div className="brand"><div className="brand-mark"><Refrigerator size={24} /></div><div className="brand-copy"><h1>{text(language, 'ثلاجتي', 'Smart Fridge')}</h1><small>{text(language, 'رفيق البيت الطازج', 'Fresh home companion')}</small></div></div>
+       <nav className="nav-list" aria-label={text(language, 'التنقل الرئيسي', 'Main navigation')}>
+         {navItems.map(item => { const Icon = item.icon; const label = text(language, item.ar, item.en); return <Link key={item.href} href={item.href} className={`nav-item ${location === item.href ? 'active' : ''}`} data-testid={`link-nav-${item.ar}`}><Icon size={18} /><span className="nav-label">{label}</span>{item.href === '/shopping' && <b className="nav-count">{shoppingCount}</b>}</Link>; })}
       </nav>
       <div className="sidebar-footer">
-        <Link href="/settings" className={`nav-item ${location === '/settings' ? 'active' : ''}`} data-testid="link-nav-settings"><Settings size={18} /><span className="nav-label">الإعدادات</span></Link>
+         <Link href="/settings" className={`nav-item ${location === '/settings' ? 'active' : ''}`} data-testid="link-nav-settings"><Settings size={18} /><span className="nav-label">{text(language, 'الإعدادات', 'Settings')}</span></Link>
          <LanguageSwitcher />
         <div className="profile-mini"><div className="avatar">{initials(user.name)}</div><div><strong>{user.name}</strong><span>مساحتي الشخصية</span></div></div>
         <button className="logout-btn" onClick={onLogout} data-testid="button-logout"><LogOut size={15} /><span>تسجيل الخروج</span></button>
@@ -595,7 +605,6 @@ function RoutedPages({ user, data, setData, onLogout, setNotice }: { user: User;
 
 function App() {
   const [session, setSession] = useState<string | null>(() => localStorage.getItem(SESSION_KEY));
-  const [language, setLanguage] = useState<Language>(() => localStorage.getItem('smart_fridge_language') === 'en' ? 'en' : 'ar');
   const [notice, setNotice] = useState('');
   const [data, setData] = useState<UserData>(() => loadData(session || ''));
   const users: User[] = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
@@ -604,16 +613,10 @@ function App() {
   useEffect(() => { if (session) saveData(session, data); }, [data, session]);
   const login = (nextUser: User) => { localStorage.setItem(SESSION_KEY, nextUser.id); setSession(nextUser.id); setData(loadData(nextUser.id)); };
   const logout = () => { localStorage.removeItem(SESSION_KEY); setSession(null); setNotice(''); };
-  useEffect(() => {
-    localStorage.setItem('smart_fridge_language', language);
-    document.documentElement.lang = language;
-    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
-    document.body.dir = language === 'ar' ? 'rtl' : 'ltr';
-  }, [language]);
   if (!session || !user) return <AuthScreen onLogin={login} />;
-  return <LanguageContext.Provider value={{ language, setLanguage }}><div className={data.darkMode ? 'theme-dark' : ''} data-theme={data.darkMode ? 'dark' : undefined}><RoutedPages user={user} data={data} setData={setData} onLogout={logout} setNotice={setNotice} />{notice && <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 60, padding: '12px 17px', borderRadius: 12, background: 'hsl(var(--sidebar))', color: 'hsl(var(--card))', boxShadow: '0 10px 25px hsl(155 22% 17% / .2)', animation: 'modal-in .2s ease-out' }} role="status" data-testid="status-notice"><CheckCircle2 size={16} style={{ verticalAlign: 'middle', marginLeft: 7, color: 'hsl(var(--accent))' }} />{notice}</div>}</div></LanguageContext.Provider>;
+  return <div className={data.darkMode ? 'theme-dark' : ''} data-theme={data.darkMode ? 'dark' : undefined}><RoutedPages user={user} data={data} setData={setData} onLogout={logout} setNotice={setNotice} />{notice && <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 60, padding: '12px 17px', borderRadius: 12, background: 'hsl(var(--sidebar))', color: 'hsl(var(--card))', boxShadow: '0 10px 25px hsl(155 22% 17% / .2)', animation: 'modal-in .2s ease-out' }} role="status" data-testid="status-notice"><CheckCircle2 size={16} style={{ verticalAlign: 'middle', marginLeft: 7, color: 'hsl(var(--accent))' }} />{notice}</div>}</div>;
 }
 
 export default function AppWithProviders() {
-  return <QueryClientProvider client={queryClient}><TooltipProvider><LanguageContext.Provider value={{ language: 'ar', setLanguage: () => undefined }}><WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}><ErrorBoundary resetKey={location.pathname}><App /></ErrorBoundary></WouterRouter><Toaster /></LanguageContext.Provider></TooltipProvider></QueryClientProvider>;
+  return <QueryClientProvider client={queryClient}><TooltipProvider><LanguageProvider><WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}><ErrorBoundary resetKey={location.pathname}><App /></ErrorBoundary></WouterRouter><Toaster /></LanguageProvider></TooltipProvider></QueryClientProvider>;
 }
