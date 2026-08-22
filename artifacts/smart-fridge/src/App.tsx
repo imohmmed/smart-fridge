@@ -119,21 +119,14 @@ function getEnglishName(arabicName: string) {
     .reduce((name, arabic) => name.replaceAll(arabic, translateToEnglish[arabic]), arabicName);
 }
 async function getFoodImage(foodName: string): Promise<string | null> {
-  const cacheKey = 'smart_fridge_spoonacular_images';
+  const cacheKey = 'smart_fridge_source_unsplash_images_v2';
   let cache: Record<string, string | null> = {};
   try { cache = JSON.parse(localStorage.getItem(cacheKey) || '{}'); } catch { cache = {}; }
   const englishName = getEnglishName(foodName);
   if (Object.prototype.hasOwnProperty.call(cache, englishName)) return cache[englishName];
-  try {
-    const response = await fetch(`/api/food-image?name=${encodeURIComponent(englishName)}`);
-    if (!response.ok) throw new Error('Image search failed');
-    const result = await response.json() as { image?: string | null };
-    const image = result.image || null;
-    localStorage.setItem(cacheKey, JSON.stringify({ ...cache, [englishName]: image }));
-    return image;
-  } catch {
-    return null;
-  }
+  const image = `https://source.unsplash.com/300x200/?${encodeURIComponent(englishName)}`;
+  localStorage.setItem(cacheKey, JSON.stringify({ ...cache, [englishName]: image }));
+  return image;
 }
 function RemoteFoodImage({ foodName, alt }: { foodName: string; alt: string }) {
   const [image, setImage] = useState<string | null>(null);
