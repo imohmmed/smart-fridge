@@ -246,7 +246,7 @@ function FoodArt({ item, size = 40 }: { item?: FridgeItem; size?: number }) {
 function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [name, setName] = useState('');
-  const [gender, setGender] = useState<'female' | 'male'>('female');
+  const [gender, setGender] = useState<'' | 'female' | 'male'>('');
   const [email, setEmail] = useState(() => localStorage.getItem('smart_fridge_email') || '');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -266,7 +266,7 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
     if (mode === 'register') {
       if (!name.trim() || !email.trim() || password.length < 4) { setError('أكملي البيانات، وكلمة المرور 4 أحرف على الأقل.'); return; }
       if (users.some(user => user.email === email.trim().toLowerCase())) { setError('هذا البريد مسجل مسبقاً.'); return; }
-      const user = { id: `u-${Date.now()}`, name: name.trim(), email: email.trim().toLowerCase(), password, gender };
+      const user: User = { id: `u-${Date.now()}`, name: name.trim(), email: email.trim().toLowerCase(), password, gender: gender || undefined };
       localStorage.setItem(USERS_KEY, JSON.stringify([...users, user])); onLogin(user);
     } else {
       const user = users.find(candidate => candidate.email === email.trim().toLowerCase() && candidate.password === password);
@@ -326,11 +326,11 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
         <div className="language-switcher" aria-label="اختيار اللغة"><Globe2 size={15} /><button type="button" className={language === 'ar' ? 'active' : ''} onClick={() => setLanguage('ar')} aria-pressed={language === 'ar'}>العربية</button><span>/</span><button type="button" className={language === 'en' ? 'active' : ''} onClick={() => setLanguage('en')} aria-pressed={language === 'en'}>English</button></div>
         <div className="auth-card-heading"><h2>{mode === 'login' ? 'أهلاً بعودتك' : 'لنبدأ معاً'}</h2><p>{mode === 'login' ? 'سجّل دخولك لثلاجتك الذكية' : 'أنشئي مساحتك الخاصة في دقائق.'}</p></div>
         <div className="auth-tabs"><button type="button" className={`auth-tab ${mode === 'login' ? 'active' : ''}`} onClick={() => { setMode('login'); setError(''); }} data-testid="tab-login">تسجيل الدخول</button><button type="button" className={`auth-tab ${mode === 'register' ? 'active' : ''}`} onClick={() => { setMode('register'); setError(''); }} data-testid="tab-register">حساب جديد</button></div>
-        {mode === 'register' && <div className="field auth-field"><label htmlFor="auth-name">الاسم</label><input id="auth-name" data-testid="input-auth-name" value={name} onChange={e => setName(e.target.value)} placeholder="مثال: سارة" /></div>}
+        {mode === 'register' && <div className="field auth-field"><label htmlFor="auth-name">الاسم</label><input id="auth-name" data-testid="input-auth-name" value={name} onChange={e => setName(e.target.value)} /></div>}
         <div className="field auth-field"><label htmlFor="auth-email">البريد الإلكتروني</label><div className="input-with-icon"><Mail size={17} /><input id="auth-email" type="email" autoComplete="email" dir="ltr" aria-describedby={error ? 'auth-error' : undefined} data-testid="input-auth-email" value={email} onChange={e => setEmail(e.target.value)} placeholder="name@example.com" /></div></div>
         <div className="field auth-field"><label htmlFor="auth-password">كلمة المرور</label><div className="input-with-icon password-control"><LockKeyhole size={17} /><input id="auth-password" type={showPassword ? 'text' : 'password'} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} dir="ltr" aria-describedby={error ? 'auth-error' : undefined} data-testid="input-auth-password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" /><button type="button" className="password-toggle" onClick={() => setShowPassword(value => !value)} aria-label={showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'}>{showPassword ? <EyeOff size={17} /> : <Eye size={17} />}</button></div></div>
         {error && <p id="auth-error" className="auth-error" role="alert" data-testid="status-auth-error">{error}</p>}
-        {mode === 'register' && <div className="field auth-field"><label htmlFor="auth-gender">الجنس</label><select id="auth-gender" value={gender} onChange={e => setGender(e.target.value as 'female' | 'male')} data-testid="select-auth-gender"><option value="female">أنثى</option><option value="male">ذكر</option></select></div>}
+        {mode === 'register' && <div className="field auth-field"><label htmlFor="auth-gender">الجنس</label><select id="auth-gender" value={gender} onChange={e => setGender(e.target.value as '' | 'female' | 'male')} data-testid="select-auth-gender"><option value="" disabled>اختاري الجنس</option><option value="female">أنثى</option><option value="male">ذكر</option></select></div>}
         <div className="auth-options"><label htmlFor="remember-me"><input id="remember-me" type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} /> <span>تذكريني</span></label><button type="button" className="link-btn" onClick={forgotPassword}>نسيت كلمة المرور؟</button></div>
         <button className="primary-btn auth-submit" type="submit" data-testid="button-auth-submit">{mode === 'login' ? 'دخول إلى ثلاجتي' : 'إنشاء مساحتي'}<ArrowLeft size={17} /></button>
         <div className="auth-divider"><span>أو</span></div>
