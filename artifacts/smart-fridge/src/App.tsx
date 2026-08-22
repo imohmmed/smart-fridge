@@ -381,9 +381,10 @@ function AddFoodModal({ onClose, onAdd }: { onClose: () => void; onAdd: (item: O
   const update = (key: keyof typeof form, value: string) => setForm(prev => ({ ...prev, [key]: value }));
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    if (!form.name.trim() || !form.expiry) return;
+    if (!form.name.trim()) return;
     const art = form.category === 'فواكه' ? 'apple' : form.category === 'ألبان' ? 'milk' : form.category === 'لحوم' ? 'chicken' : form.category === 'خضروات' ? 'leaf' : 'package';
-    onAdd({ name: form.name.trim(), quantity: Math.max(1, Number(form.quantity) || 1), unit: form.unit, category: form.category, expiry: form.expiry, calories: Math.max(0, Number(form.calories) || 0), art });
+    const expiry = form.expiry || new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
+    onAdd({ name: form.name.trim(), quantity: Math.max(1, Number(form.quantity) || 1), unit: form.unit, category: form.category, expiry, calories: Math.max(0, Number(form.calories) || 0), art });
     onClose();
   };
   return <div className="modal-backdrop" onMouseDown={e => { if (e.target === e.currentTarget) onClose(); }}>
@@ -475,7 +476,7 @@ function Dashboard({ userName, userGender, data, setData, onAdd, setNotice }: { 
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [readIds, setReadIds] = useState<string[]>(() => {
-    try { return JSON.parse(localStorage.getItem(`smart_fridge_read_notifications_${data.items.length}`) || '[]'); } catch { return []; }
+    try { return JSON.parse(localStorage.getItem('smart_fridge_read_notifications') || '[]'); } catch { return []; }
   });
   const refreshNotifications = () => setNotifications(checkAndGenerateNotifications(data));
   useEffect(() => {
@@ -487,7 +488,7 @@ function Dashboard({ userName, userGender, data, setData, onAdd, setNotice }: { 
   const markAllRead = () => {
     const ids = notifications.map(item => item.id);
     setReadIds(ids);
-    localStorage.setItem(`smart_fridge_read_notifications_${data.items.length}`, JSON.stringify(ids));
+    localStorage.setItem('smart_fridge_read_notifications', JSON.stringify(ids));
   };
   return <main className="app-main dashboard-main">
     <div className="dashboard-topbar">
