@@ -35,6 +35,31 @@ type Language = 'ar' | 'en';
 const LanguageContext = createContext<{ language: Language; setLanguage: (language: Language) => void }>({ language: 'ar', setLanguage: () => undefined });
 const useLanguage = () => useContext(LanguageContext);
 const text = (language: Language, ar: string, en: string) => language === 'ar' ? ar : en;
+const englishTranslations: Record<string, string> = {
+  'ثلاجتي': 'Smart Fridge', 'رفيق البيت الطازج': 'Fresh home companion', 'وجباتي': 'My meals',
+  'تحليل يومي': 'Daily analysis', 'قائمة التسوق': 'Shopping list', 'وصفات مقترحة': 'Suggested recipes',
+  'المفضلة': 'Favorites', 'الإعدادات': 'Settings', 'مساحتي الشخصية': 'My space', 'تسجيل الخروج': 'Sign out',
+  'مساحتي اليومية': 'My daily space', 'محتويات ثلاجتك': 'Your fridge contents', 'تفاصيل العنصر': 'Item details',
+  'قائمة التنبيهات': 'Notifications', 'التنبيهات': 'Notifications', 'تعليم الكل كمقروء': 'Mark all as read',
+  'لا توجد إشعارات جديدة 🎉': 'No new notifications 🎉', 'قائمة التسوق ': 'Shopping list ',
+  'تصدير القائمة': 'Export list', 'إضافة': 'Add', 'تعديل': 'Edit', 'استهلكت': 'Consumed',
+  'إضافة إلى الثلاجة': 'Add to fridge', 'حفظ': 'Save', 'إلغاء': 'Cancel', 'اسم الطعام': 'Food name',
+  'الكمية': 'Quantity', 'الوحدة': 'Unit', 'القسم': 'Category', 'تاريخ الانتهاء': 'Expiry date',
+  'السعرات الحرارية': 'Calories', 'السعرات لكل وحدة': 'Calories per unit', 'أضف طعاماً جديداً': 'Add new food',
+  'اشرب الماء': 'Drink water', 'السعرات المتبقية': 'Calories remaining', 'توزيع المغذيات': 'Nutrients',
+  'نصيحة اليوم': 'Tip of the day', 'هدفك اليومي': 'Daily goal', 'استهلاكك اليوم': 'Today’s intake',
+  'سعرة': 'kcal', 'أهلاً بعودتك': 'Welcome back', 'لنبدأ معاً': 'Let’s get started',
+  'تسجيل الدخول': 'Sign in', 'حساب جديد': 'Create account', 'البريد الإلكتروني': 'Email',
+  'كلمة المرور': 'Password', 'الاسم': 'Name', 'الجنس': 'Gender', 'تذكرني': 'Remember me',
+  'نسيت كلمة المرور؟': 'Forgot password?', 'إنشاء مساحتي': 'Create my space', 'دخول إلى ثلاجتي': 'Enter my fridge',
+  'تجربة ثلاجتي الآن': 'Try Smart Fridge', 'أو': 'or', 'أضف': 'Add', 'سهل': 'Easy',
+  'عرض الوصفة': 'View recipe', 'مفضلاتي': 'My favorites', 'خطة اليوم': 'Today’s plan',
+  'اقتراحات ذكية': 'Smart suggestions', 'ملاحظة للمتجر': 'Note for the store', 'قائمتك': 'Your list',
+  'قائمتك فارغة': 'Your list is empty', 'مخزونك بخير': 'Your stock is healthy', 'السلة فارغة الآن': 'Your basket is empty',
+  'لم تختر مفضلات بعد': 'No favorites yet', 'تصفح الوصفات': 'Browse recipes', 'تفضيلاتك': 'Your preferences',
+  'مظهر ثلاجتي': 'Smart Fridge appearance', 'الوضع الليلي': 'Dark mode', 'تنبيهات لطيفة': 'Gentle notifications',
+  'الخصوصية': 'Privacy', 'خصوصيتك أولاً': 'Your privacy first', 'عربي': 'Arabic', 'بياناتك محلية تماماً': 'Your data stays local',
+};
 function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguage] = useState<Language>(() => localStorage.getItem('smart_fridge_language') === 'en' ? 'en' : 'ar');
   useEffect(() => {
@@ -42,6 +67,25 @@ function LanguageProvider({ children }: { children: ReactNode }) {
     document.documentElement.lang = language;
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
     document.body.dir = language === 'ar' ? 'rtl' : 'ltr';
+    const originals = new WeakMap<Text, string>();
+    const translate = () => {
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      let node: Node | null;
+      while ((node = walker.nextNode())) {
+        const textNode = node as Text;
+        if (!textNode.parentElement || ['SCRIPT', 'STYLE'].includes(textNode.parentElement.tagName)) continue;
+        const original = originals.get(textNode) ?? textNode.nodeValue ?? '';
+        originals.set(textNode, original);
+        const trimmed = original.trim();
+        const translated = language === 'en' ? englishTranslations[trimmed] : original;
+        if (translated && translated !== trimmed) textNode.nodeValue = original.replace(trimmed, translated);
+        else if (language === 'ar' && textNode.nodeValue !== original) textNode.nodeValue = original;
+      }
+    };
+    translate();
+    const observer = new MutationObserver(translate);
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
   }, [language]);
   return <LanguageContext.Provider value={{ language, setLanguage }}>{children}</LanguageContext.Provider>;
 }
