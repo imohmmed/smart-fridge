@@ -63,6 +63,32 @@ const recipes: Recipe[] = [
   { id: 'r5', name: 'راب الدجاج الأخضر', description: 'لفافة عملية من الدجاج والخس والصلصة.', time: '25 دقيقة', calories: 390, color: 'linear-gradient(135deg, #b4cf9b, #477e62)', tags: ['غداء', 'للعمل'] },
   { id: 'r6', name: 'حمص بالليمون', description: 'طبق جانبي كريمي يرافق كل شيء.', time: '12 دقيقة', calories: 240, color: 'linear-gradient(135deg, #e5d59d, #ad9352)', tags: ['جانبي', 'نباتي'] },
 ];
+const defaultFoodImage = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=300';
+const mealImageMap: Record<string, string> = {
+  فطور: 'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=200',
+  غداء: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=200',
+  عشاء: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200',
+  سلطة: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200',
+  شوربة: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=200',
+  دجاج: 'https://images.unsplash.com/photo-1598103442097-8b74394b95c2?w=200',
+  سمك: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=200',
+  بيض: 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=200',
+  default: defaultFoodImage,
+};
+const recipeImageMap: Record<string, string> = {
+  سلطة: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=300',
+  شوربة: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=300',
+  'دجاج مشوي': 'https://images.unsplash.com/photo-1598103442097-8b74394b95c2?w=300',
+  بيض: 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=300',
+  معكرونة: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=300',
+  أرز: 'https://images.unsplash.com/photo-1516684732162-798a0062be99?w=300',
+  سمك: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=300',
+  default: defaultFoodImage,
+};
+function findMappedImage(name: string, map: Record<string, string>) {
+  const key = Object.keys(map).find(item => item !== 'default' && name.includes(item));
+  return key ? map[key] : map.default;
+}
 
 function loadData(userId: string): UserData {
   try {
@@ -404,8 +430,16 @@ function ShoppingPreview({ data, setData }: { data: UserData; setData: Dispatch<
   return <div className="shopping-list">{visible.length ? visible.map(item => <div className={`shopping-item ${item.done ? 'done' : ''}`} key={item.id}><input type="checkbox" checked={item.done} onChange={() => setData(prev => ({ ...prev, shopping: prev.shopping.map(row => row.id === item.id ? { ...row, done: !row.done } : row) }))} data-testid={`checkbox-shopping-${item.id}`} /><label>{item.name}</label><span className="item-quantity">{item.quantity}</span></div>) : <div className="empty-state" style={{ padding: 20 }}><ShoppingBasket size={23} /><strong>قائمتك فارغة</strong><span>أضيفي ما ينقصك.</span></div>}</div>;
 }
 
-function RecipeCard({ recipe, favorite, onFavorite, compact = false }: { recipe: Recipe; favorite: boolean; onFavorite: () => void; compact?: boolean }) {
-  return <article className={`recipe-card ${compact ? 'recipe-compact' : ''}`}><div className="recipe-visual" style={{ background: recipe.color }}><span>{recipe.tags[0]}</span><button className="icon-btn" style={{ marginRight: 'auto', position: 'relative', zIndex: 2, color: favorite ? 'hsl(var(--destructive))' : undefined }} onClick={onFavorite} data-testid={`button-favorite-${recipe.id}`} aria-label="إضافة للمفضلة"><Heart size={16} fill={favorite ? 'currentColor' : 'none'} /></button></div><div className="recipe-body"><h3>{recipe.name}</h3><p>{recipe.description}</p><div className="recipe-meta"><span>{recipe.time}</span><span>{recipe.calories} سعرة</span></div></div></article>;
+function RecipeCard({ recipe, favorite, onFavorite, compact = false, imageOverride }: { recipe: Recipe; favorite: boolean; onFavorite: () => void; compact?: boolean; imageOverride?: string }) {
+  const image = imageOverride || findMappedImage(recipe.name, recipeImageMap);
+  return <article className={`recipe-card ${compact ? 'recipe-compact' : ''}`}>
+    <div className="recipe-visual">
+      <img src={image} alt={recipe.name} loading="lazy" onError={event => { event.currentTarget.src = defaultFoodImage; }} />
+      <span className="recipe-difficulty">سهل</span>
+      <button className="icon-btn" style={{ marginRight: 'auto', position: 'relative', zIndex: 2, color: favorite ? 'hsl(var(--destructive))' : undefined }} onClick={onFavorite} data-testid={`button-favorite-${recipe.id}`} aria-label="إضافة للمفضلة"><Heart size={16} fill={favorite ? 'currentColor' : 'none'} /></button>
+    </div>
+    <div className="recipe-body"><h3>{recipe.name}</h3><p>{recipe.description}</p><div className="recipe-meta"><span>{recipe.time}</span><span>{recipe.calories} سعرة</span></div><button className="recipe-view-btn" type="button" data-testid={`button-view-recipe-${recipe.id}`}>عرض الوصفة</button></div>
+  </article>;
 }
 
 function MealsPage({ data, setData, setNotice }: { data: UserData; setData: Dispatch<SetStateAction<UserData>>; setNotice: (v: string) => void }) {
@@ -414,7 +448,7 @@ function MealsPage({ data, setData, setNotice }: { data: UserData; setData: Disp
   ]);
   const suggestions = meal === 'الفطور' ? ['بيض بلدي مع خضار', 'توست الجبن والخضار'] : meal === 'الغداء' ? ['سلطة الدجاج والحمص', 'راب الدجاج الأخضر'] : ['كوب الفواكه المنعش', 'حمص بالليمون'];
   const addMeal = () => { setPlanned(prev => [...prev, { id: `m-${Date.now()}`, title: meal, time: meal === 'العشاء' ? '20:00' : '16:00', recipe: suggestions[0] }]); flash(setNotice, 'أضيفت الوجبة إلى يومك'); };
-  return <main className="app-main"><PageHeading title="وجباتي" description="خطة مرنة، تترك مساحة لما يشتهيه يومك." action={<button className="primary-btn" onClick={addMeal} data-testid="button-add-meal"><Plus size={17} />إضافة وجبة</button>} /><div className="card card-pad"><div className="toolbar">{['الفطور', 'الغداء', 'العشاء', 'سناك'].map(tab => <button key={tab} className={meal === tab ? 'primary-btn' : 'secondary-btn'} onClick={() => setMeal(tab)} data-testid={`button-meal-tab-${tab}`}>{tab}</button>)}</div><div className="recipe-grid">{suggestions.map(name => { const recipe = recipes.find(item => item.name === name) || recipes[0]; return <RecipeCard key={recipe.id} recipe={recipe} favorite={data.favorites.includes(recipe.id)} onFavorite={() => setData(prev => ({ ...prev, favorites: prev.favorites.includes(recipe.id) ? prev.favorites.filter(id => id !== recipe.id) : [...prev.favorites, recipe.id] }))} />; })}</div></div><div className="card card-pad" style={{ marginTop: 21 }}><div className="card-title"><div><h3>خطة اليوم</h3><p>تعديلاتك محفوظة على هذا الجهاز</p></div><span className="status-pill">{planned.length} وجبات</span></div><div className="table-list">{planned.map(item => <div className="data-row" key={item.id}><strong><Utensils size={15} style={{ verticalAlign: 'middle', marginLeft: 7, color: 'hsl(var(--primary))' }} />{item.title}</strong><span>{item.recipe}</span><span>{item.time}</span><button className="icon-btn" onClick={() => setPlanned(prev => prev.filter(row => row.id !== item.id))} data-testid={`button-remove-meal-${item.id}`}><Trash2 size={15} /></button></div>)}</div></div></main>;
+  return <main className="app-main"><PageHeading title="وجباتي" description="خطة مرنة، تترك مساحة لما يشتهيه يومك." action={<button className="primary-btn" onClick={addMeal} data-testid="button-add-meal"><Plus size={17} />إضافة وجبة</button>} /><div className="card card-pad"><div className="toolbar">{['الفطور', 'الغداء', 'العشاء', 'سناك'].map(tab => <button key={tab} className={meal === tab ? 'primary-btn' : 'secondary-btn'} onClick={() => setMeal(tab)} data-testid={`button-meal-tab-${tab}`}>{tab}</button>)}</div><div className="recipe-grid">{suggestions.map(name => { const recipe = recipes.find(item => item.name === name) || recipes[0]; const mealKey = meal === 'سناك' ? name : meal.replace(/^ال/, ''); return <RecipeCard key={recipe.id} recipe={recipe} favorite={data.favorites.includes(recipe.id)} imageOverride={findMappedImage(`${mealKey} ${name}`, mealImageMap)} onFavorite={() => setData(prev => ({ ...prev, favorites: prev.favorites.includes(recipe.id) ? prev.favorites.filter(id => id !== recipe.id) : [...prev.favorites, recipe.id] }))} />; })}</div></div><div className="card card-pad" style={{ marginTop: 21 }}><div className="card-title"><div><h3>خطة اليوم</h3><p>تعديلاتك محفوظة على هذا الجهاز</p></div><span className="status-pill">{planned.length} وجبات</span></div><div className="table-list">{planned.map(item => <div className="data-row" key={item.id}><strong><Utensils size={15} style={{ verticalAlign: 'middle', marginLeft: 7, color: 'hsl(var(--primary))' }} />{item.title}</strong><span>{item.recipe}</span><span>{item.time}</span><button className="icon-btn" onClick={() => setPlanned(prev => prev.filter(row => row.id !== item.id))} data-testid={`button-remove-meal-${item.id}`}><Trash2 size={15} /></button></div>)}</div></div></main>;
 }
 
 function DailyAnalysis({ data }: { data: UserData }) {

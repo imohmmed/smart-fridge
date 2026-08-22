@@ -1799,3 +1799,64 @@ textarea:focus-visible, [tabindex]:focus-visible {
   .auth-redesign .auth-copy > p { font-size: 15px; }
   .auth-redesign .benefit-item strong { font-size: 15px; }
 }
+
+/* Food imagery for meals and suggested recipes */
+.recipe-card {
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(44, 44, 44, .08);
+}
+.recipe-visual {
+  position: relative;
+  height: 160px;
+  min-height: 160px;
+  padding: 0;
+  overflow: hidden;
+  background: #D4CFC6;
+}
+.recipe-visual::after { display: none; }
+.recipe-visual > img {
+  display: block;
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+.recipe-visual .recipe-difficulty {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(74, 124, 89, .85);
+  color: #FFFFFF;
+  font-size: 12px;
+}
+.recipe-visual .icon-btn {
+  position: absolute !important;
+  top: 10px;
+  left: 10px;
+  margin: 0 !important;
+  background: rgba(255, 255, 255, .86);
+}
+.recipe-body { padding: 15px; }
+.recipe-body h3 { font-size: 15px; font-weight: 600; }
+.recipe-meta {
+  display: flex;
+  justify-content: space-between;
+  color: #7A7A7A;
+  font-size: 12px;
+}
+.recipe-view-btn {
+  width: 100%;
+  margin-top: 13px;
+  padding: 8px;
+  border: 0;
+  border-radius: 8px;
+  background: #4A7C59;
+  color: #FFFFFF;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+}
+.recipe-view-btn:hover { background: #3D6B4A; }

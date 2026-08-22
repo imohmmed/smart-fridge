@@ -1,0 +1,60 @@
+Improve these specific sections WITHOUT changing the overall design:
+
+=== 1. MEALS PAGE (وجباتي) - ADD FOOD IMAGES ===
+
+Each meal card must show a food image. Use this approach:
+
+const mealImageMap = {
+  'فطور': 'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=200',
+  'غداء': 'https://images.unsplash.com/photo-1547592180-85f173990554?w=200',
+  'عشاء': 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200',
+  'سلطة': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200',
+  'شوربة': 'https://images.unsplash.com/photo-1547592180-85f173990554?w=200',
+  'دجاج': 'https://images.unsplash.com/photo-1598103442097-8b74394b95c2?w=200',
+  'سمك': 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=200',
+  'بيض': 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=200',
+  'default': 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200'
+};
+
+Each meal card layout:
+- Image on top: width 100%, height: 140px, object-fit: cover,
+  border-radius: 12px 12px 0 0
+- Below image: meal name, calories, time
+- Card: border-radius 12px, soft shadow
+- If no specific image found → use default food image
+
+=== 2. RECIPES PAGE (وصفات مقترحة) - ADD RECIPE IMAGES ===
+
+Each recipe card must have an image:
+
+const recipeImageMap = {
+  'سلطة': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=300',
+  'شوربة': 'https://images.unsplash.com/photo-1547592180-85f173990554?w=300',
+  'دجاج مشوي': 'https://images.unsplash.com/photo-1598103442097-8b74394b95c2?w=300',
+  'بيض': 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=300',
+  'معكرونة': 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=300',
+  'أرز': 'https://images.unsplash.com/photo-1516684732162-798a0062be99?w=300',
+  'سمك': 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=300',
+  'default': 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=300'
+};
+
+Recipe card layout:
+- Full image top half: height 160px, object-fit: cover,
+  border-radius: 12px 12px 0 0
+- Overlay badge on image (top right): "سهل" / "متوسط" / "صعب"
+  background: rgba(74,124,89,0.85), color: white,
+  border-radius: 8px, padding: 4px 10px, font-size: 12px
+- Below image:
+  • Recipe name (font-size: 15px, font-weight: 600)
+  • Prep time + calories in one line (font-size: 12px, color: #7A7A7A)
+  • "عرض الوصفة" button: background #4A7C59, color white,
+    border-radius: 8px, width 100%, padding: 8px
+
+=== 3. SMALL FIXES (no design change) ===
+
+- Fix "تلاجتي" → "ثلاجتي" anywhere it still appears
+- Make sure all images have:
+  onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200'"
+  (fallback if image fails to load)
+- Image loading: add loading="lazy" to all food/recipe images
+- Keep ALL existing colors, layout, and fridge design exactly as is
