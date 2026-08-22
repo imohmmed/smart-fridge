@@ -470,31 +470,32 @@ function AddFoodModal({ onClose, onAdd }: { onClose: () => void; onAdd: (item: O
 }
 
 function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; selected: FridgeItem | undefined; onSelect: (item: FridgeItem) => void }) {
+  const { language } = useLanguage();
   const categories = [
-    { name: '🍗 البروتينات', match: 'لحوم', tint: 'meat', note: 'طازج وجاهز' },
-    { name: '🥗 الخضروات', match: 'خضروات', tint: 'greens', note: 'خضروات طازجة' },
-    { name: '🍎 الفواكه', match: 'فواكه', tint: 'fruit', note: 'بارد ومنعش' },
-    { name: '🥛 الألبان والمشروبات', match: 'ألبان', tint: 'dairy', note: '4° م' },
+    { name: text(language, '🍗 البروتينات', '🍗 Proteins'), match: 'لحوم', tint: 'meat', note: text(language, 'طازج وجاهز', 'Fresh and ready') },
+    { name: text(language, '🥗 الخضروات', '🥗 Vegetables'), match: 'خضروات', tint: 'greens', note: text(language, 'خضروات طازجة', 'Fresh vegetables') },
+    { name: text(language, '🍎 الفواكه', '🍎 Fruits'), match: 'فواكه', tint: 'fruit', note: text(language, 'بارد ومنعش', 'Chilled and fresh') },
+    { name: text(language, '🥛 الألبان والمشروبات', '🥛 Dairy and drinks'), match: 'ألبان', tint: 'dairy', note: '4° C' },
   ];
   const doorDairy = items.filter(item => item.category === 'ألبان').slice(0, 3);
   const doorDrinks = items.filter(item => ['مشروبات', 'جاهز'].includes(item.category)).slice(0, 4);
   const renderFood = (item: FridgeItem, size = 43, door = false) => <button key={item.id} className={`${door ? 'door-food' : 'food-badge'} ${selected?.id === item.id ? 'selected' : ''}`} onClick={() => onSelect(item)} aria-pressed={selected?.id === item.id} data-testid={`button-food-${door ? 'door-' : ''}${item.id}`}>
      <span className="food-visual"><FoodArt item={item} size={door ? size + 8 : size + 12} /><b className="quantity-badge">{toWesternNums(item.quantity)}</b></span>
-    <span className="food-name">{item.name}</span>
-     {!door && <small>{toWesternNums(item.quantity)} {item.unit}</small>}
+     <span className="food-name">{language === 'en' ? getEnglishName(item.name) : item.name}</span>
+      {!door && <small>{toWesternNums(item.quantity)} {language === 'en' ? 'units' : item.unit}</small>}
     {daysUntil(item.expiry) <= 2 && <i className="food-dot" />}
   </button>;
   return <div className="fridge-card real-fridge-card">
-     <div className="fridge-temperature"><span><Refrigerator size={15} /> الثلاجة</span><strong>{toWesternNums('4°C')}</strong><span><Zap size={14} /> الفريزر</span><strong>{toWesternNums('-18°C')}</strong></div>
+     <div className="fridge-temperature"><span><Refrigerator size={15} /> {text(language, 'الثلاجة', 'Fridge')}</span><strong>4°C</strong><span><Zap size={14} /> {text(language, 'الفريزر', 'Freezer')}</span><strong>-18°C</strong></div>
     <div className="fridge-body real-fridge-body">
       <div className="fridge-door real-fridge-door">
         <span className="door-edge-shadow" />
         <span className="fridge-door-handle" />
-        <div className="door-status"><span>منطقة الطزاجة</span><i /></div>
-        <div className="door-rack rack-dairy"><h4>الألبان والمشروبات</h4>{doorDairy.map(item => renderFood(item, 30, true))}</div>
-        <div className="door-rack rack-drinks"><h4>الصلصات والمربيات</h4>{doorDrinks.map(item => renderFood(item, 28, true))}</div>
-        <div className="door-rack rack-low"><h4>المشروبات والعصائر</h4><div className="door-bottles"><span /><span /><span /></div></div>
-        <div className="door-note"><span className="note-pin" /><span>ملاحظة اليوم<br /><strong>حضّر شيئاً طازجاً</strong></span></div>
+         <div className="door-status"><span>{text(language, 'منطقة الطزاجة', 'Fresh zone')}</span><i /></div>
+         <div className="door-rack rack-dairy"><h4>{text(language, 'الألبان والمشروبات', 'Dairy and drinks')}</h4>{doorDairy.map(item => renderFood(item, 30, true))}</div>
+         <div className="door-rack rack-drinks"><h4>{text(language, 'الصلصات والمربيات', 'Sauces and jams')}</h4>{doorDrinks.map(item => renderFood(item, 28, true))}</div>
+         <div className="door-rack rack-low"><h4>{text(language, 'المشروبات والعصائر', 'Drinks and juices')}</h4><div className="door-bottles"><span /><span /><span /></div></div>
+         <div className="door-note"><span className="note-pin" /><span>{text(language, 'ملاحظة اليوم', 'Today’s note')}<br /><strong>{text(language, 'حضّر شيئاً طازجاً', 'Prepare something fresh')}</strong></span></div>
       </div>
       <div className="fridge-cabinet real-fridge-cabinet">
         <div className="cabinet-side cabinet-side-left" />
@@ -505,21 +506,21 @@ function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; sele
           const categoryItems = items.filter(item => item.category === category.match).slice(0, 5);
           return <div className={`cabinet-shelf ${category.tint}`} key={category.name}>
             <div className="shelf-title"><span>{category.name}</span><small>{category.note}</small></div>
-            <div className="shelf-items">{categoryItems.map(item => renderFood(item))}{!categoryItems.length && <span className="muted shelf-empty">أضف صنفاً جديداً</span>}</div>
+             <div className="shelf-items">{categoryItems.map(item => renderFood(item))}{!categoryItems.length && <span className="muted shelf-empty">{text(language, 'أضف صنفاً جديداً', 'Add a new item')}</span>}</div>
             <div className="glass-front" />
           </div>;
         })}</div>
         <div className="produce-drawers">
-           <div className="crisper-drawer"><span>خضروات طازجة</span><small>{toWesternNums(items.filter(item => item.category === 'خضروات').length || 0)} أصناف</small><div className="drawer-handle" /></div>
-           <div className="crisper-drawer"><span>جذور وبطاطا</span><small>{toWesternNums(items.filter(item => item.category === 'فواكه').length || 0)} أصناف</small><div className="drawer-handle" /></div>
+            <div className="crisper-drawer"><span>{text(language, 'خضروات طازجة', 'Fresh vegetables')}</span><small>{toWesternNums(items.filter(item => item.category === 'خضروات').length || 0)} {text(language, 'أصناف', 'items')}</small><div className="drawer-handle" /></div>
+            <div className="crisper-drawer"><span>{text(language, 'جذور وبطاطا', 'Roots and potatoes')}</span><small>{toWesternNums(items.filter(item => item.category === 'فواكه').length || 0)} {text(language, 'أصناف', 'items')}</small><div className="drawer-handle" /></div>
         </div>
         <div className="freezer-section">
-          <div className="shelf-title"><span>الفريزر</span><small>-18° م</small></div>
-          <div className="freezer-tray"><div className="freezer-bin"><i /><span>لحوم</span></div><div className="freezer-bin"><i /><span>ثلج</span></div><div className="freezer-bin"><i /><span>جاهز</span></div></div>
+           <div className="shelf-title"><span>{text(language, 'الفريزر', 'Freezer')}</span><small>-18° C</small></div>
+           <div className="freezer-tray"><div className="freezer-bin"><i /><span>{text(language, 'لحوم', 'Meat')}</span></div><div className="freezer-bin"><i /><span>{text(language, 'ثلج', 'Ice')}</span></div><div className="freezer-bin"><i /><span>{text(language, 'جاهز', 'Ready')}</span></div></div>
         </div>
       </div>
     </div>
-    <div className="fridge-foot"><span>تبريد ذكي</span><b>تعمل بكفاءة</b><i /></div>
+     <div className="fridge-foot"><span>{text(language, 'تبريد ذكي', 'Smart cooling')}</span><b>{text(language, 'تعمل بكفاءة', 'Running efficiently')}</b><i /></div>
   </div>;
 }
 
@@ -570,11 +571,11 @@ function Dashboard({ userName, userGender, data, setData, onAdd, setNotice }: { 
        </div>
         <LanguageSwitcher />
     </div>
-     <div className="reference-heading"><div><span className="eyebrow">مساحتي اليومية</span><h2>محتويات ثلاجتك</h2></div><span className="date-chip" data-testid="text-current-date">{formatArabicDate()}</span></div>
+      <div className="reference-heading"><div><span className="eyebrow">{text(language, 'مساحتي اليومية', 'My daily space')}</span><h2>{text(language, 'محتويات ثلاجتك', 'Your fridge contents')}</h2></div><span className="date-chip" data-testid="text-current-date">{formatArabicDate()}</span></div>
     <div className="reference-dashboard">
       <section className="reference-fridge"><FridgeVisual items={data.items} selected={selected} onSelect={item => setSelectedId(item.id)} /></section>
       <aside className="reference-rail">
-         <div className="item-detail-panel card card-pad"><div className="rail-title"><span>تفاصيل العنصر</span><button className="detail-close" aria-label="إغلاق التفاصيل"><X size={15} /></button></div>{selected ? <><div className="detail-hero" key={selected.id}><FoodArt item={selected} size={108} /><h3>{selected.name}</h3><span>{toWesternNums(selected.quantity)} {selected.unit}</span></div><div className="detail-stats"><div><small>تاريخ الانتهاء</small><strong>{toWesternNums(new Date(selected.expiry).toLocaleDateString('ar-SA'))}</strong></div><div><small>إجمالي السعرات</small><strong>{toWesternNums(selected.calories * selected.quantity)} سعرة</strong></div><div><small>السعرات للوحدة</small><strong>{toWesternNums(selected.calories)} سعرة</strong></div></div><div className="detail-actions"><button className="secondary-btn" onClick={editSelected} data-testid="button-edit-selected"><Pencil size={15} />تعديل</button><button className="primary-btn" onClick={consume} data-testid="button-consume-food"><Check size={16} />استهلكت</button><button className="icon-btn" onClick={onAdd} data-testid="button-add-related"><Plus size={17} /> <span>إضافة</span></button></div></> : <div className="empty-state">الثلاجة فارغة</div>}</div>
+         <div className="item-detail-panel card card-pad"><div className="rail-title"><span>{text(language, 'تفاصيل العنصر', 'Item details')}</span><button className="detail-close" aria-label={text(language, 'إغلاق التفاصيل', 'Close details')}><X size={15} /></button></div>{selected ? <><div className="detail-hero" key={selected.id}><FoodArt item={selected} size={108} /><h3>{language === 'en' ? getEnglishName(selected.name) : selected.name}</h3><span>{toWesternNums(selected.quantity)} {language === 'en' ? 'units' : selected.unit}</span></div><div className="detail-stats"><div><small>{text(language, 'تاريخ الانتهاء', 'Expiry date')}</small><strong>{toWesternNums(new Date(selected.expiry).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US'))}</strong></div><div><small>{text(language, 'إجمالي السعرات', 'Total calories')}</small><strong>{toWesternNums(selected.calories * selected.quantity)} {text(language, 'سعرة', 'kcal')}</strong></div><div><small>{text(language, 'السعرات للوحدة', 'Calories per unit')}</small><strong>{toWesternNums(selected.calories)} {text(language, 'سعرة', 'kcal')}</strong></div></div><div className="detail-actions"><button className="secondary-btn" onClick={editSelected} data-testid="button-edit-selected"><Pencil size={15} />{text(language, 'تعديل', 'Edit')}</button><button className="primary-btn" onClick={consume} data-testid="button-consume-food"><Check size={16} />{text(language, 'استهلكت', 'Consumed')}</button><button className="icon-btn" onClick={onAdd} data-testid="button-add-related"><Plus size={17} /> <span>{text(language, 'إضافة', 'Add')}</span></button></div></> : <div className="empty-state">{text(language, 'الثلاجة فارغة', 'The fridge is empty')}</div>}</div>
        <div className="shopping-panel card card-pad"><div className="rail-title"><span><ShoppingBasket size={17} /> قائمة التسوق <b>{toWesternNums(data.shopping.filter(item => !item.done).length)}</b></span><Link href="/shopping"><ChevronLeft size={16} /></Link></div><ShoppingPreview data={data} setData={setData} /><Link href="/shopping" className="export-list"><ClipboardCopy size={15} /> تصدير القائمة</Link></div>
       </aside>
     </div>
