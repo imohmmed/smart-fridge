@@ -381,7 +381,6 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
       </nav>
       <div className="sidebar-footer">
          <Link href="/settings" className={`nav-item ${location === '/settings' ? 'active' : ''}`} data-testid="link-nav-settings"><Settings size={18} /><span className="nav-label">{text(language, 'الإعدادات', 'Settings')}</span></Link>
-         <LanguageSwitcher />
         <div className="profile-mini"><div className="avatar">{initials(user.name)}</div><div><strong>{user.name}</strong><span>مساحتي الشخصية</span></div></div>
         <button className="logout-btn" onClick={onLogout} data-testid="button-logout"><LogOut size={15} /><span>تسجيل الخروج</span></button>
       </div>
@@ -524,6 +523,7 @@ function Dashboard({ userName, userGender, data, setData, onAdd, setNotice }: { 
            {notifications.length ? notifications.map(item => <div className={`notification-item notification-${item.type}`} key={item.id}><span className="notification-icon" aria-hidden="true">{item.icon}</span><div><strong>{item.title}</strong><p>{item.message}</p><small>{item.time}</small></div></div>) : <div className="notification-empty">لا توجد إشعارات جديدة 🎉</div>}
          </div>}
        </div>
+        <LanguageSwitcher />
     </div>
      <div className="reference-heading"><div><span className="eyebrow">مساحتي اليومية</span><h2>محتويات ثلاجتك</h2></div><span className="date-chip" data-testid="text-current-date">{formatArabicDate()}</span></div>
     <div className="reference-dashboard">
