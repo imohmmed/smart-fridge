@@ -186,14 +186,14 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
   return <main className="auth-shell auth-redesign">
     <section className="auth-art auth-visual-panel">
       <div className="auth-visual-inner">
-        <div className="visual-topline"><span><i className="live-dot" /> نظام ثلاجتي الذكي</span><small>SMART / FRESH SYSTEM</small></div>
+        <div className="visual-topline"><span><i className="live-dot" /> نظام ثلاجتي الذكي</span></div>
         <div className="auth-visual-content">
           <div className="fridge-stage" aria-label="رسم توضيحي لثلاجة ذكية">
             <div className="fridge-halo" />
             <div className="smart-fridge-illustration">
               <div className="fridge-top-cap" />
               <div className="fridge-freezer">
-                <span className="fridge-display"><b>4°</b><small>FRESH</small></span>
+                 <span className="fridge-display"><b>4°</b><small>طازج</small></span>
                 <span className="fridge-handle handle-freezer" />
               </div>
               <div className="fridge-fresh">
@@ -210,14 +210,13 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
             <span className="stage-shadow" />
           </div>
           <div className="auth-copy">
-            <div className="brand auth-brand"><div className="brand-mark"><Refrigerator size={22} /></div><div><h1>ثلاجتي</h1><small>رفيق البيت الطازج</small></div></div>
             <div className="copy-kicker"><Sparkles size={14} /> طازج، مرتب، على طريقتك</div>
-            <h2>Smart today,<br /><em>fresh tomorrow</em></h2>
+             <h2>ثلاجتك الذكية..<br /><em>طعامك دائماً طازج</em></h2>
             <p>إدارة ذكية لمحتويات ثلاجتك، للحفاظ على طعامك طازجًا وحياتك أسهل.</p>
             <div className="auth-benefits">
-              <div className="benefit-item"><span><Leaf size={17} /></span><div><strong>Fresh Tracking</strong><small>تتبّع الصلاحية والطزاجة</small></div></div>
-              <div className="benefit-item"><span><ShoppingBasket size={17} /></span><div><strong>Smart Shopping</strong><small>قائمة تسوق أذكى وأسرع</small></div></div>
-              <div className="benefit-item"><span><Bell size={17} /></span><div><strong>Instant Alerts</strong><small>تنبيهات قبل انتهاء الطعام</small></div></div>
+               <div className="benefit-item"><span><Leaf size={17} /></span><div><strong>تتبع ذكي للمحتويات والصلاحية</strong></div></div>
+               <div className="benefit-item"><span><ShoppingBasket size={17} /></span><div><strong>قائمة تسوق أذكى وأسرع</strong></div></div>
+               <div className="benefit-item"><span><Bell size={17} /></span><div><strong>تنبيهات انتهاء صلاحية الطعام</strong></div></div>
             </div>
           </div>
         </div>
@@ -227,7 +226,6 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
     <section className="auth-form-wrap">
       <form className="auth-form auth-card" onSubmit={submit}>
         <div className="language-switcher" aria-label="اختيار اللغة"><Globe2 size={15} /><button type="button" className={language === 'ar' ? 'active' : ''} onClick={() => setLanguage('ar')} aria-pressed={language === 'ar'}>العربية</button><span>/</span><button type="button" className={language === 'en' ? 'active' : ''} onClick={() => setLanguage('en')} aria-pressed={language === 'en'}>English</button></div>
-        <div className="auth-card-logo"><div className="brand-mark"><Refrigerator size={20} /></div><span>ثلاجتي الذكية</span></div>
         <div className="auth-card-heading"><h2>{mode === 'login' ? 'أهلاً بعودتك' : 'لنبدأ معاً'}</h2><p>{mode === 'login' ? 'سجّلي الدخول إلى مساحتك الطازجة.' : 'أنشئي مساحتك الخاصة في دقائق.'}</p></div>
         <div className="auth-tabs"><button type="button" className={`auth-tab ${mode === 'login' ? 'active' : ''}`} onClick={() => { setMode('login'); setError(''); }} data-testid="tab-login">تسجيل الدخول</button><button type="button" className={`auth-tab ${mode === 'register' ? 'active' : ''}`} onClick={() => { setMode('register'); setError(''); }} data-testid="tab-register">حساب جديد</button></div>
         {mode === 'register' && <div className="field auth-field"><label htmlFor="auth-name">الاسم</label><input id="auth-name" data-testid="input-auth-name" value={name} onChange={e => setName(e.target.value)} placeholder="مثال: سارة" /></div>}
