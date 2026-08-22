@@ -303,7 +303,8 @@ function FoodArt({ item, size = 40 }: { item?: FridgeItem; size?: number }) {
 
 function LanguageSwitcher() {
   const { language, setLanguage } = useLanguage();
-  return <div className="language-switcher" aria-label={text(language, 'اختيار اللغة', 'Choose language')}><Globe2 size={16} /><button type="button" className={language === 'ar' ? 'active' : ''} onClick={() => setLanguage('ar')} aria-pressed={language === 'ar'}>العربية</button><span>/</span><button type="button" className={language === 'en' ? 'active' : ''} onClick={() => setLanguage('en')} aria-pressed={language === 'en'}>English</button></div>;
+  const next = language === 'ar' ? 'en' : 'ar';
+  return <div className="language-switcher" aria-label={text(language, 'تغيير اللغة إلى الإنجليزية', 'Switch language to Arabic')}><Globe2 size={16} /><button type="button" onClick={() => setLanguage(next)} aria-label={text(language, 'English', 'العربية')}>{text(language, 'English', 'العربية')}</button></div>;
 }
 
 function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
