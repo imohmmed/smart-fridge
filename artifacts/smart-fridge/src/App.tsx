@@ -1,4 +1,4 @@
-import { type CSSProperties, type Dispatch, type FormEvent, type ReactNode, type SetStateAction, useEffect, useState } from 'react';
+import { createContext, useContext, type CSSProperties, type Dispatch, type FormEvent, type ReactNode, type SetStateAction, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
@@ -31,6 +31,10 @@ type UserData = {
 };
 type Recipe = { id: string; name: string; description: string; time: string; calories: number; color: string; tags: string[] };
 type AppNotification = { id: string; type: 'danger' | 'warning' | 'success' | 'info'; icon: string; title: string; message: string; time: string };
+type Language = 'ar' | 'en';
+const LanguageContext = createContext<{ language: Language; setLanguage: (language: Language) => void }>({ language: 'ar', setLanguage: () => undefined });
+const useLanguage = () => useContext(LanguageContext);
+const text = (language: Language, ar: string, en: string) => language === 'ar' ? ar : en;
 
 const queryClient = new QueryClient();
 const USERS_KEY = 'smart_fridge_users';
@@ -243,6 +247,11 @@ function FoodArt({ item, size = 40 }: { item?: FridgeItem; size?: number }) {
   return <div className="food-art" style={{ ...style, width: size, height: size }}><TransparentFoodImage src={photo} alt="" width={size * 1.5} height={size * 1.5} /><span className="food-emoji" aria-hidden="true">{emoji}</span></div>;
 }
 
+function LanguageSwitcher() {
+  const { language, setLanguage } = useLanguage();
+  return <div className="language-switcher" aria-label={text(language, 'اختيار اللغة', 'Choose language')}><Globe2 size={16} /><button type="button" className={language === 'ar' ? 'active' : ''} onClick={() => setLanguage('ar')} aria-pressed={language === 'ar'}>العربية</button><span>/</span><button type="button" className={language === 'en' ? 'active' : ''} onClick={() => setLanguage('en')} aria-pressed={language === 'en'}>English</button></div>;
+}
+
 function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [name, setName] = useState('');
@@ -252,7 +261,7 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(() => localStorage.getItem('smart_fridge_remember') === 'true');
-  const [language, setLanguage] = useState<'ar' | 'en'>('ar');
+  const { language } = useLanguage();
   const submit = (event: FormEvent) => {
     event.preventDefault(); setError('');
     const users: User[] = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
