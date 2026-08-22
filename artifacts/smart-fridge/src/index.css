@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
@@ -1748,6 +1749,64 @@ textarea:focus-visible, [tabindex]:focus-visible {
 }
 @media (min-width: 1440px) {
   .app-shell { max-width: 1400px; margin: 0 auto; }
+}
+
+/* Reference-inspired polish: quiet cream canvas, clearer type, left-aligned icons. */
+body {
+  font-family: 'Noto Sans Arabic', 'Noto Naskh Arabic', sans-serif;
+  font-size: 16px;
+}
+.nav-item {
+  direction: ltr;
+  text-align: left;
+  font-size: 15px;
+}
+.nav-item .nav-label {
+  direction: rtl;
+  text-align: right;
+}
+.sidebar .language-switcher {
+  justify-content: center;
+  margin: 2px 0 4px;
+  padding: 8px 10px;
+  border: 1px solid rgba(74,124,89,.18);
+  border-radius: 12px;
+  background: rgba(255,255,255,.28);
+}
+.language-switcher button {
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 2px 4px;
+  font-size: 13px;
+}
+.language-switcher button.active {
+  color: var(--green-text);
+  font-weight: 800;
+}
+.language-switcher span { color: var(--text-muted); }
+.page-heading h2 { font-size: clamp(30px, 4vw, 46px); }
+.card-title h3, .recipe-body h3, .data-row strong { font-size: 1.05em; }
+
+html[dir="ltr"] body { direction: ltr; text-align: left; }
+html[dir="ltr"] .app-main { direction: ltr; text-align: left; }
+html[dir="ltr"] .sidebar { direction: ltr; text-align: left; }
+html[dir="ltr"] .sidebar .brand-copy,
+html[dir="ltr"] .sidebar .nav-label,
+html[dir="ltr"] .sidebar .profile-mini { direction: ltr; text-align: left; }
+html[dir="ltr"] .nav-item { direction: ltr; }
+html[dir="ltr"] .nav-item .nav-label { direction: ltr; text-align: left; }
+html[dir="ltr"] .page-heading,
+html[dir="ltr"] .dashboard-greeting,
+html[dir="ltr"] .card-title,
+html[dir="ltr"] .setting-line { text-align: left; }
+html[dir="ltr"] button, html[dir="ltr"] input, html[dir="ltr"] select, html[dir="ltr"] textarea { direction: ltr; }
+html[dir="ltr"] .language-switcher { direction: ltr; }
+
+@media (max-width: 768px) {
+  .sidebar .language-switcher { margin: 0; padding: 5px 7px; }
+  .sidebar .language-switcher button { font-size: 12px; }
 }
 
 /* Login page: Arabic-first forest-green presentation */
