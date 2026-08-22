@@ -488,6 +488,47 @@ button:active, .nav-item:active, .icon-btn:active, .secondary-btn:active { box-s
 .mini-ring strong { position: relative; z-index: 1; font-size: 11px; }
 .mini-ring.small { width: 50px; height: 50px; margin-right: auto; }
 .topbar-bell { width: 39px; height: 39px; border: 0; background: transparent; color: hsl(var(--foreground)); }
+.notification-wrap { position: relative; }
+.notification-count {
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #E74C3C;
+  color: #fff;
+  font: 700 11px/1 Arial, sans-serif;
+}
+.notification-dropdown {
+  position: absolute;
+  z-index: 30;
+  top: 48px;
+  left: 0;
+  width: min(360px, calc(100vw - 28px));
+  max-height: min(520px, 70vh);
+  overflow-y: auto;
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--bg-card);
+  box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+  direction: rtl;
+}
+.notification-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--shadow-dark); }
+.notification-head .link-btn { min-height: 32px; padding: 4px 6px; font-size: 12px; }
+.notification-item { display: flex; gap: 10px; margin-top: 10px; padding: 10px; border-right: 4px solid; border-radius: 9px; background: rgba(255,255,255,.42); }
+.notification-danger { border-right-color: #E74C3C; }
+.notification-warning { border-right-color: #F0C674; }
+.notification-success { border-right-color: #4A7C59; }
+.notification-info { border-right-color: #3498DB; }
+.notification-icon { font-size: 20px; line-height: 1.1; }
+.notification-item strong { font-size: 13px; }
+.notification-item p { margin: 3px 0; font-size: 12px; color: var(--text-secondary); }
+.notification-item small { font-size: 11px; color: var(--text-muted); }
+.notification-empty { padding: 28px 10px 16px; color: var(--text-secondary); text-align: center; }
 .reference-heading { display: flex; justify-content: space-between; align-items: end; gap: 15px; padding: 8px 2px 14px; }
 .reference-heading h2 { margin: 4px 0 0; font-size: clamp(24px, 2.3vw, 34px); letter-spacing: -.05em; }
 .reference-dashboard { display: grid; grid-template-columns: minmax(0, 1fr) 310px; gap: 17px; align-items: start; direction: ltr; }
