@@ -22,6 +22,20 @@ const strawberryPhoto = '/food-strawberry.png';
 const cherriesPhoto = '/food-cherries.png';
 const tomatoPhoto = '/food-tomato.png';
 const grapesPhoto = '/food-grapes.png';
+const broccoliPhoto = '/food-broccoli.png';
+const avocadoPhoto = '/food-avocado.png';
+const cornPhoto = '/food-corn.png';
+const romainePhoto = '/food-romaine.png';
+const carrotsPhoto = '/food-carrots.png';
+const redApplePhoto = '/food-red-apple.png';
+const bananasPhoto = '/food-bananas.png';
+const kiwiPhoto = '/food-kiwi.png';
+const greenApplePhoto = '/food-green-apple.png';
+const limePhoto = '/food-lime.png';
+const mandarinsPhoto = '/food-mandarins.png';
+const steakPhoto = '/food-steak.png';
+const waterBottlePhoto = '/food-water-bottle.png';
+const juiceBottlesPhoto = '/food-juice-bottles.png';
 
 type FridgeItem = {
   id: string; name: string; quantity: number; unit: string; category: string;
@@ -145,6 +159,20 @@ const defaultItems: FridgeItem[] = [
   { id: 'strawberry', name: 'فراولة', quantity: 6, unit: 'حبة', category: 'فواكه', expiry: '2025-06-04', calories: 6, art: 'strawberry' },
   { id: 'cherries', name: 'كرز', quantity: 12, unit: 'حبة', category: 'فواكه', expiry: '2025-06-04', calories: 5, art: 'cherries' },
   { id: 'grapes', name: 'عنب', quantity: 1, unit: 'عنقود', category: 'فواكه', expiry: '2025-06-05', calories: 104, art: 'grapes' },
+  { id: 'broccoli', name: 'بروكلي', quantity: 1, unit: 'قطعة', category: 'خضروات', expiry: '2025-06-06', calories: 55, art: 'broccoli' },
+  { id: 'avocado', name: 'أفوكادو', quantity: 2, unit: 'حبة', category: 'فواكه', expiry: '2025-06-07', calories: 240, art: 'avocado' },
+  { id: 'corn', name: 'ذرة', quantity: 2, unit: 'قطعة', category: 'خضروات', expiry: '2025-06-07', calories: 96, art: 'corn' },
+  { id: 'romaine', name: 'خس روماني', quantity: 1, unit: 'رأس', category: 'خضروات', expiry: '2025-06-05', calories: 17, art: 'romaine' },
+  { id: 'carrots', name: 'جزر', quantity: 4, unit: 'حبة', category: 'خضروات', expiry: '2025-06-09', calories: 25, art: 'carrots' },
+  { id: 'red-apple', name: 'تفاح أحمر', quantity: 2, unit: 'حبة', category: 'فواكه', expiry: '2025-06-08', calories: 95, art: 'red-apple' },
+  { id: 'bananas', name: 'موز', quantity: 5, unit: 'حبة', category: 'فواكه', expiry: '2025-06-08', calories: 105, art: 'bananas' },
+  { id: 'kiwi', name: 'كيوي', quantity: 3, unit: 'حبة', category: 'فواكه', expiry: '2025-06-08', calories: 42, art: 'kiwi' },
+  { id: 'green-apple', name: 'تفاح أخضر', quantity: 2, unit: 'حبة', category: 'فواكه', expiry: '2025-06-09', calories: 95, art: 'green-apple' },
+  { id: 'lime', name: 'ليمون أخضر', quantity: 3, unit: 'حبة', category: 'فواكه', expiry: '2025-06-10', calories: 20, art: 'lime' },
+  { id: 'mandarins', name: 'يوسفي', quantity: 4, unit: 'حبة', category: 'فواكه', expiry: '2025-06-07', calories: 47, art: 'mandarins' },
+  { id: 'steak', name: 'ستيك لحم', quantity: 2, unit: 'قطعة', category: 'لحوم', expiry: '2025-06-03', calories: 271, art: 'steak' },
+  { id: 'water-bottle', name: 'زجاجة ماء', quantity: 3, unit: 'عبوة', category: 'مشروبات', expiry: '2025-12-31', calories: 0, art: 'water-bottle' },
+  { id: 'juice-bottles', name: 'زجاجات عصير', quantity: 2, unit: 'عبوة', category: 'مشروبات', expiry: '2025-06-12', calories: 110, art: 'juice-bottles' },
 ];
 const defaultData: UserData = {
   items: defaultItems, shopping: [
@@ -216,6 +244,9 @@ const translateToEnglish: Record<string, string> = {
   'زبادي': 'Yogurt', 'لبن': 'Yogurt', 'خبز': 'Bread', 'موزة': 'Banana',
   'زيت': 'Oil', 'ماء معدني': 'Mineral water', 'عصير': 'Juice',
   'فراولة': 'Strawberries', 'كرز': 'Cherries', 'عنب': 'Grapes',
+  'بروكلي': 'Broccoli', 'أفوكادو': 'Avocado', 'ذرة': 'Corn', 'خس روماني': 'Romaine lettuce',
+  'جزر': 'Carrots', 'تفاح أخضر': 'Green apples', 'كيوي': 'Kiwi', 'ليمون أخضر': 'Limes',
+  'يوسفي': 'Mandarins', 'ستيك لحم': 'Beef steak', 'زجاجة ماء': 'Water bottle', 'زجاجات عصير': 'Juice bottles',
   حمص: 'hummus', فلافل: 'falafel', شاورما: 'shawarma', سلطة: 'salad', 'شوربة دجاج': 'chicken soup',
   مندي: 'mandi rice', كبسة: 'kabsa', 'دجاج مشوي': 'grilled chicken', 'سمك مشوي': 'grilled fish',
   معكرونة: 'pasta', أرز: 'rice', رز: 'rice', برياني: 'biryani', تبولة: 'tabbouleh',
@@ -355,11 +386,16 @@ function getFoodEmoji(foodName: string) {
 
 function FoodArt({ item, size = 40 }: { item?: FridgeItem; size?: number }) {
   const art = item?.art || 'apple';
-  const photo = art === 'strawberry' ? strawberryPhoto : art === 'cherries' ? cherriesPhoto : art === 'grapes' ? grapesPhoto
+  const photo = art === 'broccoli' ? broccoliPhoto : art === 'avocado' ? avocadoPhoto : art === 'corn' ? cornPhoto
+    : art === 'romaine' ? romainePhoto : art === 'carrots' ? carrotsPhoto : art === 'red-apple' ? redApplePhoto
+    : art === 'bananas' ? bananasPhoto : art === 'kiwi' ? kiwiPhoto : art === 'green-apple' ? greenApplePhoto
+    : art === 'lime' ? limePhoto : art === 'mandarins' ? mandarinsPhoto : art === 'steak' ? steakPhoto
+    : art === 'water-bottle' ? waterBottlePhoto : art === 'juice-bottles' ? juiceBottlesPhoto
+    : art === 'strawberry' ? strawberryPhoto : art === 'cherries' ? cherriesPhoto : art === 'grapes' ? grapesPhoto
     : art === 'tomato' ? tomatoPhoto : art === 'milk' ? milkPhoto : art === 'egg' ? eggsPhoto : art === 'chicken' ? proteinPhoto
     : art === 'leaf' ? vegetablesPhoto : art === 'apple' || art === 'orange' ? fruitPhoto
     : art === 'cheese' ? cheesePhoto : art === 'hummus' ? cheesePhoto : art === 'package' ? milkPhoto : freezerPhoto;
-  const emoji = art === 'strawberry' ? '🍓' : art === 'cherries' ? '🍒' : art === 'grapes' ? '🍇' : art === 'milk' ? '🥛' : art === 'egg' ? '🥚' : art === 'cheese' ? '🧀' : art === 'apple' ? '🍎'
+  const emoji = art === 'broccoli' ? '🥦' : art === 'avocado' ? '🥑' : art === 'corn' ? '🌽' : art === 'romaine' ? '🥬' : art === 'carrots' ? '🥕' : art === 'strawberry' ? '🍓' : art === 'cherries' ? '🍒' : art === 'grapes' ? '🍇' : art === 'bananas' ? '🍌' : art === 'kiwi' ? '🥝' : art === 'lime' ? '🍋' : art === 'mandarins' ? '🍊' : art === 'steak' ? '🥩' : art === 'water-bottle' ? '💧' : art === 'juice-bottles' ? '🧃' : art === 'milk' ? '🥛' : art === 'egg' ? '🥚' : art === 'cheese' ? '🧀' : art === 'apple' ? '🍎'
     : art === 'orange' ? '🍊' : art === 'leaf' ? '🥦' : art === 'tomato' ? '🍅' : art === 'chicken' ? '🍗'
     : art === 'hummus' ? '🥫' : art === 'package' ? '🧃' : '🥕';
   const style = art === 'apple' ? { color: 'hsl(6 58% 48%)' }
