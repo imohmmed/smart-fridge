@@ -223,6 +223,17 @@ function getEnglishName(arabicName: string) {
 function displayFoodName(name: string, language: Language) {
   return language === 'en' ? getEnglishName(name) : name;
 }
+function displayShoppingQuantity(quantity: string, language: Language) {
+  if (language === 'ar') return quantity;
+  return quantity
+    .replaceAll('حبات', 'items')
+    .replaceAll('حبة', 'item')
+    .replaceAll('علبة', 'box')
+    .replaceAll('كيس', 'bag')
+    .replaceAll('قطعة', 'piece')
+    .replaceAll('رأس', 'head')
+    .replaceAll('عبوة', 'bottle');
+}
 async function getFoodImage(foodName: string): Promise<string | null> {
   const cacheKey = 'smart_fridge_source_unsplash_images_v2';
   let cache: Record<string, string | null> = {};
@@ -428,7 +439,7 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
             </div>
           </div>
         </div>
-        <div className="visual-footer"><span><LockKeyhole size={13} /> بياناتك محفوظة على هذا الجهاز</span><span>ثلاجتك، بإيقاع يومك</span></div>
+         <div className="visual-footer"><span><LockKeyhole size={13} /> {text(language, 'بياناتك محفوظة على هذا الجهاز', 'Your data is saved on this device')}</span><span>{text(language, 'ثلاجتك، بإيقاع يومك', 'Your fridge, your rhythm')}</span></div>
       </div>
     </section>
     <section className="auth-form-wrap">
@@ -621,15 +632,15 @@ function Dashboard({ userName, userGender, data, setData, onAdd, setNotice }: { 
       <section className="reference-fridge"><FridgeVisual items={data.items} selected={selected} onSelect={item => setSelectedId(item.id)} /></section>
       <aside className="reference-rail">
          <div className="item-detail-panel card card-pad"><div className="rail-title"><span>{text(language, 'تفاصيل العنصر', 'Item details')}</span><button className="detail-close" aria-label={text(language, 'إغلاق التفاصيل', 'Close details')}><X size={15} /></button></div>{selected ? <><div className="detail-hero" key={selected.id}><FoodArt item={selected} size={108} /><h3>{displayFoodName(selected.name, language)}</h3><span>{toWesternNums(selected.quantity)} {language === 'en' ? 'units' : selected.unit}</span></div><div className="detail-stats"><div><small>{text(language, 'تاريخ الانتهاء', 'Expiry date')}</small><strong>{toWesternNums(new Date(selected.expiry).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US'))}</strong></div><div><small>{text(language, 'إجمالي السعرات', 'Total calories')}</small><strong>{toWesternNums(selected.calories * selected.quantity)} {text(language, 'سعرة', 'kcal')}</strong></div><div><small>{text(language, 'السعرات للوحدة', 'Calories per unit')}</small><strong>{toWesternNums(selected.calories)} {text(language, 'سعرة', 'kcal')}</strong></div></div><div className="detail-actions"><button className="secondary-btn" onClick={editSelected} data-testid="button-edit-selected"><Pencil size={15} />{text(language, 'تعديل', 'Edit')}</button><button className="primary-btn" onClick={consume} data-testid="button-consume-food"><Check size={16} />{text(language, 'استهلكت', 'Consumed')}</button><button className="icon-btn" onClick={onAdd} data-testid="button-add-related"><Plus size={17} /> <span>{text(language, 'إضافة', 'Add')}</span></button></div></> : <div className="empty-state">{text(language, 'الثلاجة فارغة', 'The fridge is empty')}</div>}</div>
-       <div className="shopping-panel card card-pad"><div className="rail-title"><span><ShoppingBasket size={17} /> قائمة التسوق <b>{toWesternNums(data.shopping.filter(item => !item.done).length)}</b></span><Link href="/shopping"><ChevronLeft size={16} /></Link></div><ShoppingPreview data={data} setData={setData} /><Link href="/shopping" className="export-list"><ClipboardCopy size={15} /> تصدير القائمة</Link></div>
+         <div className="shopping-panel card card-pad"><div className="rail-title"><span><ShoppingBasket size={17} /> {text(language, 'قائمة التسوق', 'Shopping list')} <b>{toWesternNums(data.shopping.filter(item => !item.done).length)}</b></span><Link href="/shopping"><ChevronLeft size={16} /></Link></div><ShoppingPreview data={data} setData={setData} /><Link href="/shopping" className="export-list"><ClipboardCopy size={15} /> {text(language, 'تصدير القائمة', 'Export list')}</Link></div>
       </aside>
     </div>
        <div className="dashboard-footer">
-       <div className="footer-stat water-stat"><Droplets size={25} /><div><small>اشرب الماء</small><strong>{toWesternNums(data.water)} / 8 أكواب</strong><div className="footer-progress"><i style={{ width: `${data.water / 8 * 100}%` }} /></div></div></div>
-       <div className="footer-stat"><Flame size={24} /><div><small>السعرات المتبقية</small><strong>{toWesternNums(Math.max(0, data.calorieGoal - totalCalories).toLocaleString('en-US'))} سعرة</strong></div><div className="mini-ring small" style={{ '--ring-progress': `${percentage}%` } as CSSProperties}><strong>{toWesternNums(percentage)}%</strong></div></div>
-      <div className="macro-stat"><small>توزيع المغذيات</small><div className="macro-lines"><span><i className="macro-protein" />بروتين <b>35%</b></span><span><i className="macro-carb" />كربوهيدرات <b>40%</b></span><span><i className="macro-fat" />دهون <b>25%</b></span></div></div>
-      <div className="health-tip"><Leaf size={20} /><div><small>نصيحة اليوم</small><strong>تناول الخضروات في كل وجبة<br />للحصول على صحة أفضل.</strong></div></div>
-      <button className="floating-add" onClick={onAdd} data-testid="button-add-food-dashboard"><Plus size={26} /><span>أضف طعاماً جديداً</span></button>
+       <div className="footer-stat water-stat"><Droplets size={25} /><div><small>{text(language, 'اشرب الماء', 'Drink water')}</small><strong>{toWesternNums(data.water)} / 8 {text(language, 'أكواب', 'cups')}</strong><div className="footer-progress"><i style={{ width: `${data.water / 8 * 100}%` }} /></div></div></div>
+       <div className="footer-stat"><Flame size={24} /><div><small>{text(language, 'السعرات المتبقية', 'Calories remaining')}</small><strong>{toWesternNums(Math.max(0, data.calorieGoal - totalCalories).toLocaleString('en-US'))} {text(language, 'سعرة', 'kcal')}</strong></div><div className="mini-ring small" style={{ '--ring-progress': `${percentage}%` } as CSSProperties}><strong>{toWesternNums(percentage)}%</strong></div></div>
+      <div className="macro-stat"><small>{text(language, 'توزيع المغذيات', 'Nutrients')}</small><div className="macro-lines"><span><i className="macro-protein" />{text(language, 'بروتين', 'Protein')} <b>35%</b></span><span><i className="macro-carb" />{text(language, 'كربوهيدرات', 'Carbohydrates')} <b>40%</b></span><span><i className="macro-fat" />{text(language, 'دهون صحية', 'Healthy fats')} <b>25%</b></span></div></div>
+      <div className="health-tip"><Leaf size={20} /><div><small>{text(language, 'نصيحة اليوم', 'Tip of the day')}</small><strong>{text(language, 'تناول الخضروات في كل وجبة', 'Eat vegetables with every meal')}<br />{text(language, 'للحصول على صحة أفضل.', 'for better health.')}</strong></div></div>
+      <button className="floating-add" onClick={onAdd} data-testid="button-add-food-dashboard"><Plus size={26} /><span>{text(language, 'أضف طعاماً جديداً', 'Add new food')}</span></button>
     </div>
   </main>;
 }
@@ -637,7 +648,7 @@ function Dashboard({ userName, userGender, data, setData, onAdd, setNotice }: { 
 function ShoppingPreview({ data, setData }: { data: UserData; setData: Dispatch<SetStateAction<UserData>> }) {
   const { language } = useLanguage();
   const visible = data.shopping.slice(0, 4);
-  return <div className="shopping-list">{visible.length ? visible.map(item => <div className={`shopping-item ${item.done ? 'done' : ''}`} key={item.id}><input type="checkbox" checked={item.done} onChange={() => setData(prev => ({ ...prev, shopping: prev.shopping.map(row => row.id === item.id ? { ...row, done: !row.done } : row) }))} data-testid={`checkbox-shopping-${item.id}`} /><label>{displayFoodName(item.name, language)}</label><span className="item-quantity">{item.quantity}</span></div>) : <div className="empty-state" style={{ padding: 20 }}><ShoppingBasket size={23} /><strong>قائمتك فارغة</strong><span>أضف ما ينقصك.</span></div>}</div>;
+  return <div className="shopping-list">{visible.length ? visible.map(item => <div className={`shopping-item ${item.done ? 'done' : ''}`} key={item.id}><input type="checkbox" checked={item.done} onChange={() => setData(prev => ({ ...prev, shopping: prev.shopping.map(row => row.id === item.id ? { ...row, done: !row.done } : row) }))} data-testid={`checkbox-shopping-${item.id}`} /><label>{displayFoodName(item.name, language)}</label><span className="item-quantity">{displayShoppingQuantity(item.quantity, language)}</span></div>) : <div className="empty-state" style={{ padding: 20 }}><ShoppingBasket size={23} /><strong>{text(language, 'قائمتك فارغة', 'Your list is empty')}</strong><span>{text(language, 'أضف ما ينقصك.', 'Add what is missing.')}</span></div>}</div>;
 }
 
 function RecipeCard({ recipe, favorite, onFavorite, compact = false }: { recipe: Recipe; favorite: boolean; onFavorite: () => void; compact?: boolean }) {
