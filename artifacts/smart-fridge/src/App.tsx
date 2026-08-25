@@ -18,6 +18,10 @@ import vegetablesPhoto from '@assets/generated_images/fridge-vegetables.png';
 import fruitPhoto from '@assets/generated_images/fridge-fruit.png';
 import cheesePhoto from '@assets/generated_images/fridge-cheese.png';
 import freezerPhoto from '@assets/generated_images/fridge-freezer.png';
+const strawberryPhoto = '/food-strawberry.png';
+const cherriesPhoto = '/food-cherries.png';
+const tomatoPhoto = '/food-tomato.png';
+const grapesPhoto = '/food-grapes.png';
 
 type FridgeItem = {
   id: string; name: string; quantity: number; unit: string; category: string;
@@ -138,6 +142,9 @@ const defaultItems: FridgeItem[] = [
   { id: 'hummus', name: 'حمص جاهز', quantity: 1, unit: 'علبة', category: 'جاهز', expiry: '2025-06-06', calories: 166, art: 'hummus' },
   { id: 'orange-juice', name: 'عصير برتقال', quantity: 1, unit: 'عبوة', category: 'مشروبات', expiry: '2025-06-08', calories: 110, art: 'orange' },
   { id: 'water', name: 'ماء', quantity: 4, unit: 'عبوة', category: 'مشروبات', expiry: '2025-12-31', calories: 0, art: 'bottle' },
+  { id: 'strawberry', name: 'فراولة', quantity: 6, unit: 'حبة', category: 'فواكه', expiry: '2025-06-04', calories: 6, art: 'strawberry' },
+  { id: 'cherries', name: 'كرز', quantity: 12, unit: 'حبة', category: 'فواكه', expiry: '2025-06-04', calories: 5, art: 'cherries' },
+  { id: 'grapes', name: 'عنب', quantity: 1, unit: 'عنقود', category: 'فواكه', expiry: '2025-06-05', calories: 104, art: 'grapes' },
 ];
 const defaultData: UserData = {
   items: defaultItems, shopping: [
@@ -265,7 +272,10 @@ function RemoteFoodImage({ foodName, alt }: { foodName: string; alt: string }) {
 function loadData(userId: string): UserData {
   try {
     const stored = JSON.parse(localStorage.getItem(DATA_KEY) || '{}');
-    return stored[userId] ? { ...defaultData, ...stored[userId] } : { ...defaultData, items: defaultItems.map(item => ({ ...item })) };
+    if (!stored[userId]) return { ...defaultData, items: defaultItems.map(item => ({ ...item })) };
+    const saved = stored[userId] as UserData;
+    const savedIds = new Set((saved.items || []).map(item => item.id));
+    return { ...defaultData, ...saved, items: [...(saved.items || []), ...defaultItems.filter(item => !savedIds.has(item.id)).map(item => ({ ...item }))] };
   } catch { return { ...defaultData, items: defaultItems.map(item => ({ ...item })) }; }
 }
 function saveData(userId: string, data: UserData) {
@@ -343,10 +353,11 @@ function getFoodEmoji(foodName: string) {
 
 function FoodArt({ item, size = 40 }: { item?: FridgeItem; size?: number }) {
   const art = item?.art || 'apple';
-  const photo = art === 'milk' ? milkPhoto : art === 'egg' ? eggsPhoto : art === 'chicken' ? proteinPhoto
-    : art === 'leaf' || art === 'tomato' ? vegetablesPhoto : art === 'apple' || art === 'orange' ? fruitPhoto
+  const photo = art === 'strawberry' ? strawberryPhoto : art === 'cherries' ? cherriesPhoto : art === 'grapes' ? grapesPhoto
+    : art === 'tomato' ? tomatoPhoto : art === 'milk' ? milkPhoto : art === 'egg' ? eggsPhoto : art === 'chicken' ? proteinPhoto
+    : art === 'leaf' ? vegetablesPhoto : art === 'apple' || art === 'orange' ? fruitPhoto
     : art === 'cheese' ? cheesePhoto : art === 'hummus' ? cheesePhoto : art === 'package' ? milkPhoto : freezerPhoto;
-  const emoji = art === 'milk' ? '🥛' : art === 'egg' ? '🥚' : art === 'cheese' ? '🧀' : art === 'apple' ? '🍎'
+  const emoji = art === 'strawberry' ? '🍓' : art === 'cherries' ? '🍒' : art === 'grapes' ? '🍇' : art === 'milk' ? '🥛' : art === 'egg' ? '🥚' : art === 'cheese' ? '🧀' : art === 'apple' ? '🍎'
     : art === 'orange' ? '🍊' : art === 'leaf' ? '🥦' : art === 'tomato' ? '🍅' : art === 'chicken' ? '🍗'
     : art === 'hummus' ? '🥫' : art === 'package' ? '🧃' : '🥕';
   const style = art === 'apple' ? { color: 'hsl(6 58% 48%)' }
