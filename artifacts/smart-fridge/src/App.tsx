@@ -452,8 +452,6 @@ const navItems = [
   { href: '/meals', ar: 'وجباتي', en: 'My meals', icon: Utensils },
   { href: '/daily-analysis', ar: 'تحليل يومي', en: 'Daily analysis', icon: Flame },
   { href: '/shopping', ar: 'قائمة التسوق', en: 'Shopping list', icon: ShoppingBasket },
-  { href: '/recipes', ar: 'وصفات مقترحة', en: 'Suggested recipes', icon: BookOpen },
-  { href: '/favorites', ar: 'المفضلة', en: 'Favorites', icon: Heart },
 ];
 
 function AppShell({ user, shoppingCount, children, onLogout }: { user: User; shoppingCount: number; children: ReactNode; onLogout: () => void }) {
