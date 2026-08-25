@@ -210,7 +210,7 @@ const translateToEnglish: Record<string, string> = {
   'زيت': 'Oil', 'ماء معدني': 'Mineral water', 'عصير': 'Juice',
   حمص: 'hummus', فلافل: 'falafel', شاورما: 'shawarma', سلطة: 'salad', 'شوربة دجاج': 'chicken soup',
   مندي: 'mandi rice', كبسة: 'kabsa', 'دجاج مشوي': 'grilled chicken', 'سمك مشوي': 'grilled fish',
-  بيض: 'eggs', معكرونة: 'pasta', أرز: 'rice', رز: 'rice', برياني: 'biryani', تبولة: 'tabbouleh',
+  معكرونة: 'pasta', أرز: 'rice', رز: 'rice', برياني: 'biryani', تبولة: 'tabbouleh',
   فتوش: 'fattoush', كباب: 'kebab', شوكولاتة: 'chocolate cake', بيتزا: 'pizza', برغر: 'burger',
   دجاج: 'chicken', 'رز ودجاج': 'rice and chicken',
 };
