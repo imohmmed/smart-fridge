@@ -1665,6 +1665,70 @@ textarea:focus-visible, [tabindex]:focus-visible {
   top: -3px;
   left: -4px;
 }
+
+/* Layered depth makes the food illustrations read as small 3D objects. */
+.food-art {
+  position: relative;
+  isolation: isolate;
+  perspective: 160px;
+  transform-style: preserve-3d;
+  filter: drop-shadow(0 5px 4px rgba(48, 74, 58, .18));
+  transition: transform .2s ease, filter .2s ease;
+}
+.food-art:hover {
+  transform: translateY(-3px) rotateY(-7deg) rotateX(3deg);
+  filter: drop-shadow(3px 8px 5px rgba(48, 74, 58, .26));
+}
+.food-art .food-photo,
+.food-art img {
+  position: relative;
+  z-index: 2;
+  transform: translateZ(12px);
+  filter: saturate(1.08) contrast(1.04) drop-shadow(2px 4px 2px rgba(40, 58, 45, .2));
+}
+.food-shadow {
+  position: absolute;
+  z-index: 1;
+  left: 12%;
+  right: 12%;
+  bottom: 2%;
+  height: 18%;
+  border-radius: 50%;
+  background: rgba(40, 58, 45, .25);
+  filter: blur(3px);
+  transform: translateZ(-8px) rotateX(62deg);
+}
+.art-milk::after,
+.art-cheese::after,
+.art-hummus::after,
+.art-package::after {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  inset: 18% 18% 20% auto;
+  width: 18%;
+  border-radius: 50%;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.7));
+  transform: translateZ(18px) rotate(-20deg);
+  pointer-events: none;
+}
+.art-egg::after,
+.art-apple::after,
+.art-orange::after,
+.art-tomato::after {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  top: 16%;
+  left: 25%;
+  width: 16%;
+  height: 13%;
+  border-radius: 50%;
+  background: rgba(255,255,255,.72);
+  filter: blur(1px);
+  transform: translateZ(20px);
+  pointer-events: none;
+}
 .theme-dark .real-fridge-cabinet .food-badge,
 .theme-dark .real-fridge-door .door-food {
   background: rgba(255, 255, 255, .8) !important;

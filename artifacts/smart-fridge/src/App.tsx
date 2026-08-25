@@ -356,7 +356,7 @@ function FoodArt({ item, size = 40 }: { item?: FridgeItem; size?: number }) {
     : art === 'chicken' ? { color: 'hsl(274 35% 48%)' }
     : art === 'egg' ? { color: 'hsl(34 52% 40%)' }
     : { color: 'hsl(196 48% 40%)' };
-  return <div className="food-art" style={{ ...style, width: size, height: size }}><TransparentFoodImage src={photo} alt="" width={size * 1.5} height={size * 1.5} /><span className="food-emoji" aria-hidden="true">{emoji}</span></div>;
+  return <div className={`food-art art-${art}`} style={{ ...style, width: size, height: size }}><span className="food-shadow" aria-hidden="true" /><TransparentFoodImage src={photo} alt="" width={size * 1.5} height={size * 1.5} /><span className="food-emoji" aria-hidden="true">{emoji}</span></div>;
 }
 
 function LanguageSwitcher() {
