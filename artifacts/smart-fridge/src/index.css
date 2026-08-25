@@ -2059,3 +2059,24 @@ html[dir="ltr"] .language-switcher { direction: ltr; }
   font-weight: 600;
 }
 .recipe-view-btn:hover { background: #3D6B4A; }
+
+/* Keep secondary labels readable on every screen size. */
+.shopping-item label,
+.shopping-item .item-quantity,
+.shopping-panel .export-list,
+.card-title p,
+.page-heading p,
+.food-badge small {
+  font-size: 14px;
+}
+.shopping-item label { line-height: 1.45; }
+@media (max-width: 700px) {
+  .shopping-item label,
+  .shopping-item .item-quantity,
+  .shopping-panel .export-list,
+  .card-title p,
+  .page-heading p,
+  .food-badge small {
+    font-size: 15px;
+  }
+}
