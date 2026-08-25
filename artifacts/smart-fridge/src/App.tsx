@@ -215,6 +215,7 @@ const translateToEnglish: Record<string, string> = {
   'بطاطا': 'Potatoes', 'بطاطس': 'Potatoes', 'جزر': 'Carrots', 'فلفل': 'Peppers',
   'زبادي': 'Yogurt', 'لبن': 'Yogurt', 'خبز': 'Bread', 'موزة': 'Banana',
   'زيت': 'Oil', 'ماء معدني': 'Mineral water', 'عصير': 'Juice',
+  'فراولة': 'Strawberries', 'كرز': 'Cherries', 'عنب': 'Grapes',
   حمص: 'hummus', فلافل: 'falafel', شاورما: 'shawarma', سلطة: 'salad', 'شوربة دجاج': 'chicken soup',
   مندي: 'mandi rice', كبسة: 'kabsa', 'دجاج مشوي': 'grilled chicken', 'سمك مشوي': 'grilled fish',
   معكرونة: 'pasta', أرز: 'rice', رز: 'rice', برياني: 'biryani', تبولة: 'tabbouleh',
@@ -240,6 +241,7 @@ function displayShoppingQuantity(quantity: string, language: Language) {
     .replaceAll('كيس', 'bag')
     .replaceAll('قطعة', 'piece')
     .replaceAll('رأس', 'head')
+    .replaceAll('عنقود', 'bunch')
     .replaceAll('عبوة', 'bottle');
 }
 async function getFoodImage(foodName: string): Promise<string | null> {
