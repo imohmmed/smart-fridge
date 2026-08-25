@@ -105,6 +105,8 @@ const defaultItems: FridgeItem[] = [
   { id: 'tomato', name: 'طماطم كرزية', quantity: 9, unit: 'حبة', category: 'خضروات', expiry: '2025-05-29', calories: 18, art: 'tomato' },
   { id: 'chicken', name: 'صدور دجاج', quantity: 2, unit: 'قطعة', category: 'لحوم', expiry: '2025-05-27', calories: 220, art: 'chicken' },
   { id: 'hummus', name: 'حمص جاهز', quantity: 1, unit: 'علبة', category: 'جاهز', expiry: '2025-06-06', calories: 166, art: 'hummus' },
+  { id: 'orange-juice', name: 'عصير برتقال', quantity: 1, unit: 'عبوة', category: 'مشروبات', expiry: '2025-06-08', calories: 110, art: 'orange' },
+  { id: 'water', name: 'ماء', quantity: 4, unit: 'عبوة', category: 'مشروبات', expiry: '2025-12-31', calories: 0, art: 'bottle' },
 ];
 const defaultData: UserData = {
   items: defaultItems, shopping: [
@@ -475,13 +477,14 @@ function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; sele
     { name: text(language, '🍗 البروتينات', '🍗 Proteins'), match: 'لحوم', tint: 'meat', note: text(language, 'طازج وجاهز', 'Fresh and ready') },
     { name: text(language, '🥗 الخضروات', '🥗 Vegetables'), match: 'خضروات', tint: 'greens', note: text(language, 'خضروات طازجة', 'Fresh vegetables') },
     { name: text(language, '🍎 الفواكه', '🍎 Fruits'), match: 'فواكه', tint: 'fruit', note: text(language, 'بارد ومنعش', 'Chilled and fresh') },
-    { name: text(language, '🥛 الألبان والمشروبات', '🥛 Dairy and drinks'), match: 'ألبان', tint: 'dairy', note: '4° C' },
+    { name: text(language, '🥛 الألبان', '🥛 Dairy'), match: 'ألبان', tint: 'dairy', note: '4° C' },
+    { name: text(language, '🧃 العصائر والمشروبات', '🧃 Juices and drinks'), match: 'مشروبات', tint: 'drinks', note: text(language, 'بارد ومنعش', 'Chilled and fresh') },
   ];
   const doorDairy = items.filter(item => item.category === 'ألبان').slice(0, 3);
   const doorDrinks = items.filter(item => ['مشروبات', 'جاهز'].includes(item.category)).slice(0, 4);
   const renderFood = (item: FridgeItem, size = 43, door = false) => <button key={item.id} className={`${door ? 'door-food' : 'food-badge'} ${selected?.id === item.id ? 'selected' : ''}`} onClick={() => onSelect(item)} aria-pressed={selected?.id === item.id} data-testid={`button-food-${door ? 'door-' : ''}${item.id}`}>
      <span className="food-visual"><FoodArt item={item} size={door ? size + 8 : size + 12} /><b className="quantity-badge">{toWesternNums(item.quantity)}</b></span>
-     <span className="food-name">{item.name}</span>
+     <span className="food-name">{language === 'en' ? getEnglishName(item.name) : item.name}</span>
       {!door && <small>{toWesternNums(item.quantity)} {language === 'en' ? 'units' : item.unit}</small>}
     {daysUntil(item.expiry) <= 2 && <i className="food-dot" />}
   </button>;
@@ -575,7 +578,7 @@ function Dashboard({ userName, userGender, data, setData, onAdd, setNotice }: { 
     <div className="reference-dashboard">
       <section className="reference-fridge"><FridgeVisual items={data.items} selected={selected} onSelect={item => setSelectedId(item.id)} /></section>
       <aside className="reference-rail">
-         <div className="item-detail-panel card card-pad"><div className="rail-title"><span>{text(language, 'تفاصيل العنصر', 'Item details')}</span><button className="detail-close" aria-label={text(language, 'إغلاق التفاصيل', 'Close details')}><X size={15} /></button></div>{selected ? <><div className="detail-hero" key={selected.id}><FoodArt item={selected} size={108} /><h3>{selected.name}</h3><span>{toWesternNums(selected.quantity)} {language === 'en' ? 'units' : selected.unit}</span></div><div className="detail-stats"><div><small>{text(language, 'تاريخ الانتهاء', 'Expiry date')}</small><strong>{toWesternNums(new Date(selected.expiry).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US'))}</strong></div><div><small>{text(language, 'إجمالي السعرات', 'Total calories')}</small><strong>{toWesternNums(selected.calories * selected.quantity)} {text(language, 'سعرة', 'kcal')}</strong></div><div><small>{text(language, 'السعرات للوحدة', 'Calories per unit')}</small><strong>{toWesternNums(selected.calories)} {text(language, 'kcal', 'kcal')}</strong></div></div><div className="detail-actions"><button className="secondary-btn" onClick={editSelected} data-testid="button-edit-selected"><Pencil size={15} />{text(language, 'تعديل', 'Edit')}</button><button className="primary-btn" onClick={consume} data-testid="button-consume-food"><Check size={16} />{text(language, 'استهلكت', 'Consumed')}</button><button className="icon-btn" onClick={onAdd} data-testid="button-add-related"><Plus size={17} /> <span>{text(language, 'إضافة', 'Add')}</span></button></div></> : <div className="empty-state">{text(language, 'الثلاجة فارغة', 'The fridge is empty')}</div>}</div>
+         <div className="item-detail-panel card card-pad"><div className="rail-title"><span>{text(language, 'تفاصيل العنصر', 'Item details')}</span><button className="detail-close" aria-label={text(language, 'إغلاق التفاصيل', 'Close details')}><X size={15} /></button></div>{selected ? <><div className="detail-hero" key={selected.id}><FoodArt item={selected} size={108} /><h3>{language === 'en' ? getEnglishName(selected.name) : selected.name}</h3><span>{toWesternNums(selected.quantity)} {language === 'en' ? 'units' : selected.unit}</span></div><div className="detail-stats"><div><small>{text(language, 'تاريخ الانتهاء', 'Expiry date')}</small><strong>{toWesternNums(new Date(selected.expiry).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US'))}</strong></div><div><small>{text(language, 'إجمالي السعرات', 'Total calories')}</small><strong>{toWesternNums(selected.calories * selected.quantity)} {text(language, 'سعرة', 'kcal')}</strong></div><div><small>{text(language, 'السعرات للوحدة', 'Calories per unit')}</small><strong>{toWesternNums(selected.calories)} {text(language, 'سعرة', 'kcal')}</strong></div></div><div className="detail-actions"><button className="secondary-btn" onClick={editSelected} data-testid="button-edit-selected"><Pencil size={15} />{text(language, 'تعديل', 'Edit')}</button><button className="primary-btn" onClick={consume} data-testid="button-consume-food"><Check size={16} />{text(language, 'استهلكت', 'Consumed')}</button><button className="icon-btn" onClick={onAdd} data-testid="button-add-related"><Plus size={17} /> <span>{text(language, 'إضافة', 'Add')}</span></button></div></> : <div className="empty-state">{text(language, 'الثلاجة فارغة', 'The fridge is empty')}</div>}</div>
        <div className="shopping-panel card card-pad"><div className="rail-title"><span><ShoppingBasket size={17} /> قائمة التسوق <b>{toWesternNums(data.shopping.filter(item => !item.done).length)}</b></span><Link href="/shopping"><ChevronLeft size={16} /></Link></div><ShoppingPreview data={data} setData={setData} /><Link href="/shopping" className="export-list"><ClipboardCopy size={15} /> تصدير القائمة</Link></div>
       </aside>
     </div>
