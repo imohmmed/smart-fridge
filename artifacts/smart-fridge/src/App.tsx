@@ -245,7 +245,7 @@ const translateToEnglish: Record<string, string> = {
   'زيت': 'Oil', 'ماء معدني': 'Mineral water', 'عصير': 'Juice',
   'فراولة': 'Strawberries', 'كرز': 'Cherries', 'عنب': 'Grapes',
   'بروكلي': 'Broccoli', 'أفوكادو': 'Avocado', 'ذرة': 'Corn', 'خس روماني': 'Romaine lettuce',
-  'جزر': 'Carrots', 'تفاح أخضر': 'Green apples', 'كيوي': 'Kiwi', 'ليمون أخضر': 'Limes',
+  'تفاح أخضر': 'Green apples', 'كيوي': 'Kiwi', 'ليمون أخضر': 'Limes',
   'يوسفي': 'Mandarins', 'ستيك لحم': 'Beef steak', 'زجاجة ماء': 'Water bottle', 'زجاجات عصير': 'Juice bottles',
   حمص: 'hummus', فلافل: 'falafel', شاورما: 'shawarma', سلطة: 'salad', 'شوربة دجاج': 'chicken soup',
   مندي: 'mandi rice', كبسة: 'kabsa', 'دجاج مشوي': 'grilled chicken', 'سمك مشوي': 'grilled fish',
