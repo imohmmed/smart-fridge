@@ -66,12 +66,12 @@ const englishTranslations: Record<string, string> = {
   'جذور وبطاطا': 'Roots and potatoes', 'أصناف': 'items', 'لحوم': 'Meat', 'ثلج': 'Ice', 'جاهز': 'Ready',
   'أكمل هدفك!': 'Goal reached!', 'تذكير انتهاء الصلاحية': 'Expiry reminder', 'قبل يومين من انتهاء الطعام': 'Two days before food expires',
   'ملخص نهاية اليوم': 'End-of-day summary', 'لمحة عن الماء والسعرات': 'A look at water and calories',
-  'الاسم': 'Name', 'هدف السعرات اليومي': 'Daily calorie goal', 'الرقم الذي يساعدك على توازن يومك': 'The number that helps balance your day',
+  'هدف السعرات اليومي': 'Daily calorie goal', 'الرقم الذي يساعدك على توازن يومك': 'The number that helps balance your day',
   'وحدات القياس': 'Measurement units', 'السعرات والكميات تظهر بالعربية': 'Calories and quantities appear in Arabic',
   'بعض اللمسات الصغيرة لمساحتك': 'A few small touches for your space', 'يمكن تعديل الاسم من صفحة الحساب قريباً': 'Name editing will be available soon',
   'اختر الإضاءة التي تناسب وقتك': 'Choose the lighting that suits you', 'يخفف إضاءة الثلاجة ويجعل الداخل أكثر هدوءاً': 'Dims the fridge for a calmer interior',
   'إضاءة ليلية هادئة': 'Calm night lighting', 'إضاءة نهارية مشرقة': 'Bright daylight lighting',
-  'نذكّرك عندما يكون الوقت مناسباً': 'We remind you at the right time', 'قبل يومين من انتهاء الطعام': 'Two days before food expires',
+  'نذكّرك عندما يكون الوقت مناسباً': 'We remind you at the right time',
   'لا نرسل بياناتك إلى أي مكان': 'We never send your data anywhere', 'يتم حفظ حسابك ومحتويات ثلاجتك في هذا المتصفح فقط.': 'Your account and fridge contents are saved only in this browser.',
   'تسجيل الخروج من هذا الجهاز': 'Sign out from this device', 'أكملي البيانات، وكلمة المرور 4 أحرف على الأقل.': 'Complete the fields; the password must be at least 4 characters.',
   'هذا البريد مسجل مسبقاً.': 'This email is already registered.', 'البريد أو كلمة المرور غير صحيحة.': 'The email or password is incorrect.',
@@ -89,7 +89,7 @@ const englishTranslations: Record<string, string> = {
   'ابحثي عن وصفة...': 'Search for a recipe...', 'وصفات': 'recipes', 'الوصفات التي نالت إعجابك، قريبة دائماً.': 'Recipes you love, always close by.',
   'اضغط على القلب بجانب أي وصفة لحفظها هنا.': 'Press the heart beside a recipe to save it here.',
   'اجعل ثلاجتي تشبه طريقتك أكثر.': 'Make Smart Fridge feel more like you.',
-  'اختر الجنس': 'Choose gender', 'طازج وجاهز': 'Fresh and ready', 'بارد ومنعش': 'Chilled and fresh',
+  'طازج وجاهز': 'Fresh and ready', 'بارد ومنعش': 'Chilled and fresh',
 };
 function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguage] = useState<Language>(() => localStorage.getItem('smart_fridge_language') === 'en' ? 'en' : 'ar');
