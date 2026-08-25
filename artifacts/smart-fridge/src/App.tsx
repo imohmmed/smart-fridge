@@ -481,12 +481,12 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
       </nav>
       <div className="sidebar-footer">
          <Link href="/settings" className={`nav-item ${location === '/settings' ? 'active' : ''}`} data-testid="link-nav-settings"><Settings size={18} /><span className="nav-label">{text(language, 'الإعدادات', 'Settings')}</span></Link>
-        <div className="profile-mini"><div className="avatar">{initials(user.name)}</div><div><strong>{user.name}</strong><span>مساحتي الشخصية</span></div></div>
-        <button className="logout-btn" onClick={onLogout} data-testid="button-logout"><LogOut size={15} /><span>تسجيل الخروج</span></button>
+         <div className="profile-mini"><div className="avatar">{initials(user.name)}</div><div><strong>{user.name}</strong><span>{text(language, 'مساحتي الشخصية', 'My space')}</span></div></div>
+         <button className="logout-btn" onClick={onLogout} data-testid="button-logout"><LogOut size={15} /><span>{text(language, 'تسجيل الخروج', 'Sign out')}</span></button>
       </div>
     </aside>
     <div style={{ minWidth: 0 }}>
-      <header className="mobile-topbar"><div className="brand"><div className="brand-mark"><Refrigerator size={19} /></div><h1>ثلاجتي</h1></div><button className="icon-btn" onClick={onLogout} data-testid="button-mobile-logout"><LogOut size={17} /></button></header>
+       <header className="mobile-topbar"><div className="brand"><div className="brand-mark"><Refrigerator size={19} /></div><h1>{text(language, 'ثلاجتي', 'Smart Fridge')}</h1></div><button className="icon-btn" onClick={onLogout} data-testid="button-mobile-logout"><LogOut size={17} /></button></header>
       {children}
     </div>
   </div>;
