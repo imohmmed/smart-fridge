@@ -1025,7 +1025,7 @@ button:active, .nav-item:active, .icon-btn:active, .secondary-btn:active { box-s
 .real-fridge-cabinet .food-visual .food-art { margin: 0; }
 .real-fridge-cabinet .food-name {
   display: block;
-  overflow: hidden;
+  overflow: visible;
   font-size: 8px;
   font-weight: 800;
   text-overflow: ellipsis;
@@ -2778,5 +2778,354 @@ textarea:focus-visible {
   }
   .reference-dashboard {
     grid-template-columns: minmax(0, 1fr) 310px;
+  }
+}
+
+/* Final UI consistency pass: calm hierarchy, soft surfaces, and resilient narrow layouts. */
+html,
+body {
+  font-family: 'Noto Sans Arabic', sans-serif;
+  line-height: 1.6;
+}
+
+body {
+  font-size: 16px;
+}
+
+h1,
+h2 {
+  font-size: 24px;
+  line-height: 1.35;
+}
+
+.page-heading h2,
+.modal-head h2,
+.auth-form h2 {
+  font-size: 24px;
+  line-height: 1.35;
+}
+
+.page-heading p,
+.modal-head p,
+.card-title p,
+.setting-line p,
+.recipe-body p,
+.muted,
+.eyebrow,
+.notification-item small,
+.recipe-meta,
+.item-quantity {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.sidebar,
+.dashboard-topbar,
+.mobile-topbar {
+  background: hsl(var(--sidebar) / .88);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.dashboard-topbar,
+.mobile-topbar {
+  border-bottom-color: hsl(var(--border) / .55);
+}
+
+.card,
+.recipe-card,
+.quick-link {
+  border-color: transparent;
+  box-shadow: 0 14px 32px hsl(155 20% 26% / .08);
+}
+
+.card:hover,
+.recipe-card:hover,
+.quick-link:hover {
+  box-shadow: 0 18px 38px hsl(155 20% 26% / .12);
+}
+
+button,
+a,
+input,
+select,
+textarea,
+.card,
+.recipe-card,
+.quick-link {
+  transition: all .2s ease;
+}
+
+button svg,
+a svg {
+  flex: 0 0 auto;
+}
+
+.page-actions,
+.shopping-add-row,
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.shopping-add-row {
+  margin-top: 20px;
+}
+
+.page-heading h2,
+.page-heading p,
+.card-title h3,
+.card-title p,
+.recipe-body h3,
+.recipe-body p,
+.data-row strong,
+.shopping-item label,
+.setting-line strong,
+.setting-line p,
+.nav-label,
+.profile-mini strong,
+.profile-mini span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.page-heading h2,
+.card-title h3,
+.recipe-body h3,
+.data-row strong,
+.shopping-item label,
+.setting-line strong,
+.nav-label,
+.profile-mini strong {
+  white-space: nowrap;
+}
+
+.page-heading p,
+.card-title p,
+.recipe-body p,
+.setting-line p,
+.profile-mini span {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.setting-control {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex: 0 0 auto;
+}
+
+html[dir="ltr"] body,
+html[dir="ltr"] button,
+html[dir="ltr"] input,
+html[dir="ltr"] select,
+html[dir="ltr"] textarea {
+  direction: ltr;
+  text-align: left;
+}
+
+html[dir="ltr"] .app-main,
+html[dir="ltr"] .mobile-topbar,
+html[dir="ltr"] .sidebar {
+  text-align: left;
+}
+
+html[dir="ltr"] .settings-nav button {
+  text-align: left;
+}
+
+@media (max-width: 760px) {
+  .page-actions {
+    width: 100%;
+  }
+
+  .page-actions > button {
+    flex: 1 1 auto;
+  }
+
+  .shopping-add-row {
+    align-items: stretch;
+  }
+
+  .shopping-add-row .search-box:first-child {
+    flex: 1 1 150px;
+  }
+
+  .shopping-add-row .search-box:nth-child(2) {
+    flex: 0 1 78px;
+  }
+
+  .shopping-add-row .primary-btn {
+    flex: 0 0 43px;
+  }
+
+  .setting-line {
+    align-items: flex-start;
+  }
+
+  .setting-control {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 390px) {
+  .app-main {
+    padding-inline: 13px;
+  }
+
+  .page-heading h2,
+  .modal-head h2,
+  .auth-form h2 {
+    font-size: 24px;
+  }
+
+  .page-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .page-actions > button {
+    min-width: 0;
+    padding-inline: 9px;
+    font-size: 13px;
+  }
+
+  .card-pad {
+    padding: 16px;
+  }
+
+  .shopping-add-row .search-box:nth-child(2) {
+    max-width: 68px !important;
+    min-width: 60px !important;
+  }
+}
+
+/* Fridge contents: give every item a stable visual slot so the image and label never collide. */
+.real-fridge-cabinet .cabinet-shelf {
+  min-height: 118px;
+  padding: 7px 9px 11px;
+}
+
+.real-fridge-cabinet .shelf-title {
+  max-width: 100%;
+  min-width: 0;
+  width: fit-content;
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+
+.real-fridge-cabinet .shelf-title span,
+.real-fridge-cabinet .shelf-title small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.real-fridge-cabinet .shelf-items {
+  display: flex;
+  align-items: flex-end;
+  gap: 9px;
+  min-height: 86px;
+  padding: 3px 2px 1px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+
+.real-fridge-cabinet .food-badge {
+  flex: 0 0 78px;
+  width: 78px;
+  min-width: 78px;
+  min-height: 106px;
+  height: 106px;
+  padding: 6px 5px 5px;
+  gap: 3px;
+  overflow: hidden;
+}
+
+.real-fridge-cabinet .food-badge .food-visual {
+  width: 66px;
+  height: 65px;
+  flex: 0 0 65px;
+  display: grid;
+  place-items: center;
+  overflow: visible;
+}
+
+.real-fridge-cabinet .food-badge .food-art {
+  width: 56px !important;
+  height: 56px !important;
+  margin: 0 auto;
+}
+
+.real-fridge-cabinet .food-badge .food-photo {
+  width: 68px !important;
+  height: 68px !important;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.real-fridge-cabinet .food-badge .food-name {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-height: 18px;
+  color: #2c2c2c;
+  font-size: 11px;
+  line-height: 1.35;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.real-fridge-cabinet .food-badge small {
+  display: block;
+  max-width: 100%;
+  color: #687676;
+  font-size: 10px;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.real-fridge-door .door-food {
+  min-height: 40px;
+  align-items: center;
+  gap: 6px;
+}
+
+.real-fridge-door .door-food .food-art {
+  width: 31px !important;
+  height: 31px !important;
+}
+
+.real-fridge-door .door-food .food-name {
+  min-width: 0;
+  max-width: 100%;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+@media (max-width: 560px) {
+  .real-fridge-cabinet .cabinet-shelf {
+    min-height: 119px;
+  }
+
+  .real-fridge-cabinet .shelf-items {
+    gap: 8px;
+  }
+
+  .real-fridge-cabinet .food-badge {
+    flex-basis: 76px;
+    width: 76px;
+    min-width: 76px;
   }
 }

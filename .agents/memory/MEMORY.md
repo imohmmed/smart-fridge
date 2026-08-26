@@ -1,1 +1,2 @@
 - [Recipe image provider](recipe-image-provider.md) — keep the temporary Unsplash source until Spoonacular credentials return a valid response.
+- [Layered fridge styling](layered-fridge-styling.md) — keep final responsive fridge overrides together at the end of the stylesheet because legacy rules are layered above one another.
