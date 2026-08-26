@@ -23,20 +23,6 @@ const strawberryPhoto = assetUrl('food-strawberry.png');
 const cherriesPhoto = assetUrl('food-cherries.png');
 const tomatoPhoto = assetUrl('food-tomato.png');
 const grapesPhoto = assetUrl('food-grapes.png');
-const broccoliPhoto = assetUrl('food-broccoli.png');
-const avocadoPhoto = assetUrl('food-avocado.png');
-const cornPhoto = assetUrl('food-corn.png');
-const romainePhoto = assetUrl('food-romaine.png');
-const carrotsPhoto = assetUrl('food-carrots.png');
-const redApplePhoto = assetUrl('food-red-apple.png');
-const bananasPhoto = assetUrl('food-bananas.png');
-const kiwiPhoto = assetUrl('food-kiwi.png');
-const greenApplePhoto = assetUrl('food-green-apple.png');
-const limePhoto = assetUrl('food-lime.png');
-const mandarinsPhoto = assetUrl('food-mandarins.png');
-const steakPhoto = assetUrl('food-steak.png');
-const waterBottlePhoto = assetUrl('food-water-bottle.png');
-const juiceBottlesPhoto = assetUrl('food-juice-bottles.png');
 
 type FridgeItem = {
   id: string; name: string; quantity: number; unit: string; category: string;
@@ -160,20 +146,6 @@ const defaultItems: FridgeItem[] = [
   { id: 'strawberry', name: 'فراولة', quantity: 6, unit: 'حبة', category: 'فواكه', expiry: '2025-06-04', calories: 6, art: 'strawberry' },
   { id: 'cherries', name: 'كرز', quantity: 12, unit: 'حبة', category: 'فواكه', expiry: '2025-06-04', calories: 5, art: 'cherries' },
   { id: 'grapes', name: 'عنب', quantity: 1, unit: 'عنقود', category: 'فواكه', expiry: '2025-06-05', calories: 104, art: 'grapes' },
-  { id: 'broccoli', name: 'بروكلي', quantity: 1, unit: 'قطعة', category: 'خضروات', expiry: '2025-06-06', calories: 55, art: 'broccoli' },
-  { id: 'avocado', name: 'أفوكادو', quantity: 2, unit: 'حبة', category: 'فواكه', expiry: '2025-06-07', calories: 240, art: 'avocado' },
-  { id: 'corn', name: 'ذرة', quantity: 2, unit: 'قطعة', category: 'خضروات', expiry: '2025-06-07', calories: 96, art: 'corn' },
-  { id: 'romaine', name: 'خس روماني', quantity: 1, unit: 'رأس', category: 'خضروات', expiry: '2025-06-05', calories: 17, art: 'romaine' },
-  { id: 'carrots', name: 'جزر', quantity: 4, unit: 'حبة', category: 'خضروات', expiry: '2025-06-09', calories: 25, art: 'carrots' },
-  { id: 'red-apple', name: 'تفاح أحمر', quantity: 2, unit: 'حبة', category: 'فواكه', expiry: '2025-06-08', calories: 95, art: 'red-apple' },
-  { id: 'bananas', name: 'موز', quantity: 5, unit: 'حبة', category: 'فواكه', expiry: '2025-06-08', calories: 105, art: 'bananas' },
-  { id: 'kiwi', name: 'كيوي', quantity: 3, unit: 'حبة', category: 'فواكه', expiry: '2025-06-08', calories: 42, art: 'kiwi' },
-  { id: 'green-apple', name: 'تفاح أخضر', quantity: 2, unit: 'حبة', category: 'فواكه', expiry: '2025-06-09', calories: 95, art: 'green-apple' },
-  { id: 'lime', name: 'ليمون أخضر', quantity: 3, unit: 'حبة', category: 'فواكه', expiry: '2025-06-10', calories: 20, art: 'lime' },
-  { id: 'mandarins', name: 'يوسفي', quantity: 4, unit: 'حبة', category: 'فواكه', expiry: '2025-06-07', calories: 47, art: 'mandarins' },
-  { id: 'steak', name: 'ستيك لحم', quantity: 2, unit: 'قطعة', category: 'لحوم', expiry: '2025-06-03', calories: 271, art: 'steak' },
-  { id: 'water-bottle', name: 'زجاجة ماء', quantity: 3, unit: 'عبوة', category: 'مشروبات', expiry: '2025-12-31', calories: 0, art: 'water-bottle' },
-  { id: 'juice-bottles', name: 'زجاجات عصير', quantity: 2, unit: 'عبوة', category: 'مشروبات', expiry: '2025-06-12', calories: 110, art: 'juice-bottles' },
 ];
 const defaultData: UserData = {
   items: defaultItems, shopping: [
@@ -247,7 +219,6 @@ const translateToEnglish: Record<string, string> = {
   'فراولة': 'Strawberries', 'كرز': 'Cherries', 'عنب': 'Grapes',
   'بروكلي': 'Broccoli', 'أفوكادو': 'Avocado', 'ذرة': 'Corn', 'خس روماني': 'Romaine lettuce',
   'تفاح أخضر': 'Green apples', 'كيوي': 'Kiwi', 'ليمون أخضر': 'Limes',
-  'يوسفي': 'Mandarins', 'ستيك لحم': 'Beef steak', 'زجاجة ماء': 'Water bottle', 'زجاجات عصير': 'Juice bottles',
   حمص: 'hummus', فلافل: 'falafel', شاورما: 'shawarma', سلطة: 'salad', 'شوربة دجاج': 'chicken soup',
   مندي: 'mandi rice', كبسة: 'kabsa', 'دجاج مشوي': 'grilled chicken', 'سمك مشوي': 'grilled fish',
   معكرونة: 'pasta', أرز: 'rice', رز: 'rice', برياني: 'biryani', تبولة: 'tabbouleh',
