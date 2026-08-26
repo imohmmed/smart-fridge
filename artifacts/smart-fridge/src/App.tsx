@@ -279,8 +279,9 @@ function loadData(userId: string): UserData {
     const stored = JSON.parse(localStorage.getItem(DATA_KEY) || '{}');
     if (!stored[userId]) return { ...defaultData, items: defaultItems.map(item => ({ ...item })) };
     const saved = stored[userId] as UserData;
-    const savedIds = new Set((saved.items || []).map(item => item.id));
-    return { ...defaultData, ...saved, items: [...(saved.items || []), ...defaultItems.filter(item => !savedIds.has(item.id)).map(item => ({ ...item }))] };
+    const cleanedItems = (saved.items || []).filter(item => !removedBrokenImageItemIds.has(item.id));
+    const savedIds = new Set(cleanedItems.map(item => item.id));
+    return { ...defaultData, ...saved, items: [...cleanedItems, ...defaultItems.filter(item => !savedIds.has(item.id)).map(item => ({ ...item }))] };
   } catch { return { ...defaultData, items: defaultItems.map(item => ({ ...item })) }; }
 }
 function saveData(userId: string, data: UserData) {
@@ -356,18 +357,18 @@ function getFoodEmoji(foodName: string) {
   return foodEmojiMap[foodName] || Object.keys(foodEmojiMap).find(key => key !== 'default' && foodName.includes(key)) && foodEmojiMap[Object.keys(foodEmojiMap).find(key => key !== 'default' && foodName.includes(key)) as string] || foodEmojiMap.default;
 }
 
+const removedBrokenImageItemIds = new Set([
+  'broccoli', 'avocado', 'corn', 'romaine', 'carrots', 'red-apple', 'bananas',
+  'kiwi', 'green-apple', 'lime', 'mandarins', 'steak', 'water-bottle', 'juice-bottles',
+]);
+
 function FoodArt({ item, size = 40 }: { item?: FridgeItem; size?: number }) {
   const art = item?.art || 'apple';
-  const photo = art === 'broccoli' ? broccoliPhoto : art === 'avocado' ? avocadoPhoto : art === 'corn' ? cornPhoto
-    : art === 'romaine' ? romainePhoto : art === 'carrots' ? carrotsPhoto : art === 'red-apple' ? redApplePhoto
-    : art === 'bananas' ? bananasPhoto : art === 'kiwi' ? kiwiPhoto : art === 'green-apple' ? greenApplePhoto
-    : art === 'lime' ? limePhoto : art === 'mandarins' ? mandarinsPhoto : art === 'steak' ? steakPhoto
-    : art === 'water-bottle' ? waterBottlePhoto : art === 'juice-bottles' ? juiceBottlesPhoto
-    : art === 'strawberry' ? strawberryPhoto : art === 'cherries' ? cherriesPhoto : art === 'grapes' ? grapesPhoto
+  const photo = art === 'strawberry' ? strawberryPhoto : art === 'cherries' ? cherriesPhoto : art === 'grapes' ? grapesPhoto
     : art === 'tomato' ? tomatoPhoto : art === 'milk' ? milkPhoto : art === 'egg' ? eggsPhoto : art === 'chicken' ? proteinPhoto
     : art === 'leaf' ? vegetablesPhoto : art === 'apple' || art === 'orange' ? fruitPhoto
     : art === 'cheese' ? cheesePhoto : art === 'hummus' ? cheesePhoto : art === 'package' ? milkPhoto : freezerPhoto;
-  const emoji = art === 'broccoli' ? '🥦' : art === 'avocado' ? '🥑' : art === 'corn' ? '🌽' : art === 'romaine' ? '🥬' : art === 'carrots' ? '🥕' : art === 'strawberry' ? '🍓' : art === 'cherries' ? '🍒' : art === 'grapes' ? '🍇' : art === 'bananas' ? '🍌' : art === 'kiwi' ? '🥝' : art === 'lime' ? '🍋' : art === 'mandarins' ? '🍊' : art === 'steak' ? '🥩' : art === 'water-bottle' ? '💧' : art === 'juice-bottles' ? '🧃' : art === 'milk' ? '🥛' : art === 'egg' ? '🥚' : art === 'cheese' ? '🧀' : art === 'apple' ? '🍎'
+  const emoji = art === 'strawberry' ? '🍓' : art === 'cherries' ? '🍒' : art === 'grapes' ? '🍇' : art === 'milk' ? '🥛' : art === 'egg' ? '🥚' : art === 'cheese' ? '🧀' : art === 'apple' ? '🍎'
     : art === 'orange' ? '🍊' : art === 'leaf' ? '🥦' : art === 'tomato' ? '🍅' : art === 'chicken' ? '🍗'
     : art === 'hummus' ? '🥫' : art === 'package' ? '🧃' : '🥕';
   const style = art === 'apple' ? { color: 'hsl(6 58% 48%)' }
