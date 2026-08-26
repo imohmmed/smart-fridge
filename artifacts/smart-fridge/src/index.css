@@ -2144,3 +2144,381 @@ html[dir="ltr"] .language-switcher { direction: ltr; }
     font-size: 15px;
   }
 }
+
+/* Readable mobile-first layout */
+body {
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid hsl(var(--accent));
+  outline-offset: 3px;
+}
+
+.page-heading h2 {
+  font-size: clamp(32px, 4vw, 48px);
+  line-height: 1.25;
+}
+.page-heading p,
+.card-title p {
+  font-size: 16px;
+  line-height: 1.6;
+}
+.eyebrow,
+.date-chip,
+.status-pill {
+  font-size: 14px;
+}
+.card-title h3 {
+  font-size: 21px;
+}
+.primary-btn,
+.secondary-btn {
+  min-height: 48px;
+  font-size: 16px;
+}
+.icon-btn {
+  width: 44px;
+  height: 44px;
+}
+.shopping-item label,
+.shopping-item .item-quantity,
+.shopping-panel .export-list {
+  font-size: 16px;
+}
+.shopping-item {
+  gap: 11px;
+  padding-block: 12px;
+}
+.shopping-item input {
+  width: 20px;
+  height: 20px;
+}
+.food-badge small {
+  font-size: 13px;
+}
+
+@media (max-width: 700px) {
+  body {
+    font-size: 16px;
+  }
+  .app-shell {
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    width: 100%;
+    min-height: 0;
+    padding: 10px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    overflow: visible;
+    box-shadow: 0 4px 18px rgba(44, 74, 53, .14);
+  }
+  .sidebar .brand {
+    justify-content: flex-start;
+    gap: 10px;
+  }
+  .sidebar .brand-mark {
+    width: 42px;
+    height: 42px;
+  }
+  .sidebar .brand-copy {
+    display: block;
+  }
+  .sidebar .brand h1 {
+    font-size: 21px;
+  }
+  .sidebar .brand small {
+    font-size: 12px;
+  }
+  .sidebar .nav-list {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    overflow: visible;
+  }
+  .sidebar .nav-item {
+    min-width: 0;
+    min-height: 66px;
+    padding: 8px 3px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.2;
+  }
+  .sidebar .nav-item .nav-label {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
+  }
+  .sidebar .nav-count {
+    position: absolute;
+    top: 3px;
+    left: 7px;
+  }
+  .sidebar .sidebar-footer {
+    margin: 0;
+    padding-top: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .sidebar .sidebar-footer > .nav-item {
+    width: 100%;
+    min-height: 48px;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding-inline: 14px;
+    text-align: right;
+  }
+  .sidebar .sidebar-footer > .nav-item .nav-label {
+    display: block;
+    width: auto;
+    text-align: right;
+  }
+  .sidebar .profile-mini,
+  .sidebar .logout-btn {
+    display: none;
+  }
+  .sidebar .language-switcher {
+    align-self: flex-start;
+    margin: 0;
+    padding: 5px 9px;
+  }
+  .sidebar .language-switcher button {
+    font-size: 14px;
+  }
+  .app-main {
+    width: 100%;
+    padding: 22px 12px 42px;
+  }
+  .page-heading {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .page-heading h2 {
+    font-size: clamp(30px, 9vw, 38px);
+  }
+  .page-heading p {
+    font-size: 16px;
+    margin-top: 7px;
+  }
+  .page-heading > :last-child:not(:first-child) {
+    width: 100%;
+  }
+  .page-heading > :last-child:not(:first-child) button {
+    flex: 1;
+  }
+  .dashboard-grid,
+  .reference-dashboard {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .stack {
+    gap: 16px;
+  }
+  .card-pad {
+    padding: 16px;
+  }
+  .card {
+    border-radius: 18px;
+  }
+  .card-title {
+    align-items: flex-start;
+    margin-bottom: 15px;
+  }
+  .card-title h3 {
+    font-size: 20px;
+  }
+  .card-title p {
+    font-size: 15px;
+  }
+  .quick-grid {
+    grid-template-columns: 1fr;
+  }
+  .quick-link {
+    min-height: 74px;
+    padding: 14px;
+  }
+  .quick-link strong {
+    font-size: 16px;
+  }
+  .quick-link span {
+    font-size: 14px;
+  }
+  .data-row {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 8px;
+    padding: 12px;
+  }
+  .data-row strong {
+    font-size: 16px;
+    min-width: 0;
+  }
+  .data-row.header {
+    display: none;
+  }
+  .toolbar {
+    align-items: stretch;
+    gap: 9px;
+  }
+  .toolbar > * {
+    min-width: 0;
+  }
+  .toolbar .search-box {
+    flex-basis: 100%;
+    width: 100%;
+  }
+  .form-grid {
+    gap: 14px;
+  }
+  .field label {
+    font-size: 16px;
+  }
+  .field input,
+  .field select,
+  .field textarea,
+  .search-box {
+    min-height: 48px;
+    font-size: 16px;
+  }
+  .modal-backdrop {
+    padding: 10px;
+    align-items: end;
+  }
+  .modal {
+    max-height: calc(100dvh - 20px);
+    border-radius: 20px 20px 12px 12px;
+  }
+  .modal-head {
+    padding: 18px 16px 10px;
+  }
+  .modal-head h2 {
+    font-size: 25px;
+  }
+  .real-fridge-card {
+    min-height: 0;
+  }
+  .real-fridge-body {
+    min-height: 0;
+    height: auto;
+    grid-template-columns: minmax(96px, 31%) minmax(0, 1fr);
+    gap: 6px;
+    padding: 10px;
+  }
+  .real-fridge-door {
+    min-height: 520px;
+    padding: 30px 6px 10px;
+  }
+  .real-fridge-cabinet {
+    min-width: 0;
+    padding: 20px 7px 8px;
+    border-width: 6px;
+  }
+  .real-fridge-cabinet .cabinet-shelf {
+    min-height: 112px;
+    padding-inline: 4px;
+  }
+  .real-fridge-cabinet .shelf-items {
+    gap: 6px;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: thin;
+  }
+  .real-fridge-cabinet .food-badge {
+    min-width: 64px;
+    min-height: 94px;
+  }
+  .real-fridge-cabinet .food-badge .food-visual {
+    width: 52px;
+    height: 56px;
+  }
+  .real-fridge-cabinet .food-badge .food-art {
+    width: 52px !important;
+    height: 52px !important;
+  }
+  .real-fridge-cabinet .food-badge .food-photo {
+    width: 70px !important;
+    height: 70px !important;
+  }
+  .real-fridge-cabinet .food-badge .food-name {
+    font-size: 11px;
+  }
+  .real-fridge-cabinet .food-badge small {
+    font-size: 10px;
+  }
+  .real-fridge-cabinet .shelf-title {
+    font-size: 12px;
+  }
+  .fridge-temperature {
+    right: 10px;
+    top: 10px;
+    font-size: 11px;
+  }
+  .fridge-temperature strong {
+    font-size: 14px;
+  }
+  .real-fridge-door .door-rack h4 {
+    font-size: 11px;
+  }
+  .real-fridge-door .door-food .food-name {
+    font-size: 10px;
+  }
+  .real-fridge-door .door-note span {
+    font-size: 11px;
+  }
+  .dashboard-footer > * {
+    flex-basis: 100%;
+  }
+}
+
+@media (max-width: 390px) {
+  .sidebar .nav-item {
+    font-size: 11px;
+  }
+  .sidebar .nav-item svg {
+    width: 17px;
+    height: 17px;
+  }
+  .app-main {
+    padding-inline: 10px;
+  }
+  .real-fridge-body {
+    grid-template-columns: 88px minmax(0, 1fr);
+    padding-inline: 7px;
+  }
+  .real-fridge-cabinet .food-badge {
+    min-width: 60px;
+  }
+  .real-fridge-cabinet .food-badge .food-name {
+    font-size: 10px;
+  }
+}
