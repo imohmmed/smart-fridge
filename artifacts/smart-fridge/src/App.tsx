@@ -40,6 +40,11 @@ type Language = 'ar' | 'en';
 const LanguageContext = createContext<{ language: Language; setLanguage: (language: Language) => void }>({ language: 'ar', setLanguage: () => undefined });
 const useLanguage = () => useContext(LanguageContext);
 const text = (language: Language, ar: string, en: string) => language === 'ar' ? ar : en;
+const getInitialLanguage = (): Language => {
+  const saved = localStorage.getItem('smart_fridge_language');
+  if (saved === 'ar' || saved === 'en') return saved;
+  return typeof navigator !== 'undefined' && navigator.language.toLowerCase().startsWith('ar') ? 'ar' : 'en';
+};
 const englishTranslations: Record<string, string> = {
   'ثلاجتي': 'Smart Fridge', 'رفيق البيت الطازج': 'Fresh home companion', 'وجباتي': 'My meals',
   'تحليل يومي': 'Daily analysis', 'قائمة التسوق': 'Shopping list', 'وصفات مقترحة': 'Suggested recipes',
@@ -95,33 +100,40 @@ const englishTranslations: Record<string, string> = {
   'اضغط على القلب بجانب أي وصفة لحفظها هنا.': 'Press the heart beside a recipe to save it here.',
   'اجعل ثلاجتي تشبه طريقتك أكثر.': 'Make Smart Fridge feel more like you.',
   'طازج وجاهز': 'Fresh and ready', 'بارد ومنعش': 'Chilled and fresh',
+  'رسم توضيحي لثلاجة ذكية': 'Illustration of a smart fridge', 'إخفاء التفاصيل': 'Close details',
+  'جار تحميل صورة الطبق': 'Loading dish image', 'صورة طبق محايد': 'Neutral dish image',
+  'أكملت': 'Completed', 'أيام': 'days', 'اليوم': 'Today', 'الآن': 'Now',
+  'أكواب': 'cups', 'منتهية الصلاحية': 'expired', 'قريب انتهاء الصلاحية': 'Expiring soon',
+  'كمية منخفضة': 'Low quantity', 'تذكير شرب الماء': 'Water reminder',
+  'عدّل الكمية': 'Edit quantity', 'تم تسجيل استهلاك': 'Consumption recorded',
+  'إغلاق التفاصيل': 'Close details', 'السعرات للوحدة': 'Calories per unit',
+  'إجمالي السعرات': 'Total calories', 'وجبة': 'meal', 'وجبات': 'meals',
+  'اسم الوجبة': 'Meal name', 'الوقت': 'Time', 'إضافة وجبة': 'Add meal',
+  'مثال: فطور صحي': 'Example: healthy breakfast', 'لم تضف وجبات بعد': 'No meals added yet',
+  'ابدأ بإضافة أول وجبة ليومك.': 'Start by adding your first meal.',
+  'حذف الوجبة': 'Delete meal', 'أضيفت الوجبة إلى يومك': 'Meal added to your day',
+  'أضيفت للقائمة': 'Added to the list', 'تم نسخ قائمة التسوق': 'Shopping list copied',
+  'حدّد القائمة وانسخها': 'Select the list and copy it', 'إضافة عنصر': 'Add item',
+  'مساء الخير،': 'Good evening,', 'صورة طبق': 'Dish image', 'وجباتك التي أضفتها بنفسك': 'Meals you added yourself',
+  'إيقاع السعرات': 'Calorie rhythm', 'آخر سبعة أيام': 'Last seven days',
+  'ملخص لطيف': 'A gentle summary', 'مقارنة بهدفك اليومي': 'Compared with your daily goal',
+  'السعرات المتاحة في الثلاجة': 'Calories in your fridge', 'أكواب الماء اليوم': 'Water cups today',
+  'أصناف نباتية': 'Plant-based items', 'سعرة متبقية للهدف': 'kcal left to goal',
+  'بروتين': 'Protein', 'كربوهيدرات': 'Carbohydrates', 'دهون صحية': 'Healthy fats',
+  'تناول الخضروات في كل وجبة': 'Eat vegetables with every meal', 'للحصول على صحة أفضل.': 'for better health.',
+  'تفضيراتك': 'Your preferences', 'إضاءة ليلية هادئة': 'Calm night lighting',
+  'إضاءة نهارية مشرقة': 'Bright daylight lighting', 'القسم': 'Category',
+  'شربت': 'You drank', 'أكملت': 'You completed', 'سعرة حرارية اليوم': 'kcal today',
+  'أكواب فقط، هدفك 8 أكواب': 'cups only; your goal is 8 cups',
+  'ينتهي خلال': 'expires in', 'كميته منخفضة، أضفه لقائمة التسوق': 'is running low; add it to your shopping list',
 };
 function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>(() => localStorage.getItem('smart_fridge_language') === 'en' ? 'en' : 'ar');
+  const [language, setLanguage] = useState<Language>(getInitialLanguage);
   useEffect(() => {
     localStorage.setItem('smart_fridge_language', language);
     document.documentElement.lang = language;
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
     document.body.dir = language === 'ar' ? 'rtl' : 'ltr';
-    const originals = new WeakMap<Text, string>();
-    const translate = () => {
-      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-      let node: Node | null;
-      while ((node = walker.nextNode())) {
-        const textNode = node as Text;
-        if (!textNode.parentElement || ['SCRIPT', 'STYLE'].includes(textNode.parentElement.tagName)) continue;
-        const original = originals.get(textNode) ?? textNode.nodeValue ?? '';
-        originals.set(textNode, original);
-        const trimmed = original.trim();
-        const translated = language === 'en' ? englishTranslations[trimmed] : original;
-        if (translated && translated !== trimmed) textNode.nodeValue = original.replace(trimmed, translated);
-        else if (language === 'ar' && textNode.nodeValue !== original) textNode.nodeValue = original;
-      }
-    };
-    translate();
-    const observer = new MutationObserver(translate);
-    observer.observe(document.body, { childList: true, subtree: true });
-    return () => observer.disconnect();
   }, [language]);
   return <LanguageContext.Provider value={{ language, setLanguage }}>{children}</LanguageContext.Provider>;
 }
@@ -258,6 +270,7 @@ async function getFoodImage(foodName: string): Promise<string | null> {
   return image;
 }
 function RemoteFoodImage({ foodName, alt }: { foodName: string; alt: string }) {
+  const { language } = useLanguage();
   const [image, setImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
@@ -269,8 +282,8 @@ function RemoteFoodImage({ foodName, alt }: { foodName: string; alt: string }) {
     });
     return () => { cancelled = true; };
   }, [foodName]);
-  if (loading) return <div className="recipe-image-placeholder is-loading" aria-label="جار تحميل صورة الطبق"><span /></div>;
-  if (!image || failed) return <img className="recipe-card-image" src={defaultFoodImage} alt="صورة طبق محايد" loading="lazy" />;
+  if (loading) return <div className="recipe-image-placeholder is-loading" aria-label={text(language, 'جار تحميل صورة الطبق', 'Loading dish image')}><span /></div>;
+  if (!image || failed) return <img className="recipe-card-image" src={defaultFoodImage} alt={text(language, 'صورة طبق محايد', 'Neutral dish image')} loading="lazy" />;
   return <img className="recipe-card-image" src={image} alt={alt} loading="lazy" onError={() => setFailed(true)} />;
 }
 
@@ -330,17 +343,40 @@ function formatArabicDate(language: Language = 'ar') {
 function flash(setNotice: (value: string) => void, text: string) {
   setNotice(text); window.setTimeout(() => setNotice(''), 2400);
 }
-function checkAndGenerateNotifications(data: UserData): AppNotification[] {
+function checkAndGenerateNotifications(data: UserData, language: Language): AppNotification[] {
   const notifications: AppNotification[] = [];
   data.items.forEach(item => {
     const daysLeft = daysUntil(item.expiry);
-    if (daysLeft <= 0) notifications.push({ id: `expired_${item.id}`, type: 'danger', icon: '⚠️', title: 'طعام منتهي الصلاحية', message: `${item.name} انتهت صلاحيته!`, time: 'الآن' });
-    else if (daysLeft <= 3) notifications.push({ id: `expiring_${item.id}`, type: 'warning', icon: '🕐', title: 'قريب انتهاء الصلاحية', message: `${item.name} ينتهي خلال ${toWesternNums(daysLeft)} أيام`, time: `${toWesternNums(daysLeft)} أيام` });
-    if (item.quantity <= 1) notifications.push({ id: `low_${item.id}`, type: 'info', icon: '📦', title: 'كمية منخفضة', message: `${item.name} كميته منخفضة، أضفه لقائمة التسوق`, time: 'اليوم' });
+    const itemName = displayFoodName(item.name, language);
+    if (daysLeft <= 0) notifications.push({
+      id: `expired_${item.id}`, type: 'danger', icon: '⚠️',
+      title: text(language, 'طعام منتهي الصلاحية', 'Food expired'),
+      message: `${itemName} ${text(language, 'انتهت صلاحيته!', 'has expired!')}`, time: text(language, 'الآن', 'Now'),
+    });
+    else if (daysLeft <= 3) notifications.push({
+      id: `expiring_${item.id}`, type: 'warning', icon: '🕐',
+      title: text(language, 'قريب انتهاء الصلاحية', 'Expiring soon'),
+      message: `${itemName} ${text(language, 'ينتهي خلال', 'expires in')} ${toWesternNums(daysLeft)} ${text(language, 'أيام', 'days')}`,
+      time: `${toWesternNums(daysLeft)} ${text(language, 'أيام', 'days')}`,
+    });
+    if (item.quantity <= 1) notifications.push({
+      id: `low_${item.id}`, type: 'info', icon: '📦',
+      title: text(language, 'كمية منخفضة', 'Low quantity'),
+      message: `${itemName} ${text(language, 'كميته منخفضة، أضفه لقائمة التسوق', 'is running low; add it to your shopping list')}`,
+      time: text(language, 'اليوم', 'Today'),
+    });
   });
   const calories = data.items.reduce((sum, item) => sum + item.calories * item.quantity, 0);
-  if (calories >= data.calorieGoal) notifications.push({ id: 'calorie_goal', type: 'success', icon: '🎯', title: 'وصلت هدفك!', message: `أكملت ${toWesternNums(data.calorieGoal)} سعرة حرارية اليوم`, time: 'اليوم' });
-  if (data.water < 4) notifications.push({ id: 'water_reminder', type: 'info', icon: '💧', title: 'تذكير شرب الماء', message: `شربت ${toWesternNums(data.water)} أكواب فقط، هدفك 8 أكواب`, time: 'اليوم' });
+  if (calories >= data.calorieGoal) notifications.push({
+    id: 'calorie_goal', type: 'success', icon: '🎯', title: text(language, 'وصلت هدفك!', 'Goal reached!'),
+    message: `${text(language, 'أكملت', 'Completed')} ${toWesternNums(data.calorieGoal)} ${text(language, 'سعرة حرارية اليوم', 'kcal today')}`,
+    time: text(language, 'اليوم', 'Today'),
+  });
+  if (data.water < 4) notifications.push({
+    id: 'water_reminder', type: 'info', icon: '💧', title: text(language, 'تذكير شرب الماء', 'Water reminder'),
+    message: `${text(language, 'شربت', 'You drank')} ${toWesternNums(data.water)} ${text(language, 'أكواب فقط، هدفك 8 أكواب', 'cups only; your goal is 8 cups')}`,
+    time: text(language, 'اليوم', 'Today'),
+  });
   return notifications;
 }
 
@@ -414,7 +450,7 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
       localStorage.setItem(USERS_KEY, JSON.stringify([...users, user])); onLogin(user);
     } else {
       const user = users.find(candidate => candidate.email === email.trim().toLowerCase() && candidate.password === password);
-      if (!user) { setError('البريد أو كلمة المرور غير صحيحة.'); return; }
+      if (!user) { setError(text(language, 'البريد أو كلمة المرور غير صحيحة.', 'The email or password is incorrect.')); return; }
       onLogin(user);
     }
   };
@@ -424,18 +460,18 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
     if (!users.some(item => item.id === user.id)) localStorage.setItem(USERS_KEY, JSON.stringify([...users, user]));
     onLogin(user);
   };
-  const forgotPassword = () => setError('سنرسل لك رابط استعادة كلمة المرور قريباً.');
+  const forgotPassword = () => setError(text(language, 'سنرسل لك رابط استعادة كلمة المرور قريباً.', 'We will send a password reset link soon.'));
   return <main className="auth-shell auth-redesign">
     <section className="auth-art auth-visual-panel">
       <div className="auth-visual-inner">
-        <div className="visual-topline"><span><i className="live-dot" /> نظام ثلاجتي الذكي</span></div>
+       <div className="visual-topline"><span><i className="live-dot" /> {text(language, 'نظام ثلاجتي الذكي', 'Smart Fridge system')}</span></div>
         <div className="auth-visual-content">
-          <div className="fridge-stage" aria-label="رسم توضيحي لثلاجة ذكية">
+           <div className="fridge-stage" aria-label={text(language, 'رسم توضيحي لثلاجة ذكية', 'Illustration of a smart fridge')}>
             <div className="fridge-halo" />
             <div className="smart-fridge-illustration">
               <div className="fridge-top-cap" />
               <div className="fridge-freezer">
-                 <span className="fridge-display"><b>{toWesternNums('4°')}</b><small>طازج</small></span>
+                 <span className="fridge-display"><b>{toWesternNums('4°')}</b><small>{text(language, 'طازج', 'Fresh')}</small></span>
                 <span className="fridge-handle handle-freezer" />
               </div>
               <div className="fridge-fresh">
@@ -452,13 +488,13 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
             <span className="stage-shadow" />
           </div>
           <div className="auth-copy">
-            <div className="copy-kicker"><Sparkles size={14} /> طازج، مرتب، على طريقتك</div>
-             <h2>ثلاجتك الذكية..<br /><em>طعامك دائماً طازج</em></h2>
-            <p>إدارة ذكية لمحتويات ثلاجتك، للحفاظ على طعامك طازجًا وحياتك أسهل.</p>
+             <div className="copy-kicker"><Sparkles size={14} /> {text(language, 'طازج، مرتب، على طريقتك', 'Fresh, organized, your way')}</div>
+              <h2>{text(language, 'ثلاجتك الذكية..', 'Your smart fridge..')}<br /><em>{text(language, 'طعامك دائماً طازج', 'Your food, always fresh')}</em></h2>
+             <p>{text(language, 'إدارة ذكية لمحتويات ثلاجتك، للحفاظ على طعامك طازجًا وحياتك أسهل.', 'Smartly manage your fridge contents to keep food fresh and life easier.')}</p>
             <div className="auth-benefits">
-               <div className="benefit-item"><span><Leaf size={17} /></span><div><strong>تتبع ذكي للمحتويات والصلاحية</strong></div></div>
-               <div className="benefit-item"><span><ShoppingBasket size={17} /></span><div><strong>قائمة تسوق أذكى وأسرع</strong></div></div>
-               <div className="benefit-item"><span><Bell size={17} /></span><div><strong>تنبيهات انتهاء صلاحية الطعام</strong></div></div>
+                <div className="benefit-item"><span><Leaf size={17} /></span><div><strong>{text(language, 'تتبع ذكي للمحتويات والصلاحية', 'Smart inventory and expiry tracking')}</strong></div></div>
+                <div className="benefit-item"><span><ShoppingBasket size={17} /></span><div><strong>{text(language, 'قائمة تسوق أذكى وأسرع', 'A smarter, faster shopping list')}</strong></div></div>
+                <div className="benefit-item"><span><Bell size={17} /></span><div><strong>{text(language, 'تنبيهات انتهاء صلاحية الطعام', 'Food expiry reminders')}</strong></div></div>
             </div>
           </div>
         </div>
@@ -468,19 +504,19 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
     <section className="auth-form-wrap">
       <form className="auth-form auth-card" onSubmit={submit}>
          <LanguageSwitcher />
-        <div className="auth-card-heading"><h2>{mode === 'login' ? 'أهلاً بعودتك' : 'لنبدأ معاً'}</h2><p>{mode === 'login' ? 'سجّل دخولك لثلاجتك الذكية' : 'أنشئ مساحتك الخاصة في دقائق.'}</p></div>
-        <div className="auth-tabs"><button type="button" className={`auth-tab ${mode === 'login' ? 'active' : ''}`} onClick={() => { setMode('login'); setError(''); }} data-testid="tab-login">تسجيل الدخول</button><button type="button" className={`auth-tab ${mode === 'register' ? 'active' : ''}`} onClick={() => { setMode('register'); setError(''); }} data-testid="tab-register">حساب جديد</button></div>
-        {mode === 'register' && <div className="field auth-field"><label htmlFor="auth-name">الاسم</label><input id="auth-name" data-testid="input-auth-name" value={name} onChange={e => setName(e.target.value)} /></div>}
-        <div className="field auth-field"><label htmlFor="auth-email">البريد الإلكتروني</label><div className="input-with-icon"><Mail size={17} /><input id="auth-email" type="email" autoComplete="email" dir="ltr" aria-describedby={error ? 'auth-error' : undefined} data-testid="input-auth-email" value={email} onChange={e => setEmail(e.target.value)} placeholder="name@example.com" /></div></div>
-        <div className="field auth-field"><label htmlFor="auth-password">كلمة المرور</label><div className="input-with-icon password-control"><LockKeyhole size={17} /><input id="auth-password" type={showPassword ? 'text' : 'password'} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} dir="ltr" aria-describedby={error ? 'auth-error' : undefined} data-testid="input-auth-password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" /><button type="button" className="password-toggle" onClick={() => setShowPassword(value => !value)} aria-label={showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'}>{showPassword ? <EyeOff size={17} /> : <Eye size={17} />}</button></div></div>
+         <div className="auth-card-heading"><h2>{mode === 'login' ? text(language, 'أهلاً بعودتك', 'Welcome back') : text(language, 'لنبدأ معاً', 'Let’s get started')}</h2><p>{mode === 'login' ? text(language, 'سجّل دخولك لثلاجتك الذكية', 'Sign in to your Smart Fridge') : text(language, 'أنشئ مساحتك الخاصة في دقائق.', 'Create your own space in minutes.')}</p></div>
+         <div className="auth-tabs"><button type="button" className={`auth-tab ${mode === 'login' ? 'active' : ''}`} onClick={() => { setMode('login'); setError(''); }} data-testid="tab-login">{text(language, 'تسجيل الدخول', 'Sign in')}</button><button type="button" className={`auth-tab ${mode === 'register' ? 'active' : ''}`} onClick={() => { setMode('register'); setError(''); }} data-testid="tab-register">{text(language, 'حساب جديد', 'Create account')}</button></div>
+         {mode === 'register' && <div className="field auth-field"><label htmlFor="auth-name">{text(language, 'الاسم', 'Name')}</label><input id="auth-name" data-testid="input-auth-name" value={name} onChange={e => setName(e.target.value)} /></div>}
+         <div className="field auth-field"><label htmlFor="auth-email">{text(language, 'البريد الإلكتروني', 'Email')}</label><div className="input-with-icon"><Mail size={17} /><input id="auth-email" type="email" autoComplete="email" dir="ltr" aria-describedby={error ? 'auth-error' : undefined} data-testid="input-auth-email" value={email} onChange={e => setEmail(e.target.value)} placeholder="name@example.com" /></div></div>
+         <div className="field auth-field"><label htmlFor="auth-password">{text(language, 'كلمة المرور', 'Password')}</label><div className="input-with-icon password-control"><LockKeyhole size={17} /><input id="auth-password" type={showPassword ? 'text' : 'password'} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} dir="ltr" aria-describedby={error ? 'auth-error' : undefined} data-testid="input-auth-password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" /><button type="button" className="password-toggle" onClick={() => setShowPassword(value => !value)} aria-label={showPassword ? text(language, 'إخفاء كلمة المرور', 'Hide password') : text(language, 'إظهار كلمة المرور', 'Show password')}>{showPassword ? <EyeOff size={17} /> : <Eye size={17} />}</button></div></div>
         {error && <p id="auth-error" className="auth-error" role="alert" data-testid="status-auth-error">{error}</p>}
-        {mode === 'register' && <div className="field auth-field"><label htmlFor="auth-gender">الجنس</label><select id="auth-gender" value={gender} onChange={e => setGender(e.target.value as '' | 'female' | 'male')} data-testid="select-auth-gender"><option value="" disabled>اختر الجنس</option><option value="female">أنثى</option><option value="male">ذكر</option></select></div>}
-        <div className="auth-options"><label htmlFor="remember-me"><input id="remember-me" type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} /> <span>تذكرني</span></label><button type="button" className="link-btn" onClick={forgotPassword}>نسيت كلمة المرور؟</button></div>
-        <button className="primary-btn auth-submit" type="submit" data-testid="button-auth-submit">{mode === 'login' ? 'دخول إلى ثلاجتي' : 'إنشاء مساحتي'}<ArrowLeft size={17} /></button>
-        <div className="auth-divider"><span>أو</span></div>
-        <button className="secondary-btn auth-demo" type="button" onClick={demo} data-testid="button-demo-login"><Sparkles size={16} /> تجربة ثلاجتي الآن</button>
-        <p className="create-account">{mode === 'login' ? 'ليس لديك حساب؟' : 'لديك حساب بالفعل؟'} <button type="button" className="link-btn" onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(''); }}>{mode === 'login' ? 'أنشئ حساباً' : 'تسجيل الدخول'}</button></p>
-        <div className="auth-note"><LockKeyhole size={12} /> بياناتك تبقى في هذا الجهاز، ومساحتك لك وحدك.</div>
+         {mode === 'register' && <div className="field auth-field"><label htmlFor="auth-gender">{text(language, 'الجنس', 'Gender')}</label><select id="auth-gender" value={gender} onChange={e => setGender(e.target.value as '' | 'female' | 'male')} data-testid="select-auth-gender"><option value="" disabled>{text(language, 'اختر الجنس', 'Choose gender')}</option><option value="female">{text(language, 'أنثى', 'Female')}</option><option value="male">{text(language, 'ذكر', 'Male')}</option></select></div>}
+         <div className="auth-options"><label htmlFor="remember-me"><input id="remember-me" type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} /> <span>{text(language, 'تذكرني', 'Remember me')}</span></label><button type="button" className="link-btn" onClick={forgotPassword}>{text(language, 'نسيت كلمة المرور؟', 'Forgot password?')}</button></div>
+         <button className="primary-btn auth-submit" type="submit" data-testid="button-auth-submit">{mode === 'login' ? text(language, 'دخول إلى ثلاجتي', 'Enter my fridge') : text(language, 'إنشاء مساحتي', 'Create my space')}<ArrowLeft size={17} /></button>
+         <div className="auth-divider"><span>{text(language, 'أو', 'or')}</span></div>
+         <button className="secondary-btn auth-demo" type="button" onClick={demo} data-testid="button-demo-login"><Sparkles size={16} /> {text(language, 'تجربة ثلاجتي الآن', 'Try Smart Fridge')}</button>
+         <p className="create-account">{mode === 'login' ? text(language, 'ليس لديك حساب؟', 'Don’t have an account?') : text(language, 'لديك حساب بالفعل؟', 'Already have an account?')} <button type="button" className="link-btn" onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(''); }}>{mode === 'login' ? text(language, 'أنشئ حساباً', 'Create one') : text(language, 'تسجيل الدخول', 'Sign in')}</button></p>
+         <div className="auth-note"><LockKeyhole size={12} /> {text(language, 'بياناتك تبقى في هذا الجهاز، ومساحتك لك وحدك.', 'Your data stays on this device, and your space is private.')}</div>
       </form>
     </section>
   </main>;
