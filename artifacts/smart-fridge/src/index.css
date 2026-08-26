@@ -3129,3 +3129,71 @@ html[dir="ltr"] .settings-nav button {
     min-width: 76px;
   }
 }
+
+/* Compact lower sections: keep short labels close to their content. */
+.dashboard-footer {
+  gap: 8px;
+  margin-top: 11px;
+}
+
+.footer-stat,
+.macro-stat,
+.health-tip {
+  min-height: 64px;
+  padding: 9px 11px;
+  gap: 8px;
+}
+
+.footer-stat strong {
+  line-height: 1.35;
+}
+
+.footer-progress {
+  margin-top: 5px;
+}
+
+.macro-lines {
+  margin-top: 3px;
+}
+
+.health-tip strong {
+  line-height: 1.45;
+}
+
+.floating-add {
+  min-height: 58px;
+  padding: 7px 9px;
+}
+
+@media (max-width: 767px) {
+  .sidebar {
+    height: 60px;
+    min-height: 60px;
+    padding-block: 4px;
+  }
+
+  .sidebar .nav-item,
+  .sidebar .sidebar-footer > .nav-item {
+    min-height: 50px;
+    padding-block: 3px;
+  }
+
+  .app-main {
+    padding-bottom: 76px;
+  }
+
+  .dashboard-footer {
+    gap: 8px;
+  }
+
+  .footer-stat,
+  .macro-stat,
+  .health-tip {
+    min-height: 60px;
+    padding: 8px 10px;
+  }
+
+  .floating-add {
+    min-height: 46px;
+  }
+}
