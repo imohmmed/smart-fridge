@@ -1,0 +1,12 @@
+Clean up the UI — reduce clutter, fix spacing, and add proper language support.
+Simplify the layout:
+• Remove any duplicate icons or buttons that appear more than once • Each action should appear in ONE place only (not in sidebar AND header AND bottom bar) • Maximum 5 navigation items total — remove anything that’s not essential • Give every element more breathing room: increase spacing between cards and sections • Remove decorative elements that don’t serve a function
+Cards and posts:
+• Each post card should have only 3 action buttons: Like, Comment, Save • Remove the share/repeat button if it looks cluttered • Keep the post header clean: avatar + name + time only, no extra badges unless necessary
+Language system — this is important:
+• Detect the user’s browser language using navigator.language • If it starts with "ar", set the entire site to Arabic with dir="rtl" on the <html> tag • If it starts with anything else, default to English with dir="ltr" • Add a language toggle button in the header (small, not prominent) so the user can switch manually • ALL text in the site must be translated — no mixing Arabic and English unless the user switches • Fix any text that is hardcoded in the wrong language
+Typography:
+• Use one font size system: 24px headings, 16px body, 13px metadata — nothing else • Line height should be 1.6 for all text • No bold text inside paragraphs — bold is for headings and names only
+Fix common mistakes:
+• If any text is overflowing its container, add overflow: hidden and text-overflow: ellipsis • If RTL mode is active, flip all icons and layouts that use margin-left to margin-right • Test that nothing overlaps on a 375px wide screen (iPhone size)
+• Add backdrop-filter: blur(12px) to the header and sidebar for a frosted glass effect • Use box-shadow: 0 2px 20px rgba(0,0,0,0.08) on cards instead of hard borders • Transitions on hover: transition: all 0.2s ease on all interactive elements • Remove all sharp corners from the entire project — search for border-radius: 0 and remove it
