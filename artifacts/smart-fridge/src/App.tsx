@@ -556,6 +556,7 @@ function PageHeading({ title, description, action, eyebrow = 'مساحتي ال�
 }
 
 function AddFoodModal({ onClose, onAdd }: { onClose: () => void; onAdd: (item: Omit<FridgeItem, 'id'>) => void }) {
+  const { language } = useLanguage();
   const [form, setForm] = useState({ name: '', quantity: '1', unit: 'حبة', category: 'خضروات', expiry: '', calories: '80' });
   const update = (key: keyof typeof form, value: string) => setForm(prev => ({ ...prev, [key]: value }));
   const submit = (event: FormEvent) => {
@@ -567,17 +568,17 @@ function AddFoodModal({ onClose, onAdd }: { onClose: () => void; onAdd: (item: O
     onClose();
   };
   return <div className="modal-backdrop" onMouseDown={e => { if (e.target === e.currentTarget) onClose(); }}>
-    <div className="modal" role="dialog" aria-modal="true">
-      <div className="modal-head"><div><h2>إضافة إلى الثلاجة</h2><p>شيء جديد يستحق مكاناً في مساحتك.</p></div><button className="icon-btn" onClick={onClose} data-testid="button-close-add-food"><X size={18} /></button></div>
+     <div className="modal" role="dialog" aria-modal="true" aria-labelledby="add-food-title">
+       <div className="modal-head"><div><h2 id="add-food-title">{text(language, 'إضافة إلى الثلاجة', 'Add to fridge')}</h2><p>{text(language, 'شيء جديد يستحق مكاناً في مساحتك.', 'Something new deserves a place in your space.')}</p></div><button className="icon-btn" onClick={onClose} aria-label={text(language, 'إغلاق', 'Close')} data-testid="button-close-add-food"><X size={18} /></button></div>
       <form className="form-grid" onSubmit={submit}>
-        <div className="field full"><label htmlFor="food-name">اسم الطعام</label><input autoFocus id="food-name" type="text" autoComplete="off" data-testid="input-food-name" value={form.name} onChange={e => update('name', e.target.value)} placeholder="اكتب اسم الطعام..." required /></div>
-        <div className="field"><label htmlFor="food-quantity">الكمية</label><input id="food-quantity" type="number" min="1" data-testid="input-food-quantity" value={form.quantity} onChange={e => update('quantity', e.target.value)} /></div>
-        <div className="field"><label htmlFor="food-unit">الوحدة</label><select id="food-unit" data-testid="select-food-unit" value={form.unit} onChange={e => update('unit', e.target.value)}><option>حبة</option><option>علبة</option><option>كيس</option><option>قطعة</option><option>رأس</option><option>عبوة</option></select></div>
-        <div className="field"><label htmlFor="food-category">القسم</label><select id="food-category" data-testid="select-food-category" value={form.category} onChange={e => update('category', e.target.value)}><option>خضروات</option><option>فواكه</option><option>ألبان</option><option>لحوم</option><option>جاهز</option><option>مشروبات</option></select></div>
-        <div className="field"><label htmlFor="food-expiry">تاريخ الانتهاء</label><input id="food-expiry" type="date" data-testid="input-food-expiry" value={form.expiry} onChange={e => update('expiry', e.target.value)} /></div>
-        <div className="calorie-preview"><span>السعرات لكل وحدة</span><strong>{Number(form.calories) || 0} <small>سعرة</small></strong></div>
-        <div className="field full"><label htmlFor="food-calories">السعرات الحرارية</label><input id="food-calories" type="number" min="0" data-testid="input-food-calories" value={form.calories} onChange={e => update('calories', e.target.value)} /></div>
-        <div className="form-actions"><button className="primary-btn" type="submit" data-testid="button-save-food"><Plus size={17} />حفظ الطعام</button><button className="secondary-btn" type="button" onClick={onClose} data-testid="button-cancel-food">إلغاء</button></div>
+         <div className="field full"><label htmlFor="food-name">{text(language, 'اسم الطعام', 'Food name')}</label><input autoFocus id="food-name" type="text" autoComplete="off" data-testid="input-food-name" value={form.name} onChange={e => update('name', e.target.value)} placeholder={text(language, 'اكتب اسم الطعام...', 'Type a food name...')} required /></div>
+         <div className="field"><label htmlFor="food-quantity">{text(language, 'الكمية', 'Quantity')}</label><input id="food-quantity" type="number" min="1" data-testid="input-food-quantity" value={form.quantity} onChange={e => update('quantity', e.target.value)} /></div>
+         <div className="field"><label htmlFor="food-unit">{text(language, 'الوحدة', 'Unit')}</label><select id="food-unit" data-testid="select-food-unit" value={form.unit} onChange={e => update('unit', e.target.value)}><option>حبة</option><option>علبة</option><option>كيس</option><option>قطعة</option><option>رأس</option><option>عبوة</option></select></div>
+         <div className="field"><label htmlFor="food-category">{text(language, 'القسم', 'Category')}</label><select id="food-category" data-testid="select-food-category" value={form.category} onChange={e => update('category', e.target.value)}><option>خضروات</option><option>فواكه</option><option>ألبان</option><option>لحوم</option><option>جاهز</option><option>مشروبات</option></select></div>
+         <div className="field"><label htmlFor="food-expiry">{text(language, 'تاريخ الانتهاء', 'Expiry date')}</label><input id="food-expiry" type="date" data-testid="input-food-expiry" value={form.expiry} onChange={e => update('expiry', e.target.value)} /></div>
+         <div className="calorie-preview"><span>{text(language, 'السعرات لكل وحدة', 'Calories per unit')}</span><strong>{Number(form.calories) || 0} <small>{text(language, 'سعرة', 'kcal')}</small></strong></div>
+         <div className="field full"><label htmlFor="food-calories">{text(language, 'السعرات الحرارية', 'Calories')}</label><input id="food-calories" type="number" min="0" data-testid="input-food-calories" value={form.calories} onChange={e => update('calories', e.target.value)} /></div>
+         <div className="form-actions"><button className="primary-btn" type="submit" data-testid="button-save-food"><Plus size={17} />{text(language, 'حفظ الطعام', 'Save food')}</button><button className="secondary-btn" type="button" onClick={onClose} data-testid="button-cancel-food">{text(language, 'إلغاء', 'Cancel')}</button></div>
       </form>
     </div>
   </div>;
