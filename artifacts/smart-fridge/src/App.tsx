@@ -500,10 +500,10 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
      <aside className="sidebar">
        <div className="brand"><div className="brand-mark"><Refrigerator size={24} /></div><div className="brand-copy"><h1>{text(language, 'ثلاجتي', 'Smart Fridge')}</h1><small>{text(language, 'رفيق البيت الطازج', 'Fresh home companion')}</small></div></div>
        <nav className="nav-list" aria-label={text(language, 'التنقل الرئيسي', 'Main navigation')}>
-         {navItems.map(item => { const Icon = item.icon; const label = text(language, item.ar, item.en); return <Link key={item.href} href={item.href} className={`nav-item ${location === item.href ? 'active' : ''}`} data-testid={`link-nav-${item.ar}`}><Icon size={18} /><span className="nav-label">{label}</span>{item.href === '/shopping' && <b className="nav-count">{shoppingCount}</b>}</Link>; })}
+          {navItems.map(item => { const Icon = item.icon; const label = text(language, item.ar, item.en); return <Link key={item.href} href={item.href} aria-label={label} className={`nav-item ${location === item.href ? 'active' : ''}`} data-testid={`link-nav-${item.ar}`}><Icon size={18} /><span className="nav-label">{label}</span>{item.href === '/shopping' && <b className="nav-count">{shoppingCount}</b>}</Link>; })}
       </nav>
       <div className="sidebar-footer">
-         <Link href="/settings" className={`nav-item ${location === '/settings' ? 'active' : ''}`} data-testid="link-nav-settings"><Settings size={18} /><span className="nav-label">{text(language, 'الإعدادات', 'Settings')}</span></Link>
+         <Link href="/settings" aria-label={text(language, 'الإعدادات', 'Settings')} className={`nav-item ${location === '/settings' ? 'active' : ''}`} data-testid="link-nav-settings"><Settings size={18} /><span className="nav-label">{text(language, 'الإعدادات', 'Settings')}</span></Link>
          <div className="profile-mini"><div className="avatar">{initials(user.name)}</div><div><strong>{user.name}</strong><span>{text(language, 'مساحتي الشخصية', 'My space')}</span></div></div>
          <button className="logout-btn" onClick={onLogout} data-testid="button-logout"><LogOut size={15} /><span>{text(language, 'تسجيل الخروج', 'Sign out')}</span></button>
       </div>

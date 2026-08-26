@@ -2522,3 +2522,261 @@ textarea:focus-visible {
     font-size: 10px;
   }
 }
+
+/* Final responsive layout: mobile bottom navigation, tablet rail, desktop dashboard. */
+@media (max-width: 767px) {
+  body {
+    overflow-x: hidden;
+    font-size: 16px;
+  }
+  .app-shell {
+    display: block;
+    min-height: 100dvh;
+  }
+  .sidebar {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 50;
+    width: 100%;
+    height: 68px;
+    min-height: 68px;
+    padding: 6px 8px;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0;
+    overflow: visible;
+    border-top: 1px solid hsl(var(--sidebar-border));
+    box-shadow: 0 -6px 20px rgba(44, 74, 53, .18);
+  }
+  .sidebar .brand,
+  .sidebar .language-switcher {
+    display: none;
+  }
+  .sidebar .nav-list {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 3px;
+    overflow: visible;
+  }
+  .sidebar .nav-item,
+  .sidebar .sidebar-footer > .nav-item {
+    position: relative;
+    width: auto;
+    min-width: 0;
+    min-height: 56px;
+    padding: 6px 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    border-radius: 11px;
+  }
+  .sidebar .nav-item .nav-label,
+  .sidebar .sidebar-footer > .nav-item .nav-label {
+    display: none;
+  }
+  .sidebar .nav-count {
+    top: 2px;
+    left: calc(50% + 5px);
+  }
+  .sidebar .sidebar-footer {
+    width: 56px;
+    min-width: 56px;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: stretch;
+  }
+  .sidebar .sidebar-footer > .nav-item {
+    flex: 1;
+  }
+  .sidebar .profile-mini,
+  .sidebar .logout-btn {
+    display: none;
+  }
+  .app-shell > div {
+    width: 100%;
+    min-width: 0;
+  }
+  .app-main {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    padding: 18px 10px 92px;
+  }
+  .reference-dashboard {
+    display: block;
+    width: 100%;
+  }
+  .reference-fridge {
+    width: 100%;
+    min-width: 0;
+  }
+  .reference-rail {
+    display: none;
+  }
+  .card.card-pad {
+    padding: 8px;
+  }
+  .page-heading {
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .page-heading h2 {
+    font-size: clamp(28px, 8vw, 34px);
+  }
+  .page-heading p,
+  .card-title p {
+    font-size: 14px;
+  }
+  .card-title h3 {
+    font-size: 18px;
+  }
+  .primary-btn,
+  .secondary-btn {
+    min-height: 44px;
+    font-size: 15px;
+    padding: 9px 12px;
+  }
+  .icon-btn {
+    width: 42px;
+    height: 42px;
+  }
+  .shopping-item label,
+  .shopping-item .item-quantity {
+    font-size: 15px;
+  }
+  .stories,
+  .story-list,
+  .stories-list {
+    display: flex;
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+  }
+  .stories::-webkit-scrollbar,
+  .story-list::-webkit-scrollbar,
+  .stories-list::-webkit-scrollbar {
+    display: none;
+  }
+  .stories > *,
+  .story-list > *,
+  .stories-list > * {
+    flex: 0 0 auto;
+  }
+  .real-fridge-card {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .real-fridge-body {
+    width: 100%;
+    min-width: 0;
+    grid-template-columns: minmax(82px, 29%) minmax(0, 1fr);
+    padding: 8px;
+    gap: 5px;
+  }
+  .real-fridge-door,
+  .real-fridge-cabinet {
+    min-width: 0;
+  }
+  .real-fridge-cabinet .shelf-items {
+    max-width: 100%;
+    overflow-x: hidden;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    row-gap: 4px;
+  }
+  .dashboard-footer {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  body {
+    overflow-x: hidden;
+  }
+  .app-shell {
+    grid-template-columns: 60px minmax(0, 1fr);
+  }
+  .sidebar {
+    width: 60px;
+    padding: 18px 6px;
+    align-items: center;
+    gap: 22px;
+  }
+  .sidebar .brand {
+    justify-content: center;
+  }
+  .sidebar .brand-copy,
+  .sidebar .nav-label,
+  .sidebar .profile-mini > div:last-child,
+  .sidebar .logout-btn span {
+    display: none;
+  }
+  .sidebar .nav-list {
+    width: 48px;
+    overflow: visible;
+  }
+  .sidebar .nav-item,
+  .sidebar .sidebar-footer > .nav-item {
+    width: 48px;
+    min-height: 48px;
+    padding-inline: 0;
+    justify-content: center;
+  }
+  .sidebar .sidebar-footer {
+    width: 48px;
+    justify-items: center;
+  }
+  .sidebar .profile-mini {
+    border-top: 0;
+    padding-top: 0;
+  }
+  .sidebar .logout-btn {
+    justify-content: center;
+    padding-inline: 0;
+  }
+  .reference-dashboard {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .reference-rail {
+    display: none;
+  }
+  .reference-fridge {
+    width: 100%;
+  }
+  .app-main {
+    min-width: 0;
+    padding-inline: clamp(16px, 3vw, 30px);
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1050px) {
+  .app-shell {
+    grid-template-columns: 205px minmax(0, 1fr);
+  }
+  .sidebar {
+    padding-inline: 20px;
+    align-items: stretch;
+  }
+  .sidebar .brand-copy,
+  .sidebar .nav-label,
+  .sidebar .profile-mini > div:last-child,
+  .sidebar .logout-btn span {
+    display: block;
+  }
+  .sidebar .nav-item {
+    width: auto;
+    padding-inline: 14px;
+    justify-content: flex-start;
+  }
+  .reference-dashboard {
+    grid-template-columns: minmax(0, 1fr) 310px;
+  }
+}
