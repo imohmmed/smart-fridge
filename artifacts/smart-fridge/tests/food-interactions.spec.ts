@@ -1,0 +1,88 @@
+import { expect, test } from '@playwright/test';
+
+async function seedDemoSession(page: import('@playwright/test').Page) {
+  await page.addInitScript(() => {
+    const user = {
+      id: 'food-interaction-test-user',
+      name: 'Food Test',
+      email: 'food-interaction@example.test',
+      password: 'test-password',
+      gender: 'female',
+    };
+
+    localStorage.setItem('smart_fridge_users', JSON.stringify([user]));
+    localStorage.setItem('smart_fridge_session', user.id);
+    localStorage.setItem('smart_fridge_language', 'en');
+    localStorage.removeItem('smart_fridge_read_notifications');
+  });
+}
+
+test.describe('Smart Fridge food interactions', () => {
+  test('reveals Add new food at the end of the fridge', async ({ page }) => {
+    await seedDemoSession(page);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+
+    const addFoodButton = page.getByTestId('button-add-food-dashboard');
+    await expect(addFoodButton).toBeHidden();
+
+    await page.locator('.fridge-end-sentinel').scrollIntoViewIfNeeded();
+    await expect(addFoodButton).toBeVisible();
+    await expect(addFoodButton).toHaveAttribute('aria-hidden', 'false');
+  });
+
+  test('opens details and updates the selected food quantity', async ({ page }) => {
+    await seedDemoSession(page);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+
+    await page.getByTestId('button-food-eggs').click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await expect(page.getByTestId('input-food-details-quantity')).toHaveValue('8');
+
+    await page.getByTestId('input-food-details-quantity').fill('12');
+    await page.getByTestId('button-save-food-details').click();
+
+    await expect(page.getByTestId('input-food-details-quantity')).toHaveValue('12');
+    await expect(page.getByTestId('button-food-eggs')).toHaveAttribute('aria-label', /12/);
+  });
+
+  test('persists a quantity update after reload', async ({ page }) => {
+    await seedDemoSession(page);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+
+    await page.getByTestId('button-food-eggs').click();
+    await page.getByTestId('input-food-details-quantity').fill('11');
+    await page.getByTestId('button-save-food-details').click();
+    await page.reload();
+
+    await page.getByTestId('button-food-eggs').click();
+    await expect(page.getByTestId('input-food-details-quantity')).toHaveValue('11');
+  });
+
+  test('confirms deletion and closes the details surface', async ({ page }) => {
+    await seedDemoSession(page);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+
+    await page.getByTestId('button-food-eggs').click();
+    await page.getByTestId('button-delete-food').click();
+    await expect(page.getByTestId('button-confirm-delete-food')).toBeVisible();
+    await page.getByTestId('button-confirm-delete-food').click();
+
+    await expect(page.getByRole('dialog')).toBeHidden();
+    await expect(page.getByTestId('button-food-eggs')).toHaveCount(0);
+  });
+
+  test('closes food details with Escape', async ({ page }) => {
+    await seedDemoSession(page);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+
+    await page.getByTestId('button-food-eggs').click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('dialog')).toBeHidden();
+  });
+});

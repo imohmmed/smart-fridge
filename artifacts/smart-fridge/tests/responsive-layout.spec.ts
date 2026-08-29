@@ -99,7 +99,12 @@ for (const viewport of viewports) {
     }
     await expect(page.locator('.dashboard-footer > .macro-stat')).toBeVisible();
     await expect(page.locator('.dashboard-footer > .health-tip')).toBeVisible();
-    await expect(page.locator('.dashboard-footer > .floating-add')).toBeVisible();
+    const addFoodButton = page.locator('.dashboard-footer > .floating-add');
+    if (viewport.name !== 'desktop') {
+      await expect(addFoodButton).toBeHidden();
+    }
+    await page.locator('.fridge-end-sentinel').scrollIntoViewIfNeeded();
+    await expect(addFoodButton).toBeVisible();
 
     if (viewport.name === 'phone') {
       const mainWidthBeforeDock = initial.main?.width;

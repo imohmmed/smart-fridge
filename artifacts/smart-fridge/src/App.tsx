@@ -1,4 +1,4 @@
-import { createContext, useContext, type CSSProperties, type Dispatch, type FormEvent, type ReactNode, type SetStateAction, useEffect, useState } from 'react';
+import { createContext, useContext, type CSSProperties, type Dispatch, type FormEvent, type ReactNode, type SetStateAction, useEffect, useRef, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
@@ -95,6 +95,10 @@ const englishTranslations: Record<string, string> = {
   'لم نجد هذه المرة': 'Nothing found this time', 'جربي كلمة أخرى أو تصفحي كل الوصفات.': 'Try another word or browse all recipes.',
   'كل ما تحتاجه رحلتك القادمة، في مكان واحد.': 'Everything you need for your next trip, in one place.',
   'نسخ القائمة': 'Copy list', 'إضافة للثلاجة': 'Add to fridge', 'عناصر متبقية': 'items remaining',
+  'تفاصيل الطعام': 'Food details', 'حفظ الكمية': 'Save quantity', 'حذف العنصر': 'Delete item',
+  'هل تريد حذف هذا العنصر؟': 'Delete this item?', 'تأكيد الحذف': 'Confirm deletion',
+  'إلغاء الحذف': 'Cancel deletion', 'تم تحديث الكمية': 'Quantity updated',
+  'تم حذف العنصر': 'Item deleted', 'أدخل كمية صحيحة': 'Enter a valid quantity',
   'أضف ما ينقصك.': 'Add what is missing.', 'أضف شيئاً قبل أن تنساه.': 'Add something before you forget.',
   'أضف عنصراً...': 'Add an item...', 'أصناف قاربت على النفاد': 'Items running low',
   'لا توجد اقتراحات عاجلة.': 'No urgent suggestions.', 'مثال: اختر الطماطم الناضجة...': 'Example: choose ripe tomatoes...',
@@ -624,7 +628,7 @@ function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; sele
     { title: text(language, 'المشروبات', 'Drinks'), match: 'مشروبات', tone: 'drinks', emoji: '🧃', note: text(language, 'جاهزة للتقديم', 'Ready to serve') },
     { title: text(language, 'وجبات جاهزة', 'Ready meals'), match: 'جاهز', tone: 'ready', emoji: '🍱', note: text(language, 'حل سريع ولذيذ', 'Quick and easy') },
   ];
-  const renderFood = (item: FridgeItem) => <button key={item.id} className={`smart-food-card ${selected?.id === item.id ? 'selected' : ''}`} onClick={() => onSelect(item)} aria-pressed={selected?.id === item.id} aria-label={`${displayFoodName(item.name, language)}، ${toWesternNums(item.quantity)} ${item.unit}`} data-testid={`button-food-${item.id}`}>
+  const renderFood = (item: FridgeItem) => <button key={item.id} className={`smart-food-card ${selected?.id === item.id ? 'selected' : ''}`} onClick={() => onSelect(item)} aria-pressed={selected?.id === item.id} aria-haspopup="dialog" aria-label={`${displayFoodName(item.name, language)}، ${toWesternNums(item.quantity)} ${item.unit}`} data-testid={`button-food-${item.id}`}>
     <span className="smart-food-visual"><FoodArt item={item} size={52} /><b className="quantity-badge" aria-hidden="true">{toWesternNums(item.quantity)}</b></span>
     <span className="smart-food-name">{displayFoodName(item.name, language)}</span>
   </button>;
@@ -650,22 +654,137 @@ function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; sele
   </div>;
 }
 
+function FoodDetailsDialog({
+  item,
+  quantity,
+  onQuantityChange,
+  onSave,
+  onDelete,
+  onClose,
+}: {
+  item: FridgeItem;
+  quantity: string;
+  onQuantityChange: (value: string) => void;
+  onSave: (quantity: number) => void;
+  onDelete: () => void;
+  onClose: () => void;
+}) {
+  const { language } = useLanguage();
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const [deletePending, setDeletePending] = useState(false);
+  const [quantityError, setQuantityError] = useState('');
+
+  useEffect(() => {
+    const previousFocus = document.activeElement as HTMLElement | null;
+    dialogRef.current?.focus();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      previousFocus?.focus();
+    };
+  }, []);
+
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const nextQuantity = Number(quantity);
+    if (!Number.isInteger(nextQuantity) || nextQuantity < 1) {
+      setQuantityError(text(language, 'أدخل كمية صحيحة', 'Enter a valid quantity'));
+      return;
+    }
+    setQuantityError('');
+    onSave(nextQuantity);
+  };
+
+  return <div className="modal-backdrop food-details-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}>
+    <div className="food-details-dialog" ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="food-details-title" tabIndex={-1}>
+      <div className="food-details-head">
+        <div>
+          <span className="eyebrow">{text(language, 'تفاصيل الطعام', 'Food details')}</span>
+          <h2 id="food-details-title">{displayFoodName(item.name, language)}</h2>
+          <p>{text(language, 'حدّث الكمية أو أزل العنصر من ثلاجتك.', 'Update the quantity or remove this item from your fridge.')}</p>
+        </div>
+        <button className="icon-btn" type="button" onClick={onClose} aria-label={text(language, 'إغلاق التفاصيل', 'Close details')} data-testid="button-close-food-details"><X size={18} /></button>
+      </div>
+      <div className="food-details-summary">
+        <FoodArt item={item} size={92} />
+        <div>
+          <strong>{displayFoodName(item.name, language)}</strong>
+          <span>{toWesternNums(item.quantity)} {language === 'en' ? 'units' : item.unit}</span>
+        </div>
+      </div>
+      <div className="food-details-stats">
+        <div><small>{text(language, 'تاريخ الانتهاء', 'Expiry date')}</small><strong>{toWesternNums(new Date(item.expiry).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US'))}</strong></div>
+        <div><small>{text(language, 'السعرات للوحدة', 'Calories per unit')}</small><strong>{toWesternNums(item.calories)} {text(language, 'سعرة', 'kcal')}</strong></div>
+      </div>
+      <form className="food-details-form" onSubmit={submit}>
+        <div className="field">
+          <label htmlFor="food-details-quantity">{text(language, 'كمية الطعام', 'Food quantity')}</label>
+          <input id="food-details-quantity" type="number" min="1" step="1" inputMode="numeric" value={quantity} onChange={event => { onQuantityChange(event.target.value); setQuantityError(''); }} aria-describedby={quantityError ? 'food-details-quantity-error' : undefined} data-testid="input-food-details-quantity" />
+          {quantityError && <p className="food-details-error" id="food-details-quantity-error" role="alert">{quantityError}</p>}
+        </div>
+        <div className="food-details-actions">
+          {deletePending ? <div className="food-delete-confirm" role="alert">
+            <span>{text(language, 'هل تريد حذف هذا العنصر؟', 'Delete this item?')}</span>
+            <div><button className="danger-btn" type="button" onClick={onDelete} data-testid="button-confirm-delete-food">{text(language, 'تأكيد الحذف', 'Confirm deletion')}</button><button className="secondary-btn" type="button" onClick={() => setDeletePending(false)} data-testid="button-cancel-delete-food">{text(language, 'إلغاء الحذف', 'Cancel deletion')}</button></div>
+          </div> : <button className="danger-btn" type="button" onClick={() => setDeletePending(true)} data-testid="button-delete-food"><Trash2 size={15} />{text(language, 'حذف العنصر', 'Delete item')}</button>}
+          {!deletePending && <button className="primary-btn" type="submit" data-testid="button-save-food-details"><Check size={16} />{text(language, 'حفظ الكمية', 'Save quantity')}</button>}
+        </div>
+      </form>
+    </div>
+  </div>;
+}
+
 function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: string; data: UserData; setData: Dispatch<SetStateAction<UserData>>; onAdd: () => void; setNotice: (value: string) => void }) {
   const { language } = useLanguage();
   const { sidebarOpen, toggleSidebar } = useSidebarControls();
   const [selectedId, setSelectedId] = useState(data.items.find(item => item.id === 'eggs')?.id || data.items[0]?.id);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [quantityDraft, setQuantityDraft] = useState(String(data.items.find(item => item.id === 'eggs')?.quantity || data.items[0]?.quantity || 1));
+  const [showAddButton, setShowAddButton] = useState(false);
+  const fridgeEndRef = useRef<HTMLSpanElement>(null);
   const selected = data.items.find(item => item.id === selectedId) || data.items[0];
   const totalCalories = data.items.reduce((sum, item) => sum + item.calories * item.quantity, 0);
+  const openFoodDetails = (item: FridgeItem) => {
+    setSelectedId(item.id);
+    setQuantityDraft(String(item.quantity));
+    setDetailsOpen(true);
+  };
+  const saveSelectedQuantity = (quantity: number) => {
+    if (!selected) return;
+    setData(prev => ({ ...prev, items: prev.items.map(item => item.id === selected.id ? { ...item, quantity } : item) }));
+    setQuantityDraft(String(quantity));
+    flash(setNotice, `${text(language, 'تم تحديث الكمية', 'Quantity updated')}: ${displayFoodName(selected.name, language)}`);
+  };
+  const deleteSelected = () => {
+    if (!selected) return;
+    const remaining = data.items.filter(item => item.id !== selected.id);
+    setData(prev => ({ ...prev, items: prev.items.filter(item => item.id !== selected.id) }));
+    setSelectedId(remaining[0]?.id);
+    setDetailsOpen(false);
+    flash(setNotice, `${text(language, 'تم حذف العنصر', 'Item deleted')}: ${displayFoodName(selected.name, language)}`);
+  };
   const consume = () => {
     if (!selected) return;
     setData(prev => ({ ...prev, items: prev.items.map(item => item.id === selected.id ? { ...item, quantity: item.quantity - 1 } : item).filter(item => item.quantity > 0) }));
     flash(setNotice, `${text(language, 'تم تسجيل استهلاك', 'Consumption recorded')}: ${displayFoodName(selected.name, language)}`);
   };
-  const editSelected = () => {
-    if (!selected) return;
-    const quantity = window.prompt(text(language, 'عدّل الكمية', 'Edit quantity'), String(selected.quantity));
-    if (quantity !== null && Number(quantity) > 0) setData(prev => ({ ...prev, items: prev.items.map(item => item.id === selected.id ? { ...item, quantity: Number(quantity) } : item) }));
-  };
+  useEffect(() => {
+    const endMarker = fridgeEndRef.current;
+    if (!endMarker) return;
+    if (!('IntersectionObserver' in window)) {
+      setShowAddButton(true);
+      return;
+    }
+    const observer = new IntersectionObserver(([entry]) => setShowAddButton(entry.isIntersecting), {
+      threshold: 0,
+      rootMargin: '0px 0px -48px 0px',
+    });
+    observer.observe(endMarker);
+    return () => observer.disconnect();
+  }, [data.items.length]);
   const percentage = Math.min(100, Math.round(totalCalories / data.calorieGoal * 100));
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -735,17 +854,18 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
     </div>
         <div className="reference-heading"><h2>{text(language, 'محتويات ثلاجتك', 'Your fridge contents')}</h2></div>
     <div className="reference-dashboard">
-      <section className="reference-fridge"><FridgeVisual items={data.items} selected={selected} onSelect={item => setSelectedId(item.id)} /></section>
+       <section className="reference-fridge"><FridgeVisual items={data.items} selected={selected} onSelect={openFoodDetails} /><span className="fridge-end-sentinel" ref={fridgeEndRef} aria-hidden="true" /></section>
       <aside className="reference-rail">
-          <div className="item-detail-panel card card-pad"><div className="rail-title"><span>{text(language, 'تفاصيل العنصر', 'Item details')}</span></div>{selected ? <><div className="detail-hero" key={selected.id}><FoodArt item={selected} size={108} /><h3>{displayFoodName(selected.name, language)}</h3><span>{toWesternNums(selected.quantity)} {language === 'en' ? 'units' : selected.unit}</span></div><div className="detail-stats"><div><small>{text(language, 'تاريخ الانتهاء', 'Expiry date')}</small><strong>{toWesternNums(new Date(selected.expiry).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US'))}</strong></div><div><small>{text(language, 'إجمالي السعرات', 'Total calories')}</small><strong>{toWesternNums(selected.calories * selected.quantity)} {text(language, 'سعرة', 'kcal')}</strong></div><div><small>{text(language, 'السعرات للوحدة', 'Calories per unit')}</small><strong>{toWesternNums(selected.calories)} {text(language, 'سعرة', 'kcal')}</strong></div></div><div className="detail-actions"><button className="secondary-btn" onClick={editSelected} data-testid="button-edit-selected"><Pencil size={15} />{text(language, 'تعديل', 'Edit')}</button><button className="primary-btn" onClick={consume} data-testid="button-consume-food"><Check size={16} />{text(language, 'استهلكت', 'Consumed')}</button><button className="icon-btn" onClick={onAdd} data-testid="button-add-related"><Plus size={17} /> <span>{text(language, 'إضافة', 'Add')}</span></button></div></> : <div className="empty-state">{text(language, 'الثلاجة فارغة', 'The fridge is empty')}</div>}</div>
+           <div className="item-detail-panel card card-pad"><div className="rail-title"><span>{text(language, 'تفاصيل العنصر', 'Item details')}</span></div>{selected ? <><div className="detail-hero" key={selected.id}><FoodArt item={selected} size={108} /><h3>{displayFoodName(selected.name, language)}</h3><span>{toWesternNums(selected.quantity)} {language === 'en' ? 'units' : selected.unit}</span></div><div className="detail-stats"><div><small>{text(language, 'تاريخ الانتهاء', 'Expiry date')}</small><strong>{toWesternNums(new Date(selected.expiry).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US'))}</strong></div><div><small>{text(language, 'إجمالي السعرات', 'Total calories')}</small><strong>{toWesternNums(selected.calories * selected.quantity)} {text(language, 'سعرة', 'kcal')}</strong></div><div><small>{text(language, 'السعرات للوحدة', 'Calories per unit')}</small><strong>{toWesternNums(selected.calories)} {text(language, 'سعرة', 'kcal')}</strong></div></div><div className="detail-actions"><button className="secondary-btn" onClick={() => openFoodDetails(selected)} data-testid="button-edit-selected"><Pencil size={15} />{text(language, 'تعديل', 'Edit')}</button><button className="primary-btn" onClick={consume} data-testid="button-consume-food"><Check size={16} />{text(language, 'استهلكت', 'Consumed')}</button><button className="icon-btn" onClick={onAdd} data-testid="button-add-related"><Plus size={17} /> <span>{text(language, 'إضافة', 'Add')}</span></button></div></> : <div className="empty-state">{text(language, 'الثلاجة فارغة', 'The fridge is empty')}</div>}</div>
          <div className="shopping-panel card card-pad"><div className="rail-title"><span><ShoppingBasket size={17} /> {text(language, 'قائمة التسوق', 'Shopping list')} <b>{toWesternNums(data.shopping.filter(item => !item.done).length)}</b></span><Link href="/shopping"><ChevronLeft size={16} /></Link></div><ShoppingPreview data={data} setData={setData} /><Link href="/shopping" className="export-list"><ClipboardCopy size={15} /> {text(language, 'تصدير القائمة', 'Export list')}</Link></div>
       </aside>
     </div>
          <div className="dashboard-footer">
            <div className="macro-stat" aria-label={text(language, 'إحصائية توزيع المغذيات', 'Nutrient distribution statistic')}><small>{text(language, 'توزيع المغذيات', 'Nutrients')}</small><div className="macro-lines"><span><i className="macro-protein" />{text(language, 'بروتين', 'Protein')} <b>35%</b></span><span><i className="macro-carb" />{text(language, 'كربوهيدرات', 'Carbohydrates')} <b>40%</b></span><span><i className="macro-fat" />{text(language, 'دهون صحية', 'Healthy fats')} <b>25%</b></span></div></div>
            <div className="health-tip" aria-label={text(language, 'نصيحة اليوم', 'Daily tip')}><Leaf size={20} /><div><small>{text(language, 'نصيحة اليوم', 'Tip of the day')}</small><strong>{text(language, 'تناول الخضروات في كل وجبة', 'Eat vegetables with every meal')}<br />{text(language, 'للحصول على صحة أفضل.', 'for better health.')}</strong></div></div>
-            <button className="floating-add" onClick={onAdd} data-testid="button-add-food-dashboard" aria-label={text(language, 'أضف طعاماً جديداً', 'Add new food')}><Plus size={26} /><span>{text(language, 'أضف طعاماً جديداً', 'Add new food')}</span></button>
+             <button className={`floating-add ${showAddButton ? 'is-visible' : ''}`} onClick={onAdd} data-testid="button-add-food-dashboard" aria-label={text(language, 'أضف طعاماً جديداً', 'Add new food')} aria-hidden={!showAddButton} tabIndex={showAddButton ? 0 : -1}><Plus size={26} /><span>{text(language, 'أضف طعاماً جديداً', 'Add new food')}</span></button>
          </div>
+          {detailsOpen && selected && <FoodDetailsDialog item={selected} quantity={quantityDraft} onQuantityChange={setQuantityDraft} onSave={saveSelectedQuantity} onDelete={deleteSelected} onClose={() => setDetailsOpen(false)} />}
   </main>;
 }
 
