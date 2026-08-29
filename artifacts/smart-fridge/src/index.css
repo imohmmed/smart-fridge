@@ -2526,7 +2526,7 @@ textarea:focus-visible {
 /* Final responsive layout: mobile bottom navigation, tablet rail, desktop dashboard. */
 @media (max-width: 767px) {
   body {
-    overflow-x: hidden;
+    overflow-x: clip;
     font-size: 16px;
   }
   .app-shell {
@@ -3563,7 +3563,7 @@ html[dir="ltr"] .settings-nav button {
     z-index: 80;
     width: min(286px, 88vw);
     height: 100dvh;
-    min-height: 0;
+    min-height: 100dvh;
     padding: 18px 16px;
     display: flex;
     flex-direction: column;
@@ -5216,91 +5216,24 @@ body * {
   }
 }
 
-/* Apple-style continuous squircles and scroll-safe sticky headers. */
-:root {
-  --squircle-radius: clamp(39px, 5vw, 62px);
-  --squircle-mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%20100%20100%22 preserveAspectRatio=%22none%22%3E%3Cpath fill=%22white%22 d=%22M14%200H86C93.732%200%20100%206.268%20100%2014V86C100%2093.732%2093.732%20100%2086%20100H14C6.268%20100%200%2093.732%200%2086V14C0%206.268%206.268%200%2014%200Z%22/%3E%3C/svg%3E");
-}
-
-.icon-btn,
-.brand-mark,
-.card,
-.primary-btn,
-.secondary-btn,
-.nav-item,
-.smart-sidebar__inner,
-.smart-sidebar__link,
-.smart-sidebar__logout,
-.dashboard-health-card,
-.real-fridge-card,
-.notification-dropdown,
-.notification-item,
-.food-badge,
-.date-chip,
-.search-box,
-.quick-link,
-.recipe-card,
-.floating-add,
-.modal,
-.auth-card {
-  border-radius: min(var(--squircle-radius), 50%);
-  -webkit-mask-image: var(--squircle-mask);
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  -webkit-mask-size: 100% 100%;
-  mask-image: var(--squircle-mask);
-  mask-repeat: no-repeat;
-  mask-position: center;
-  mask-size: 100% 100%;
-}
-
-.mobile-topbar,
-.dashboard-topbar {
+/* Final technical fixes: keep the mobile header anchored, align its badge,
+   and leave the document vertically scrollable on touch screens. */
+.mobile-topbar {
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
-.dashboard-topbar {
-  position: sticky;
-  isolation: isolate;
-  background: transparent !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
-}
-
-.dashboard-topbar::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  border: 1px solid hsl(var(--border));
-  border-radius: min(var(--squircle-radius), 50%);
-  background: hsl(var(--card) / .94);
-  box-shadow: var(--soft-shadow);
-  -webkit-mask-image: var(--squircle-mask);
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  -webkit-mask-size: 100% 100%;
-  mask-image: var(--squircle-mask);
-  mask-repeat: no-repeat;
-  mask-position: center;
-  mask-size: 100% 100%;
-}
-
 .notification-wrap {
   position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-block;
 }
 
 .notification-count {
-  top: 0;
-  right: 0;
+  top: -5px;
+  right: -5px;
   left: auto;
-  transform: translate(25%, -25%);
+  transform: none;
   z-index: 2;
 }
 
@@ -5325,51 +5258,11 @@ body {
 }
 
 .app-main {
-  padding-top: clamp(18px, 2vw, 30px);
   scroll-padding-top: 76px;
 }
 
 @media (max-width: 767px) {
-  .mobile-topbar {
-    padding-top: calc(8px + env(safe-area-inset-top));
-  }
-
   .app-main {
-    padding-top: calc(18px + env(safe-area-inset-top));
-    scroll-padding-top: calc(70px + env(safe-area-inset-top));
-  }
-
-  .dashboard-topbar {
-    position: relative;
-    top: auto;
-    z-index: 1;
-  }
-}
-
-@supports not ((mask-image: var(--squircle-mask))) {
-  .icon-btn,
-  .brand-mark,
-  .card,
-  .primary-btn,
-  .secondary-btn,
-  .nav-item,
-  .smart-sidebar__inner,
-  .smart-sidebar__link,
-  .smart-sidebar__logout,
-  .dashboard-health-card,
-  .real-fridge-card,
-  .notification-dropdown,
-  .notification-item,
-  .food-badge,
-  .date-chip,
-  .search-box,
-  .quick-link,
-  .recipe-card,
-  .floating-add,
-  .modal,
-  .auth-card {
-    -webkit-mask-image: none;
-    mask-image: none;
-    border-radius: min(var(--squircle-radius), 50%);
+    scroll-padding-top: 70px;
   }
 }

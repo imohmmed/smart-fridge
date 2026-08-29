@@ -1,3 +1,2 @@
 - [Recipe image provider](recipe-image-provider.md) — keep the temporary Unsplash source until Spoonacular credentials return a valid response.
 - [Layered responsive styling](layered-fridge-styling.md) — keep final fridge, navigation, and auth responsive overrides together at the end because legacy rules are layered above one another.
-- [Squircles and overlays](squircles-and-overlays.md) — apply masks to leaf surfaces, not ancestors that contain dropdowns or other content that must escape their bounds.
