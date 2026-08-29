@@ -616,7 +616,6 @@ function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; sele
   const renderFood = (item: FridgeItem) => <button key={item.id} className={`smart-food-card ${selected?.id === item.id ? 'selected' : ''}`} onClick={() => onSelect(item)} aria-pressed={selected?.id === item.id} aria-label={`${displayFoodName(item.name, language)}، ${toWesternNums(item.quantity)} ${item.unit}`} data-testid={`button-food-${item.id}`}>
     <span className="smart-food-visual"><FoodArt item={item} size={52} /><b className="quantity-badge" aria-hidden="true">{toWesternNums(item.quantity)}</b></span>
     <span className="smart-food-name">{displayFoodName(item.name, language)}</span>
-    {daysUntil(item.expiry) <= 2 && <i className="food-dot" aria-hidden="true" />}
   </button>;
   return <div className="smart-shelf-card">
     <div className="smart-shelf-grid">
