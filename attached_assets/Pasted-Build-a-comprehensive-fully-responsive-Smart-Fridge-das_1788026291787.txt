@@ -1,0 +1,17 @@
+Build a comprehensive, fully responsive 'Smart Fridge' dashboard web application based on a modern design with a warm color palette (light beige background, sage green accents). The application must be highly interactive, seamless, and mobile-friendly. Please implement the following layout and functional requirements:
+1.
+Top Header: Cleanly organize and display the user's profile, notifications, Daily Goal (e.g., 1800 kcal), and Calories Consumed (with a circular progress indicator). Ensure the layout is uncluttered and properly hides or scales elements on smaller screens.
+
+2.
+Left Navigation Sidebar: Implement a collapsible side menu for both mobile and desktop views. Crucial Fix: The opening and closing animations must be exceptionally smooth and polished, eliminating any glitchy or lagging behavior. The menu should include items: My Fridge, My Meals, Daily Analysis, Shopping List, Suggested Recipes, Favorites, Settings, and Logout. Do not include a language selection toggle in this sidebar; move it entirely inside the 'Settings' view to prevent visual overlap.
+3.
+Main Central Area (The Fridge): Create a visually appealing representation of an open fridge. It must contain distinct, categorized shelves (Dairy & Drinks, Sauces, Proteins, Vegetables, Fruits, Roots & Potatoes, and a Freezer section). Maintain the basic fridge shape and proportions so it renders clearly on smartphone screens. The shelves must support vertical/horizontal scrolling where necessary, ensuring easy touch interaction with the food items on mobile devices.
+4.
+Right Panel: Display two distinct dynamic cards. First, an 'Item Details' card showing an image of the selected food (e.g., Eggs), unit count, expiry date, total calories, and action buttons (Add, Consume, Edit). Second, a 'Shopping List' card featuring checklist items and an 'Export List' button.
+5.
+Bottom Bar: Implement a bottom statistics area showing a Water Intake tracker, Remaining Calories, Macronutrient distribution progress bars (Protein, Carbohydrates, Healthy fats), a 'Daily Tip' text box, and a prominent, floating 'Add new food' (+) button.
+
+
+Ensure the overall UI code (HTML/CSS/JS or chosen framework) prioritizes smooth transitions, clean alignment, and a bug-free responsive grid.
+
+USE POWER AGENT

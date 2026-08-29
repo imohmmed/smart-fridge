@@ -1829,14 +1829,6 @@ body {
   direction: rtl;
   text-align: right;
 }
-.sidebar .language-switcher {
-  justify-content: center;
-  margin: 2px 0 4px;
-  padding: 8px 10px;
-  border: 1px solid rgba(74,124,89,.18);
-  border-radius: 12px;
-  background: rgba(255,255,255,.28);
-}
 .language-switcher button {
   border: 0;
   background: transparent;
@@ -1850,6 +1842,14 @@ body {
   font-weight: 800;
 }
 .language-switcher span { color: var(--text-muted); }
+.setting-line .language-switcher {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid rgba(74,124,89,.18);
+  border-radius: 12px;
+  background: rgba(255,255,255,.28);
+}
 .page-heading h2 { font-size: clamp(30px, 4vw, 46px); }
 .card-title h3, .recipe-body h3, .data-row strong { font-size: 1.05em; }
 
@@ -3364,6 +3364,42 @@ html[dir="ltr"] .settings-nav button {
   }
 }
 
+@media (min-width: 768px) and (max-width: 1100px) {
+  .app-shell.sidebar-open .sidebar {
+    align-items: stretch;
+    padding-inline: 20px;
+  }
+
+  .app-shell.sidebar-open .sidebar .brand {
+    justify-content: flex-start;
+  }
+
+  .app-shell.sidebar-open .sidebar .brand-copy,
+  .app-shell.sidebar-open .sidebar .nav-label,
+  .app-shell.sidebar-open .sidebar .profile-mini,
+  .app-shell.sidebar-open .sidebar .logout-btn span {
+    display: block;
+  }
+
+  .app-shell.sidebar-open .sidebar .profile-mini {
+    display: flex;
+  }
+
+  .app-shell.sidebar-open .sidebar .profile-mini > .avatar {
+    display: grid;
+  }
+
+  .app-shell.sidebar-open .sidebar .nav-item {
+    width: auto;
+    justify-content: flex-start;
+    padding-inline: 14px;
+  }
+
+  .app-shell.sidebar-open .sidebar .sidebar-footer {
+    justify-items: stretch;
+  }
+}
+
 .app-shell.sidebar-collapsed .sidebar-header .brand-copy,
 .app-shell.sidebar-collapsed .sidebar .nav-label,
 .app-shell.sidebar-collapsed .sidebar .profile-mini,
@@ -3748,5 +3784,52 @@ html[dir="ltr"] .settings-nav button {
   .dashboard-metrics .dashboard-stat > svg {
     width: 18px;
     height: 18px;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1400px) {
+  .auth-redesign .auth-visual-panel {
+    padding-inline: clamp(20px, 3vw, 48px);
+  }
+
+  .auth-redesign .auth-visual-content {
+    grid-template-columns: minmax(220px, .8fr) minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .auth-redesign .fridge-stage {
+    min-height: 500px;
+  }
+
+  .auth-redesign .smart-fridge-illustration {
+    transform: scale(.9) perspective(800px) rotateY(-6deg);
+  }
+
+  .auth-redesign .auth-copy h2 {
+    font-size: clamp(31px, 3.6vw, 46px);
+  }
+
+  .auth-redesign .auth-copy > p {
+    max-width: 320px;
+    font-size: 14px;
+  }
+
+  .auth-redesign .benefit-item strong {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 900px) {
+  .auth-redesign {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .auth-redesign .auth-visual-panel {
+    display: none;
+  }
+
+  .auth-redesign .auth-form-wrap {
+    min-height: 100dvh;
+    padding: 24px;
   }
 }

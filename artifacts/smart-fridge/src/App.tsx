@@ -525,6 +525,8 @@ const navItems = [
   { href: '/meals', ar: 'وجباتي', en: 'My meals', icon: Utensils },
   { href: '/daily-analysis', ar: 'تحليل يومي', en: 'Daily analysis', icon: Flame },
   { href: '/shopping', ar: 'قائمة التسوق', en: 'Shopping list', icon: ShoppingBasket },
+  { href: '/recipes', ar: 'وصفات مقترحة', en: 'Suggested recipes', icon: BookOpen },
+  { href: '/favorites', ar: 'المفضلة', en: 'Favorites', icon: Heart },
 ];
 
 function AppShell({ user, shoppingCount, children, onLogout }: { user: User; shoppingCount: number; children: ReactNode; onLogout: () => void }) {
@@ -562,7 +564,6 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
           {navItems.map(item => { const Icon = item.icon; const label = text(language, item.ar, item.en); return <Link key={item.href} href={item.href} onClick={closeSidebar} aria-label={label} className={`nav-item ${location === item.href ? 'active' : ''}`} data-testid={`link-nav-${item.ar}`}><Icon size={18} /><span className="nav-label">{label}</span>{item.href === '/shopping' && <b className="nav-count">{shoppingCount}</b>}</Link>; })}
       </nav>
       <div className="sidebar-footer">
-          <LanguageSwitcher />
           <Link href="/settings" onClick={closeSidebar} aria-label={text(language, 'الإعدادات', 'Settings')} className={`nav-item ${location === '/settings' ? 'active' : ''}`} data-testid="link-nav-settings"><Settings size={18} /><span className="nav-label">{text(language, 'الإعدادات', 'Settings')}</span></Link>
          <div className="profile-mini"><div className="avatar">{initials(user.name)}</div><div><strong>{user.name}</strong><span>{text(language, 'مساحتي الشخصية', 'My space')}</span></div></div>
          <button className="logout-btn" onClick={onLogout} data-testid="button-logout"><LogOut size={15} /><span>{text(language, 'تسجيل الخروج', 'Sign out')}</span></button>
@@ -730,7 +731,6 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
            <div className="avatar">{initials(userName)}</div>
            <div><strong>{userName}</strong><small>{text(language, 'مساحتي الشخصية', 'My space')}</small></div>
          </div>
-         <LanguageSwitcher />
        </div>
     </div>
       <div className="reference-heading"><div><span className="eyebrow">{text(language, 'مساحتي اليومية', 'My daily space')}</span><h2>{text(language, 'محتويات ثلاجتك', 'Your fridge contents')}</h2></div><span className="date-chip" data-testid="text-current-date">{formatArabicDate(language)}</span></div>
@@ -836,6 +836,7 @@ function SettingsPage({ user, data, setData, setNotice, onLogout }: { user: User
       <div className="card settings-nav">{sections.map(item => <button key={item[0]} className={section === item[0] ? 'active' : ''} onClick={() => setSection(item[0])} data-testid={`button-settings-${item[0]}`}>{sectionLabel(item)}</button>)}</div>
       <div className="card card-pad">
         {section === 'عام' && <><div className="card-title"><div><h3>{text(language, 'تفضيلاتك', 'Your preferences')}</h3><p>{text(language, 'بعض اللمسات الصغيرة لمساحتك', 'A few small touches for your space')}</p></div><Settings size={20} color="hsl(var(--primary))" /></div>
+           <div className="setting-line"><div><strong>{text(language, 'لغة التطبيق', 'App language')}</strong><p>{text(language, 'اختر اللغة المناسبة لك في كل الصفحات', 'Choose the language used throughout the app')}</p></div><LanguageSwitcher /></div>
           <div className="setting-line"><div><strong>{text(language, 'الاسم', 'Name')}</strong><p>{user.name}</p></div><button className="secondary-btn" onClick={() => flash(setNotice, text(language, 'يمكن تعديل الاسم من صفحة الحساب قريباً', 'You can edit your name from the account page soon'))} data-testid="button-edit-name"><Pencil size={14} />{text(language, 'تعديل', 'Edit')}</button></div>
           <div className="setting-line"><div><strong>{text(language, 'هدف السعرات اليومي', 'Daily calorie goal')}</strong><p>{text(language, 'الرقم الذي يساعدك على توازن يومك', 'The number that helps balance your day')}</p></div><div className="setting-control"><input className="search-box" style={{ width: 100, minWidth: 100, height: 38 }} type="number" value={goal} onChange={e => setGoal(e.target.value)} aria-label={text(language, 'هدف السعرات اليومي', 'Daily calorie goal')} data-testid="input-calorie-goal" /><button className="primary-btn" style={{ padding: '7px 12px' }} onClick={saveGoal} data-testid="button-save-goal">{text(language, 'حفظ', 'Save')}</button></div></div>
           <div className="setting-line"><div><strong>{text(language, 'وحدات القياس', 'Measurement units')}</strong><p>{text(language, 'السعرات والكميات تظهر بالعربية', 'Calories and quantities are shown in Arabic')}</p></div><span className="status-pill">{text(language, 'عربي', 'Arabic')}</span></div>
@@ -860,7 +861,7 @@ function SettingsPage({ user, data, setData, setNotice, onLogout }: { user: User
 function RoutedPages({ user, data, setData, onLogout, setNotice }: { user: User; data: UserData; setData: Dispatch<SetStateAction<UserData>>; onLogout: () => void; setNotice: (v: string) => void }) {
   const { language } = useLanguage();
   const [addOpen, setAddOpen] = useState(false);
-  return <AppShell user={user} shoppingCount={data.shopping.filter(item => !item.done).length} onLogout={onLogout}><Switch><Route path="/"><Dashboard userName={user.name} data={data} setData={setData} onAdd={() => setAddOpen(true)} setNotice={setNotice} /></Route><Route path="/meals"><MealsPage data={data} setData={setData} setNotice={setNotice} /></Route><Route path="/daily-analysis"><DailyAnalysis data={data} /></Route><Route path="/shopping"><ShoppingPage data={data} setData={setData} setNotice={setNotice} onAdd={() => setAddOpen(true)} /></Route><Route path="/settings"><SettingsPage user={user} data={data} setData={setData} setNotice={setNotice} onLogout={onLogout} /></Route><Route component={NotFound} /></Switch>{addOpen && <AddFoodModal onClose={() => setAddOpen(false)} onAdd={item => { setData(prev => ({ ...prev, items: [...prev.items, { ...item, id: `food-${Date.now()}` }] })); flash(setNotice, text(language, 'أضيف الطعام إلى ثلاجتك', 'Food added to your fridge')); }} />}</AppShell>;
+  return <AppShell user={user} shoppingCount={data.shopping.filter(item => !item.done).length} onLogout={onLogout}><Switch><Route path="/"><Dashboard userName={user.name} data={data} setData={setData} onAdd={() => setAddOpen(true)} setNotice={setNotice} /></Route><Route path="/meals"><MealsPage data={data} setData={setData} setNotice={setNotice} /></Route><Route path="/daily-analysis"><DailyAnalysis data={data} /></Route><Route path="/shopping"><ShoppingPage data={data} setData={setData} setNotice={setNotice} onAdd={() => setAddOpen(true)} /></Route><Route path="/recipes"><RecipesPage data={data} setData={setData} /></Route><Route path="/favorites"><FavoritesPage data={data} setData={setData} /></Route><Route path="/settings"><SettingsPage user={user} data={data} setData={setData} setNotice={setNotice} onLogout={onLogout} /></Route><Route component={NotFound} /></Switch>{addOpen && <AddFoodModal onClose={() => setAddOpen(false)} onAdd={item => { setData(prev => ({ ...prev, items: [...prev.items, { ...item, id: `food-${Date.now()}` }] })); flash(setNotice, text(language, 'أضيف الطعام إلى ثلاجتك', 'Food added to your fridge')); }} />}</AppShell>;
 }
 
 function App() {
