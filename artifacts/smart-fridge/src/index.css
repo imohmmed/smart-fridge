@@ -5266,3 +5266,23 @@ body {
     scroll-padding-top: 70px;
   }
 }
+
+/* Header and drawer behavior fixes only. */
+.dashboard-topbar,
+.mobile-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: hsl(var(--background));
+}
+
+@media (max-width: 768px) {
+  .smart-sidebar {
+    position: fixed;
+    z-index: 999;
+  }
+
+  body.sidebar-is-open {
+    overflow: hidden;
+  }
+}
