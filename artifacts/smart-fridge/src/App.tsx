@@ -687,6 +687,23 @@ function FoodDetailsDialog({
     };
   }, []);
 
+  useEffect(() => {
+    if (!window.matchMedia('(max-width: 560px)').matches) return;
+    const html = document.documentElement;
+    const body = document.body;
+    const previousHtmlOverflow = html.style.overflow;
+    const previousBodyOverflow = body.style.overflow;
+    const previousBodyOverscroll = body.style.overscrollBehavior;
+    html.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+    body.style.overscrollBehavior = 'contain';
+    return () => {
+      html.style.overflow = previousHtmlOverflow;
+      body.style.overflow = previousBodyOverflow;
+      body.style.overscrollBehavior = previousBodyOverscroll;
+    };
+  }, []);
+
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const nextQuantity = Number(quantity);
@@ -863,7 +880,7 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
          <div className="dashboard-footer">
            <div className="macro-stat" aria-label={text(language, 'إحصائية توزيع المغذيات', 'Nutrient distribution statistic')}><small>{text(language, 'توزيع المغذيات', 'Nutrients')}</small><div className="macro-lines"><span><i className="macro-protein" />{text(language, 'بروتين', 'Protein')} <b>35%</b></span><span><i className="macro-carb" />{text(language, 'كربوهيدرات', 'Carbohydrates')} <b>40%</b></span><span><i className="macro-fat" />{text(language, 'دهون صحية', 'Healthy fats')} <b>25%</b></span></div></div>
            <div className="health-tip" aria-label={text(language, 'نصيحة اليوم', 'Daily tip')}><Leaf size={20} /><div><small>{text(language, 'نصيحة اليوم', 'Tip of the day')}</small><strong>{text(language, 'تناول الخضروات في كل وجبة', 'Eat vegetables with every meal')}<br />{text(language, 'للحصول على صحة أفضل.', 'for better health.')}</strong></div></div>
-             <button className={`floating-add ${showAddButton ? 'is-visible' : ''}`} onClick={onAdd} data-testid="button-add-food-dashboard" aria-label={text(language, 'أضف طعاماً جديداً', 'Add new food')} aria-hidden={!showAddButton} tabIndex={showAddButton ? 0 : -1}><Plus size={26} /><span>{text(language, 'أضف طعاماً جديداً', 'Add new food')}</span></button>
+             <button className={`floating-add ${showAddButton ? 'is-visible' : ''} ${sidebarOpen ? 'is-sidebar-hidden' : ''}`} onClick={onAdd} data-testid="button-add-food-dashboard" aria-label={text(language, 'أضف طعاماً جديداً', 'Add new food')} aria-hidden={!showAddButton || sidebarOpen} tabIndex={showAddButton && !sidebarOpen ? 0 : -1}><Plus size={26} /><span>{text(language, 'أضف طعاماً جديداً', 'Add new food')}</span></button>
          </div>
           {detailsOpen && selected && <FoodDetailsDialog item={selected} quantity={quantityDraft} onQuantityChange={setQuantityDraft} onSave={saveSelectedQuantity} onDelete={deleteSelected} onClose={() => setDetailsOpen(false)} />}
   </main>;

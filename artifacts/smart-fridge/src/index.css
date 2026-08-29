@@ -7853,6 +7853,13 @@ body {
   pointer-events: auto;
 }
 
+.floating-add.is-sidebar-hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: scale(.82);
+}
+
 .food-details-backdrop {
   z-index: 70;
 }

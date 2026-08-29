@@ -85,4 +85,39 @@ test.describe('Smart Fridge food interactions', () => {
     await page.keyboard.press('Escape');
     await expect(page.getByRole('dialog')).toBeHidden();
   });
+
+  test('locks page scrolling while food details are open on phone', async ({ page }) => {
+    await seedDemoSession(page);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+
+    await page.getByTestId('button-food-eggs').click();
+    await expect.poll(() => page.evaluate(() => ({
+      htmlOverflow: document.documentElement.style.overflow,
+      bodyOverflow: document.body.style.overflow,
+    }))).toEqual({ htmlOverflow: 'hidden', bodyOverflow: 'hidden' });
+
+    await page.getByTestId('button-close-food-details').click();
+    await expect.poll(() => page.evaluate(() => ({
+      htmlOverflow: document.documentElement.style.overflow,
+      bodyOverflow: document.body.style.overflow,
+    }))).toEqual({ htmlOverflow: '', bodyOverflow: '' });
+  });
+
+  test('hides Add new food while the sidebar is open', async ({ page }) => {
+    await seedDemoSession(page);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+
+    const addFoodButton = page.getByTestId('button-add-food-dashboard');
+    await page.locator('.fridge-end-sentinel').scrollIntoViewIfNeeded();
+    await expect(addFoodButton).toBeVisible();
+
+    await page.getByTestId('button-mobile-menu').evaluate(element => (element as HTMLButtonElement).click());
+    await expect(addFoodButton).toBeHidden();
+    await expect(addFoodButton).toHaveAttribute('aria-hidden', 'true');
+
+    await page.getByTestId('button-sidebar-toggle').click();
+    await expect(addFoodButton).toBeVisible();
+  });
 });
