@@ -7728,15 +7728,16 @@ body {
 
   .dashboard-topbar .dashboard-metrics .dashboard-stat {
     display: flex;
+    flex-direction: row;
     flex: 1 1 0 !important;
     min-width: 0 !important;
     width: auto;
-    height: 132px;
-    min-height: 132px;
-    align-items: flex-start;
+    height: 88px;
+    min-height: 88px;
+    align-items: center;
     justify-content: space-between;
-    gap: 8px;
-    padding: 15px 12px !important;
+    gap: 6px;
+    padding: 10px !important;
     border: 1px solid rgba(46, 125, 50, .08);
     border-radius: 18px !important;
     box-shadow: 0 5px 16px rgba(32, 48, 36, .04);
@@ -7750,9 +7751,9 @@ body {
 
   .dashboard-topbar .dashboard-metrics .dashboard-stat > div:last-child {
     display: grid;
-    align-self: stretch;
-    align-content: end;
-    gap: 4px;
+    align-self: auto;
+    align-content: center;
+    gap: 3px;
     min-width: 0;
   }
 
@@ -7763,7 +7764,7 @@ body {
   }
 
   .dashboard-topbar .dashboard-metrics .dashboard-stat strong {
-    font-size: 15px;
+    font-size: 12px;
     line-height: 1.15;
     overflow: visible;
     text-overflow: clip;
@@ -7771,8 +7772,8 @@ body {
   }
 
   .dashboard-topbar .dashboard-metrics .dashboard-stat:nth-child(1) > svg {
-    order: 2;
-    align-self: flex-end;
+    order: 0;
+    align-self: center;
   }
 
   .dashboard-topbar .dashboard-metrics .dashboard-stat:nth-child(2) {
@@ -7780,16 +7781,14 @@ body {
   }
 
   .dashboard-topbar .dashboard-metrics .dashboard-stat:nth-child(2) > .mini-ring {
-    position: absolute;
-    top: 13px;
-    inset-inline-end: 12px;
-    width: 42px;
-    height: 42px;
-    flex: 0 0 42px;
+    position: relative !important;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
   }
 
   .dashboard-topbar .dashboard-metrics .dashboard-stat:nth-child(2) > div:last-child {
-    padding-top: 38px;
+    padding-top: 0;
   }
 }
 

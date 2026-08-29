@@ -15,6 +15,12 @@ Mobile dashboard header rules may need the same `.dashboard-topbar .dashboard-*`
 
 **How to apply:** Keep mobile-only header layout rules together at the end of the stylesheet and verify computed positions, not only screenshot appearance.
 
+When compacting icon-bearing stat cards, preserve the positioning context of decorative pseudo-elements instead of forcing the icon wrapper to `position: static`.
+
+**Why:** The progress-ring inner layer is absolutely positioned and otherwise expands to the card when its relative containing block is removed.
+
+**How to apply:** After changing card flow, verify both the wrapper dimensions and the rendered pseudo-element shape at phone width.
+
 The sidebar reference pattern is best adapted as a warm, card-like rail with CSS-variable width, delayed label choreography, and `data-tooltip` labels for the collapsed state; mobile should use a translated drawer with a fading scrim.
 
 **Why:** This preserves the reference interaction without replacing the existing navigation behavior or adding a language control outside Settings.
