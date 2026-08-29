@@ -4549,3 +4549,227 @@ html[dir="ltr"] .smart-sidebar__profile-copy {
     grid-template-columns: 24px minmax(0, 1fr) max-content;
   }
 }
+
+/* Mobile dashboard pass: one health surface, tighter header, stable menu control. */
+.dashboard-footer {
+  grid-template-columns: minmax(0, 2fr) minmax(170px, 1fr) auto;
+  gap: 9px;
+  margin-top: 10px;
+  align-items: stretch;
+}
+
+.dashboard-health-card {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid rgba(74, 124, 89, .14);
+  border-radius: 16px;
+  background: var(--bg-card);
+  box-shadow: 5px 5px 12px var(--shadow-dark), -5px -5px 12px var(--shadow-light);
+  direction: ltr;
+}
+
+.dashboard-health-card > .footer-stat,
+.dashboard-health-card > .macro-stat {
+  min-width: 0;
+  min-height: 76px;
+  height: auto;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.dashboard-health-card > * + * {
+  border-inline-start: 1px solid rgba(83, 74, 61, .13);
+}
+
+.dashboard-health-card .footer-stat,
+.dashboard-health-card .macro-stat {
+  direction: rtl;
+}
+
+.dashboard-health-card .footer-stat > svg {
+  width: 21px;
+  height: 21px;
+  flex: 0 0 21px;
+}
+
+.dashboard-health-card .footer-stat > div {
+  min-width: 0;
+}
+
+.dashboard-health-card .footer-stat small,
+.dashboard-health-card .macro-stat small {
+  margin-bottom: 2px;
+  font-size: 9px;
+  line-height: 1.2;
+}
+
+.dashboard-health-card .footer-stat strong {
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-health-card .footer-progress {
+  width: min(100px, 100%);
+  margin-top: 5px;
+}
+
+.dashboard-health-card .mini-ring.small {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  margin-right: auto;
+}
+
+.dashboard-health-card .macro-stat {
+  display: block;
+}
+
+.dashboard-health-card .macro-lines {
+  gap: 7px;
+  margin-top: 4px;
+}
+
+.dashboard-health-card .macro-lines span {
+  min-width: 0;
+  font-size: 8px;
+}
+
+.dashboard-health-card .macro-lines b {
+  font-size: 9px;
+}
+
+@media (max-width: 767px) {
+  .dashboard-main {
+    padding-top: 10px;
+    padding-inline: 12px;
+  }
+
+  .mobile-topbar {
+    min-height: 54px;
+    padding-block: 6px;
+  }
+
+  .mobile-topbar .menu-toggle {
+    justify-self: start;
+    margin-inline-start: 0;
+  }
+
+  .mobile-topbar > .icon-btn:last-child {
+    justify-self: end;
+    margin-inline-end: 0;
+  }
+
+  .dashboard-topbar {
+    margin-bottom: 10px;
+    gap: 4px;
+    padding: 7px;
+  }
+
+  .dashboard-header-context strong {
+    font-size: 12px;
+  }
+
+  .dashboard-actions {
+    gap: 4px;
+  }
+
+  .dashboard-profile > div:last-child {
+    display: none;
+  }
+
+  .dashboard-profile .avatar {
+    width: 30px;
+    height: 30px;
+    flex-basis: 30px;
+  }
+
+  .dashboard-health-card {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-radius: 15px;
+  }
+
+  .dashboard-health-card > .footer-stat,
+  .dashboard-health-card > .macro-stat {
+    min-height: 62px;
+    padding: 9px 10px;
+  }
+
+  .dashboard-health-card > .macro-stat {
+    grid-column: 1 / -1;
+    border-inline-start: 0;
+    border-top: 1px solid rgba(83, 74, 61, .13);
+  }
+
+  .dashboard-health-card .footer-stat {
+    gap: 6px;
+  }
+
+  .dashboard-health-card .footer-stat > svg {
+    width: 19px;
+    height: 19px;
+    flex-basis: 19px;
+  }
+
+  .dashboard-health-card .footer-stat small,
+  .dashboard-health-card .macro-stat small {
+    font-size: 8px;
+  }
+
+  .dashboard-health-card .footer-stat strong {
+    font-size: 10px;
+  }
+
+  .dashboard-health-card .mini-ring.small {
+    flex-basis: 34px;
+    width: 34px;
+    height: 34px;
+  }
+
+  .dashboard-health-card .macro-lines {
+    justify-content: space-between;
+    gap: 5px;
+  }
+
+  .dashboard-health-card .macro-lines span {
+    font-size: 8px;
+  }
+
+  .health-tip {
+    grid-column: 1 / -1;
+    min-height: 52px;
+  }
+
+  .floating-add {
+    grid-column: 1 / -1;
+    min-height: 45px;
+  }
+}
+
+@media (max-width: 390px) {
+  .dashboard-health-card > .footer-stat,
+  .dashboard-health-card > .macro-stat {
+    padding-inline: 8px;
+  }
+
+  .dashboard-health-card .footer-stat strong {
+    font-size: 9px;
+  }
+
+  .dashboard-health-card .macro-lines {
+    gap: 3px;
+  }
+
+  .dashboard-health-card .macro-lines span {
+    font-size: 7px;
+  }
+}

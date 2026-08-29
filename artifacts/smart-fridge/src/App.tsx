@@ -743,13 +743,15 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
          <div className="shopping-panel card card-pad"><div className="rail-title"><span><ShoppingBasket size={17} /> {text(language, 'قائمة التسوق', 'Shopping list')} <b>{toWesternNums(data.shopping.filter(item => !item.done).length)}</b></span><Link href="/shopping"><ChevronLeft size={16} /></Link></div><ShoppingPreview data={data} setData={setData} /><Link href="/shopping" className="export-list"><ClipboardCopy size={15} /> {text(language, 'تصدير القائمة', 'Export list')}</Link></div>
       </aside>
     </div>
-       <div className="dashboard-footer">
-       <div className="footer-stat water-stat"><Droplets size={25} /><div><small>{text(language, 'اشرب الماء', 'Drink water')}</small><strong>{toWesternNums(data.water)} / 8 {text(language, 'أكواب', 'cups')}</strong><div className="footer-progress"><i style={{ width: `${data.water / 8 * 100}%` }} /></div></div></div>
-       <div className="footer-stat"><Flame size={24} /><div><small>{text(language, 'السعرات المتبقية', 'Calories remaining')}</small><strong>{toWesternNums(Math.max(0, data.calorieGoal - totalCalories).toLocaleString('en-US'))} {text(language, 'سعرة', 'kcal')}</strong></div><div className="mini-ring small" style={{ '--ring-progress': `${percentage}%` } as CSSProperties}><strong>{toWesternNums(percentage)}%</strong></div></div>
-      <div className="macro-stat"><small>{text(language, 'توزيع المغذيات', 'Nutrients')}</small><div className="macro-lines"><span><i className="macro-protein" />{text(language, 'بروتين', 'Protein')} <b>35%</b></span><span><i className="macro-carb" />{text(language, 'كربوهيدرات', 'Carbohydrates')} <b>40%</b></span><span><i className="macro-fat" />{text(language, 'دهون صحية', 'Healthy fats')} <b>25%</b></span></div></div>
-      <div className="health-tip"><Leaf size={20} /><div><small>{text(language, 'نصيحة اليوم', 'Tip of the day')}</small><strong>{text(language, 'تناول الخضروات في كل وجبة', 'Eat vegetables with every meal')}<br />{text(language, 'للحصول على صحة أفضل.', 'for better health.')}</strong></div></div>
-      <button className="floating-add" onClick={onAdd} data-testid="button-add-food-dashboard"><Plus size={26} /><span>{text(language, 'أضف طعاماً جديداً', 'Add new food')}</span></button>
-    </div>
+        <div className="dashboard-footer">
+          <div className="dashboard-health-card" aria-label={text(language, 'إحصائيات الصحة اليومية', 'Daily health stats')}>
+            <div className="footer-stat water-stat"><Droplets size={25} /><div><small>{text(language, 'اشرب الماء', 'Drink water')}</small><strong>{toWesternNums(data.water)} / 8 {text(language, 'أكواب', 'cups')}</strong><div className="footer-progress"><i style={{ width: `${data.water / 8 * 100}%` }} /></div></div></div>
+            <div className="footer-stat"><Flame size={24} /><div><small>{text(language, 'السعرات المتبقية', 'Calories remaining')}</small><strong>{toWesternNums(Math.max(0, data.calorieGoal - totalCalories).toLocaleString('en-US'))} {text(language, 'سعرة', 'kcal')}</strong></div><div className="mini-ring small" style={{ '--ring-progress': `${percentage}%` } as CSSProperties}><strong>{toWesternNums(percentage)}%</strong></div></div>
+            <div className="macro-stat"><small>{text(language, 'توزيع المغذيات', 'Nutrients')}</small><div className="macro-lines"><span><i className="macro-protein" />{text(language, 'بروتين', 'Protein')} <b>35%</b></span><span><i className="macro-carb" />{text(language, 'كربوهيدرات', 'Carbohydrates')} <b>40%</b></span><span><i className="macro-fat" />{text(language, 'دهون صحية', 'Healthy fats')} <b>25%</b></span></div></div>
+          </div>
+          <div className="health-tip"><Leaf size={20} /><div><small>{text(language, 'نصيحة اليوم', 'Tip of the day')}</small><strong>{text(language, 'تناول الخضروات في كل وجبة', 'Eat vegetables with every meal')}<br />{text(language, 'للحصول على صحة أفضل.', 'for better health.')}</strong></div></div>
+          <button className="floating-add" onClick={onAdd} data-testid="button-add-food-dashboard"><Plus size={26} /><span>{text(language, 'أضف طعاماً جديداً', 'Add new food')}</span></button>
+        </div>
   </main>;
 }
 
