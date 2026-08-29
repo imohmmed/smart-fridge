@@ -536,7 +536,7 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
 
     return <div className={`app-shell ${sidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'}`}>
       <button className={`smart-sidebar-scrim ${sidebarOpen ? 'is-open' : ''}`} type="button" aria-hidden={!sidebarOpen} tabIndex={sidebarOpen ? 0 : -1} aria-label={text(language, 'إغلاق القائمة', 'Close menu')} onClick={closeSidebar} />
-      <button className={`sidebar-launcher ${sidebarOpen ? 'is-hidden' : ''}`} type="button" onClick={toggleSidebar} aria-label={text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-sidebar-launcher"><Menu size={19} /></button>
+      <button className={`sidebar-launcher ${sidebarOpen ? 'is-hidden' : ''}`} type="button" onClick={toggleSidebar} aria-label={text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} aria-hidden={sidebarOpen} tabIndex={sidebarOpen ? -1 : 0} data-testid="button-sidebar-launcher"><Menu size={19} /></button>
       <aside className="smart-sidebar" aria-label={text(language, 'القائمة الجانبية', 'Sidebar navigation')}>
         <div className="smart-sidebar__inner">
           <div className="smart-sidebar__head">
