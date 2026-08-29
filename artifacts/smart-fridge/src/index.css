@@ -54,15 +54,15 @@ body {
   font-family: var(--app-font-sans);
   direction: rtl;
   text-align: right;
-  overflow-x: hidden;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
 }
 button, input, select, textarea { font: inherit; direction: rtl; }
 button { cursor: pointer; }
 ::selection { background: hsl(35 71% 65% / .45); }
 
-.fridge-app { min-height: 100dvh; }
-.app-shell { display: grid; grid-template-columns: 205px minmax(0, 1fr); min-height: 100dvh; direction: ltr; }
+.fridge-app { min-height: 100%; }
+.app-shell { display: grid; grid-template-columns: 205px minmax(0, 1fr); min-height: 100%; direction: ltr; }
 .app-main { direction: rtl; min-width: 0; padding: 34px clamp(18px, 4vw, 58px) 48px; max-width: 1700px; width: 100%; margin: 0 auto; }
 .sidebar { direction: rtl; background: hsl(var(--sidebar)); color: hsl(var(--sidebar-foreground)); padding: 28px 20px; display: flex; flex-direction: column; gap: 30px; position: sticky; top: 0; height: 100dvh; }
 .brand-mark { width: 44px; height: 44px; border-radius: 15px 15px 5px 15px; display: grid; place-items: center; background: hsl(var(--accent)); color: hsl(var(--foreground)); box-shadow: 5px 5px 0 hsl(155 24% 12% / .25); }
@@ -191,7 +191,7 @@ button { cursor: pointer; }
 .calorie-preview strong { font-size:20px; }
 .form-actions { grid-column:1/-1; display:flex; gap:9px; justify-content:flex-start; padding-top:4px; }
 
-.auth-shell { min-height:100dvh; display:grid; grid-template-columns:1fr 1.1fr; direction:ltr; background:hsl(var(--background)); }
+.auth-shell { min-height:100%; display:grid; grid-template-columns:1fr 1.1fr; direction:ltr; background:hsl(var(--background)); }
 .auth-art { direction:rtl; background: linear-gradient(145deg, hsl(155 33% 17%), hsl(152 44% 29%)); color:hsl(var(--card)); padding:clamp(28px, 7vw, 100px); position:relative; overflow:hidden; display:flex; align-items:center; }
 .auth-art:before, .auth-art:after { content:""; position:absolute; border-radius:50%; border:1px solid hsl(35 71% 65% / .32); }
 .auth-art:before { width:420px; height:420px; left:-170px; top:-80px; }
@@ -243,7 +243,7 @@ button { cursor: pointer; }
 @media (max-width: 760px) {
   .app-shell { display:block; }
   .sidebar { display:none; }
-  .mobile-topbar { display:flex; position:sticky; top:0; z-index:20; padding:14px 18px; background:hsl(var(--background) / .94); backdrop-filter:blur(12px); justify-content:space-between; align-items:center; border-bottom:1px solid hsl(var(--border)); }
+  .mobile-topbar { display:flex; position:sticky; top:0; z-index:100; padding:14px 18px; background:hsl(var(--background) / .94); backdrop-filter:blur(12px); justify-content:space-between; align-items:center; border-bottom:1px solid hsl(var(--border)); }
   .mobile-topbar .brand-mark { width:34px; height:34px; border-radius:11px 11px 4px 11px; }
   .mobile-topbar h1 { font-size:19px; margin:0; }
   .app-main { padding:25px 16px 38px; }
@@ -263,7 +263,7 @@ button { cursor: pointer; }
   .settings-nav button { width:auto; white-space:nowrap; }
   .auth-shell { grid-template-columns:1fr; }
   .auth-art { display:none; }
-  .auth-form-wrap { min-height:100dvh; padding:24px; }
+  .auth-form-wrap { min-height:100%; padding:24px; }
 }
 @media (max-width: 430px) {
   .quick-grid { grid-template-columns:1fr; }
@@ -285,11 +285,11 @@ button { cursor: pointer; }
   grid-template-columns: minmax(0, 1.08fr) minmax(440px, .92fr);
   background: var(--auth-ivory);
   color: var(--auth-forest);
-  overflow: hidden;
+  overflow: clip;
 }
 .auth-redesign .auth-visual-panel {
   display: block;
-  min-height: 100dvh;
+  min-height: 100%;
   padding: clamp(24px, 4vw, 60px) clamp(24px, 5vw, 86px) 27px;
   background:
     radial-gradient(circle at 19% 23%, hsl(202 55% 66% / .20), transparent 19rem),
@@ -297,7 +297,7 @@ button { cursor: pointer; }
     var(--auth-forest);
   color: var(--auth-white);
 }
-.auth-visual-inner { display:flex; flex-direction:column; min-height:calc(100dvh - 87px); max-width:760px; margin:0 auto; }
+.auth-visual-inner { display:flex; flex-direction:column; min-height:0; max-width:760px; margin:0 auto; }
 .visual-topline { display:flex; align-items:center; justify-content:space-between; gap:20px; color:hsl(42 37% 94% / .78); font-family:var(--app-font-sans); font-size:12px; letter-spacing:.02em; }
 .visual-topline span { display:flex; align-items:center; gap:8px; }
 .visual-topline small { color:hsl(35 37% 76% / .65); letter-spacing:.17em; font-family:ui-monospace, SFMono-Regular, monospace; font-size:9px; direction:ltr; }
@@ -354,7 +354,7 @@ button { cursor: pointer; }
 .fridge-base { position:absolute; bottom:0; left:9px; right:9px; height:17px; border-radius:0 0 8px 8px; background:linear-gradient(#9ba79c, #647269); }
 .stage-shadow { position:absolute; bottom:0; left:50%; width:300px; height:33px; transform:translateX(-50%); border-radius:50%; background:hsl(0 0% 0% / .24); filter:blur(11px); }
 
-.auth-redesign .auth-form-wrap { min-height:100dvh; padding:clamp(22px, 4vw, 58px); background:var(--auth-ivory); }
+.auth-redesign .auth-form-wrap { min-height:100%; padding:clamp(22px, 4vw, 58px); background:var(--auth-ivory); }
 .auth-redesign .auth-card { position:relative; width:min(468px, 100%); padding:30px clamp(22px, 4vw, 44px) 27px; border:1px solid hsl(35 37% 76% / .55); border-radius:31px; background:var(--auth-white); box-shadow:0 20px 60px hsl(137 22% 24% / .12), 0 3px 8px hsl(137 22% 24% / .04); }
 .language-switcher { display:flex; align-items:center; justify-content:flex-start; gap:7px; direction:rtl; color:hsl(137 22% 24% / .50); font-size:11px; margin-bottom:28px; }
 .language-switcher svg { color:var(--auth-sage); margin-left:2px; }
@@ -403,7 +403,7 @@ button { cursor: pointer; }
   .auth-visual-content .auth-copy h2 { font-size:40px; }
 }
 @media (max-width: 760px) {
-  .auth-redesign { display:block; min-height:100dvh; background:var(--auth-ivory); }
+  .auth-redesign { display:block; min-height:100%; background:var(--auth-ivory); }
   .auth-redesign .auth-visual-panel { display:block; min-height:178px; padding:21px 20px 0; border-radius:0 0 28px 28px; }
   .auth-visual-inner { min-height:0; }
   .visual-topline { font-size:11px; }
@@ -419,13 +419,13 @@ button { cursor: pointer; }
   .auth-visual-content .auth-copy h2 { font-size:29px; text-align:right; line-height:1.05; }
   .auth-visual-content .auth-copy > p { margin:10px 0 0; font-size:12px; line-height:1.7; max-width:480px; }
   .auth-benefits, .visual-footer { display:none; }
-  .auth-redesign .auth-form-wrap { min-height:calc(100dvh - 178px); padding:22px 16px 35px; align-items:start; }
+  .auth-redesign .auth-form-wrap { min-height:0; padding:22px 16px 35px; align-items:start; }
   .auth-redesign .auth-card { padding:24px 20px 22px; border-radius:26px; }
   .language-switcher { margin-bottom:23px; }
 }
 @media (max-width: 390px) {
   .auth-redesign .auth-visual-panel { min-height:166px; }
-  .auth-redesign .auth-form-wrap { min-height:calc(100dvh - 166px); }
+  .auth-redesign .auth-form-wrap { min-height:0; }
   .auth-card-heading h2 { font-size:28px; }
 }
 
@@ -648,7 +648,6 @@ button:active, .nav-item:active, .icon-btn:active, .secondary-btn:active { box-s
   --popover-foreground: 45 35% 92%;
   --secondary: 151 13% 24%;
   --secondary-foreground: 45 35% 92%;
-  min-height: 100dvh;
   background: hsl(var(--background));
 }
 .theme-dark .app-shell, .theme-dark .mobile-topbar { background: hsl(var(--background)); }
@@ -2532,7 +2531,7 @@ textarea:focus-visible {
   }
   .app-shell {
     display: block;
-    min-height: 100dvh;
+    min-height: 0;
   }
   .sidebar {
     position: fixed;
@@ -3564,7 +3563,7 @@ html[dir="ltr"] .settings-nav button {
     z-index: 80;
     width: min(286px, 88vw);
     height: 100dvh;
-    min-height: 100dvh;
+    min-height: 0;
     padding: 18px 16px;
     display: flex;
     flex-direction: column;
@@ -3830,7 +3829,7 @@ html[dir="ltr"] .settings-nav button {
   }
 
   .auth-redesign .auth-form-wrap {
-    min-height: 100dvh;
+    min-height: 0;
     padding: 24px;
   }
 }
@@ -4963,16 +4962,7 @@ body * {
   font-family: var(--app-font-sans);
 }
 
-body.sidebar-is-open {
-  overflow: hidden;
-}
-
 @media (max-width: 768px) {
-  body.sidebar-is-open {
-    overscroll-behavior: none;
-    touch-action: none;
-  }
-
   .smart-sidebar {
     position: fixed;
     top: 0;
@@ -5223,5 +5213,163 @@ body.sidebar-is-open {
   .real-fridge-cabinet .freezer-tray {
     gap: 4px;
     padding-inline: 2px;
+  }
+}
+
+/* Apple-style continuous squircles and scroll-safe sticky headers. */
+:root {
+  --squircle-radius: clamp(39px, 5vw, 62px);
+  --squircle-mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%20100%20100%22 preserveAspectRatio=%22none%22%3E%3Cpath fill=%22white%22 d=%22M14%200H86C93.732%200%20100%206.268%20100%2014V86C100%2093.732%2093.732%20100%2086%20100H14C6.268%20100%200%2093.732%200%2086V14C0%206.268%206.268%200%2014%200Z%22/%3E%3C/svg%3E");
+}
+
+.icon-btn,
+.brand-mark,
+.card,
+.primary-btn,
+.secondary-btn,
+.nav-item,
+.smart-sidebar__inner,
+.smart-sidebar__link,
+.smart-sidebar__logout,
+.dashboard-health-card,
+.real-fridge-card,
+.notification-dropdown,
+.notification-item,
+.food-badge,
+.date-chip,
+.search-box,
+.quick-link,
+.recipe-card,
+.floating-add,
+.modal,
+.auth-card {
+  border-radius: min(var(--squircle-radius), 50%);
+  -webkit-mask-image: var(--squircle-mask);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: 100% 100%;
+  mask-image: var(--squircle-mask);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: 100% 100%;
+}
+
+.mobile-topbar,
+.dashboard-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.dashboard-topbar {
+  position: sticky;
+  isolation: isolate;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.dashboard-topbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border: 1px solid hsl(var(--border));
+  border-radius: min(var(--squircle-radius), 50%);
+  background: hsl(var(--card) / .94);
+  box-shadow: var(--soft-shadow);
+  -webkit-mask-image: var(--squircle-mask);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: 100% 100%;
+  mask-image: var(--squircle-mask);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: 100% 100%;
+}
+
+.notification-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-count {
+  top: 0;
+  right: 0;
+  left: auto;
+  transform: translate(25%, -25%);
+  z-index: 2;
+}
+
+html,
+body {
+  overflow-y: auto;
+  touch-action: auto;
+}
+
+body {
+  overflow-x: clip;
+}
+
+.fridge-app,
+.app-shell,
+.app-main,
+.auth-shell,
+.auth-redesign,
+.auth-form-wrap {
+  min-height: 0;
+  height: auto;
+}
+
+.app-main {
+  padding-top: clamp(18px, 2vw, 30px);
+  scroll-padding-top: 76px;
+}
+
+@media (max-width: 767px) {
+  .mobile-topbar {
+    padding-top: calc(8px + env(safe-area-inset-top));
+  }
+
+  .app-main {
+    padding-top: calc(18px + env(safe-area-inset-top));
+    scroll-padding-top: calc(70px + env(safe-area-inset-top));
+  }
+
+  .dashboard-topbar {
+    position: relative;
+    top: auto;
+    z-index: 1;
+  }
+}
+
+@supports not ((mask-image: var(--squircle-mask))) {
+  .icon-btn,
+  .brand-mark,
+  .card,
+  .primary-btn,
+  .secondary-btn,
+  .nav-item,
+  .smart-sidebar__inner,
+  .smart-sidebar__link,
+  .smart-sidebar__logout,
+  .dashboard-health-card,
+  .real-fridge-card,
+  .notification-dropdown,
+  .notification-item,
+  .food-badge,
+  .date-chip,
+  .search-box,
+  .quick-link,
+  .recipe-card,
+  .floating-add,
+  .modal,
+  .auth-card {
+    -webkit-mask-image: none;
+    mask-image: none;
+    border-radius: min(var(--squircle-radius), 50%);
   }
 }

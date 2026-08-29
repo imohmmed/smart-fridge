@@ -531,11 +531,6 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
   }, []);
 
   useEffect(() => {
-    document.body.classList.toggle('sidebar-is-open', sidebarOpen);
-    return () => document.body.classList.remove('sidebar-is-open');
-  }, [sidebarOpen]);
-
-  useEffect(() => {
     if (window.innerWidth < 768) closeSidebar();
   }, [location]);
 
@@ -692,11 +687,11 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
     localStorage.setItem('smart_fridge_read_notifications', JSON.stringify(ids));
   };
   return <main className="app-main dashboard-main">
-    <div className="dashboard-topbar">
+     <header className="dashboard-topbar">
        <div className="dashboard-header-context">
          <span className="eyebrow">{text(language, 'ملخص اليوم', 'Today at a glance')}</span>
          <strong>{text(language, 'أهلاً بعودتك', 'Welcome back')}</strong>
-       </div>
+        </div>
        <div className="dashboard-metrics" aria-label={text(language, 'ملخص السعرات اليومي', 'Daily calorie summary')}>
          <div className="dashboard-stat">
            <Flame size={21} aria-hidden="true" />
@@ -708,8 +703,9 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
          </div>
        </div>
        <div className="dashboard-actions">
-         <div className="notification-wrap">
-           <button className="topbar-bell icon-btn" aria-label={`${text(language, 'التنبيهات', 'Notifications')}${unreadCount ? `، ${toWesternNums(unreadCount)} ${text(language, 'جديدة', 'new')}` : ''}`} aria-expanded={notificationsOpen} onClick={() => setNotificationsOpen(value => !value)} data-testid="button-notifications"><Bell size={20} />{unreadCount > 0 && <b className="notification-count">{toWesternNums(unreadCount)}</b>}</button>
+          <div className="notification-wrap">
+            <button className="topbar-bell icon-btn" aria-label={`${text(language, 'التنبيهات', 'Notifications')}${unreadCount ? `، ${toWesternNums(unreadCount)} ${text(language, 'جديدة', 'new')}` : ''}`} aria-expanded={notificationsOpen} onClick={() => setNotificationsOpen(value => !value)} data-testid="button-notifications"><Bell size={20} /></button>
+            {unreadCount > 0 && <b className="notification-count" aria-hidden="true">{toWesternNums(unreadCount)}</b>}
            {notificationsOpen && <div className="notification-dropdown" role="region" aria-label={text(language, 'قائمة التنبيهات', 'Notifications list')}>
              <div className="notification-head"><strong>{text(language, 'التنبيهات', 'Notifications')}</strong>{notifications.length > 0 && <button className="link-btn" onClick={markAllRead}>{text(language, 'تعليم الكل كمقروء', 'Mark all as read')}</button>}</div>
              {notifications.length ? notifications.map(item => <div className={`notification-item notification-${item.type}`} key={item.id}><span className="notification-icon" aria-hidden="true">{item.icon}</span><div><strong>{item.title}</strong><p>{item.message}</p><small>{item.time}</small></div></div>) : <div className="notification-empty">{text(language, 'لا توجد إشعارات جديدة 🎉', 'No new notifications 🎉')}</div>}
@@ -720,7 +716,7 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
            <div><strong>{userName}</strong><small>{text(language, 'مساحتي الشخصية', 'My space')}</small></div>
          </div>
        </div>
-    </div>
+      </header>
        <div className="reference-heading"><h2>{text(language, 'محتويات ثلاجتك', 'Your fridge contents')}</h2><span className="dashboard-date" data-testid="text-current-date">{formatArabicDate(language)}</span></div>
     <div className="reference-dashboard">
       <section className="reference-fridge"><FridgeVisual items={data.items} selected={selected} onSelect={item => setSelectedId(item.id)} /></section>
