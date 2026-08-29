@@ -699,8 +699,9 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
          {sidebarOpen ? <X size={19} /> : <Menu size={19} />}
        </button>
        <div className="dashboard-header-context">
-         <span className="eyebrow">{text(language, 'ملخص اليوم', 'Today at a glance')}</span>
+          <span className="eyebrow dashboard-header-label">{text(language, 'ملخص اليوم', 'Today at a glance')}</span>
          <strong>{text(language, 'أهلاً بعودتك', 'Welcome back')}</strong>
+          <span className="dashboard-header-date">{formatArabicDate(language)}</span>
         </div>
        </div>
         <div className="dashboard-metrics" aria-label={text(language, 'ملخص اليوم', 'Daily summary')}>

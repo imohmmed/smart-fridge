@@ -7692,6 +7692,107 @@ body {
   }
 }
 
+.dashboard-header-date {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .dashboard-header-context {
+    gap: 3px;
+  }
+
+  .dashboard-header-context .dashboard-header-label {
+    display: none;
+  }
+
+  .dashboard-header-context strong {
+    font-size: 16px;
+    line-height: 1.15;
+  }
+
+  .dashboard-header-context .dashboard-header-date {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 11px;
+    line-height: 1.2;
+  }
+
+  .dashboard-metrics {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 10px;
+    margin-top: 16px;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .dashboard-topbar .dashboard-metrics .dashboard-stat {
+    display: flex;
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    width: auto;
+    height: 132px;
+    min-height: 132px;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 15px 12px !important;
+    border: 1px solid rgba(46, 125, 50, .08);
+    border-radius: 18px !important;
+    box-shadow: 0 5px 16px rgba(32, 48, 36, .04);
+  }
+
+  .dashboard-topbar .dashboard-metrics .dashboard-stat > svg {
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+  }
+
+  .dashboard-topbar .dashboard-metrics .dashboard-stat > div:last-child {
+    display: grid;
+    align-self: stretch;
+    align-content: end;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .dashboard-topbar .dashboard-metrics .dashboard-stat small {
+    font-size: 10px;
+    line-height: 1.2;
+    white-space: normal;
+  }
+
+  .dashboard-topbar .dashboard-metrics .dashboard-stat strong {
+    font-size: 15px;
+    line-height: 1.15;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+  .dashboard-topbar .dashboard-metrics .dashboard-stat:nth-child(1) > svg {
+    order: 2;
+    align-self: flex-end;
+  }
+
+  .dashboard-topbar .dashboard-metrics .dashboard-stat:nth-child(2) {
+    position: relative;
+  }
+
+  .dashboard-topbar .dashboard-metrics .dashboard-stat:nth-child(2) > .mini-ring {
+    position: absolute;
+    top: 13px;
+    inset-inline-end: 12px;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+  }
+
+  .dashboard-topbar .dashboard-metrics .dashboard-stat:nth-child(2) > div:last-child {
+    padding-top: 38px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .smart-sidebar,
   .smart-sidebar__toggle,

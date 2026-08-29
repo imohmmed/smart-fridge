@@ -9,6 +9,12 @@ The Smart Fridge stylesheet has accumulated several historical responsive layers
 
 **How to apply:** When changing responsive UI, update the final override rules first and verify 375px, 768px, and desktop layouts after the workflow restart.
 
+Mobile dashboard header rules may need the same `.dashboard-topbar .dashboard-*` specificity as older declarations; otherwise legacy `order`, `display`, and `flex` values can reintroduce wrapping.
+
+**Why:** A visually correct mobile header can still wrap its action group when an earlier, more-specific grid declaration wins the cascade.
+
+**How to apply:** Keep mobile-only header layout rules together at the end of the stylesheet and verify computed positions, not only screenshot appearance.
+
 The sidebar reference pattern is best adapted as a warm, card-like rail with CSS-variable width, delayed label choreography, and `data-tooltip` labels for the collapsed state; mobile should use a translated drawer with a fading scrim.
 
 **Why:** This preserves the reference interaction without replacing the existing navigation behavior or adding a language control outside Settings.
