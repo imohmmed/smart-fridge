@@ -622,7 +622,7 @@ function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; sele
            const categoryItems = items.filter(item => item.category === category.match).slice(0, 10);
           return <div className={`cabinet-shelf ${category.tint}`} key={category.name}>
             <div className="shelf-title"><span>{category.name}</span><small>{category.note}</small></div>
-             <div className="shelf-items">{categoryItems.map(item => renderFood(item))}{!categoryItems.length && <span className="muted shelf-empty">{text(language, 'أضف صنفاً جديداً', 'Add a new item')}</span>}</div>
+              <div className="shelf-items" aria-label={category.name} data-testid={`shelf-items-${category.tint}`}>{categoryItems.map(item => renderFood(item))}{!categoryItems.length && <span className="muted shelf-empty">{text(language, 'أضف صنفاً جديداً', 'Add a new item')}</span>}</div>
             <div className="glass-front" />
           </div>;
         })}</div>
