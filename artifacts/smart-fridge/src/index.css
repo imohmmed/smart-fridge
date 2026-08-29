@@ -5629,3 +5629,40 @@ body {
     min-height: 48px;
   }
 }
+
+/* The updated brief keeps hydration and calorie tracking in the header.
+   The footer is reserved for nutrients, the daily tip, and adding food. */
+.dashboard-metrics .water-header-stat > svg {
+  color: hsl(196 48% 51%);
+}
+
+.dashboard-footer {
+  grid-template-columns: minmax(260px, 1.2fr) minmax(220px, 1fr) auto;
+}
+
+.dashboard-footer > .macro-stat,
+.dashboard-footer > .health-tip {
+  min-height: 86px;
+}
+
+@media (max-width: 1100px) and (min-width: 769px) {
+  .dashboard-footer {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-footer > .floating-add {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-footer {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-footer > .macro-stat,
+  .dashboard-footer > .health-tip,
+  .dashboard-footer > .floating-add {
+    grid-column: 1 / -1;
+  }
+}
