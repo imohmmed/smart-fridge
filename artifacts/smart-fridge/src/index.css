@@ -5309,3 +5309,323 @@ body {
     z-index: 999;
   }
 }
+
+/* Final dashboard refinement: a dark floating dock, clean quantity badges,
+   and independent health modules. */
+.smart-sidebar__inner {
+  border-color: rgba(255, 255, 255, .12);
+  border-radius: 28px;
+  background: linear-gradient(160deg, #2d443d 0%, #1d302a 100%);
+  box-shadow: 9px 12px 24px rgba(25, 35, 31, .24), inset 0 1px rgba(255, 255, 255, .08);
+}
+
+.smart-sidebar__brand .brand-mark {
+  background: #e6c36f;
+  color: #263a32;
+  box-shadow: 3px 4px 9px rgba(13, 25, 20, .24);
+}
+
+.smart-sidebar__brand-copy h1 {
+  color: #f7f4ea;
+}
+
+.smart-sidebar__brand-copy small {
+  color: rgba(247, 244, 234, .58);
+}
+
+.smart-sidebar__toggle {
+  border-color: rgba(255, 255, 255, .16);
+  color: #f7f4ea;
+  background: rgba(255, 255, 255, .08);
+}
+
+.smart-sidebar__toggle:hover {
+  color: #263a32;
+  background: #e6c36f;
+}
+
+.smart-sidebar__link,
+.smart-sidebar__logout {
+  color: rgba(247, 244, 234, .72);
+  border-color: transparent;
+}
+
+.smart-sidebar__link:hover,
+.smart-sidebar__logout:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, .12);
+  background: rgba(255, 255, 255, .09);
+  transform: translateX(-2px);
+}
+
+.smart-sidebar__link.active {
+  color: #fff;
+  border-color: rgba(230, 195, 111, .24);
+  background: rgba(230, 195, 111, .16);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .03);
+}
+
+.smart-sidebar__icon {
+  width: 35px;
+  height: 35px;
+  flex-basis: 35px;
+  border-radius: 12px;
+  color: #fff;
+  background: #6f9c78;
+  box-shadow: 0 5px 9px rgba(13, 25, 20, .18);
+}
+
+.smart-sidebar__nav .smart-sidebar__link:nth-child(2) .smart-sidebar__icon { background: #d98a68; }
+.smart-sidebar__nav .smart-sidebar__link:nth-child(3) .smart-sidebar__icon { background: #c96b63; }
+.smart-sidebar__nav .smart-sidebar__link:nth-child(4) .smart-sidebar__icon { background: #6f9fc1; }
+.smart-sidebar__nav .smart-sidebar__link:nth-child(5) .smart-sidebar__icon { background: #c19a59; }
+.smart-sidebar__nav .smart-sidebar__link:nth-child(6) .smart-sidebar__icon { background: #b27b9b; }
+.smart-sidebar__footer .smart-sidebar__link .smart-sidebar__icon { background: #758a82; }
+.smart-sidebar__logout .smart-sidebar__icon { background: #596d65; }
+
+.smart-sidebar__count {
+  color: #263a32;
+  background: #e6c36f;
+}
+
+.smart-sidebar__profile {
+  border-top-color: rgba(255, 255, 255, .14);
+}
+
+.smart-sidebar__profile-copy strong {
+  color: #f7f4ea;
+}
+
+.smart-sidebar__profile-copy span {
+  color: rgba(247, 244, 234, .56);
+}
+
+.smart-sidebar__link::after,
+.smart-sidebar__logout::after {
+  color: #263a32;
+  background: #f7f4ea;
+  border-color: rgba(45, 68, 61, .18);
+}
+
+.real-fridge-cabinet .food-badge small {
+  display: none;
+}
+
+.real-fridge-cabinet .food-badge .food-name {
+  margin-top: 2px;
+}
+
+.real-fridge-cabinet .quantity-badge {
+  top: -5px;
+  left: -5px;
+  min-width: 19px;
+  height: 19px;
+  color: #263a32;
+  background: #f7f4ea;
+  border-color: rgba(74, 124, 89, .28);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.dashboard-footer {
+  grid-template-columns: minmax(170px, 1.05fr) minmax(180px, 1fr) minmax(210px, 1.25fr) minmax(180px, 1fr) auto;
+  gap: 10px;
+}
+
+.dashboard-footer > .footer-stat,
+.dashboard-footer > .macro-stat,
+.dashboard-footer > .health-tip {
+  min-width: 0;
+  min-height: 86px;
+  border: 1px solid hsl(var(--border));
+  border-radius: 16px;
+  background: hsl(var(--card));
+  box-shadow: 0 8px 18px hsl(155 20% 26% / .07);
+}
+
+.dashboard-footer > .footer-stat,
+.dashboard-footer > .macro-stat {
+  padding: 13px 15px;
+}
+
+.dashboard-footer > .health-tip {
+  padding: 13px 15px;
+}
+
+.dashboard-footer > .footer-stat > div,
+.dashboard-footer > .health-tip > div {
+  min-width: 0;
+}
+
+.dashboard-footer > .macro-stat {
+  display: block;
+}
+
+.dashboard-footer > .health-tip {
+  background: hsl(152 44% 29% / .08);
+}
+
+/* Restore the established warm sidebar treatment while keeping the fixed
+   desktop rail and mobile off-canvas behavior above. */
+.smart-sidebar__inner {
+  border-color: rgba(74, 124, 89, .18);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(246, 242, 233, .98), rgba(237, 232, 220, .98));
+  box-shadow: 7px 7px 16px rgba(83, 74, 61, .12), -5px -5px 14px rgba(255, 255, 255, .82);
+}
+
+.smart-sidebar__brand .brand-mark {
+  background: var(--green-light);
+  color: var(--green-primary);
+  box-shadow: 3px 3px 7px rgba(83, 74, 61, .12);
+}
+
+.smart-sidebar__brand-copy h1 {
+  color: var(--text-primary);
+}
+
+.smart-sidebar__brand-copy small {
+  color: var(--text-muted);
+}
+
+.smart-sidebar__toggle {
+  border-color: rgba(74, 124, 89, .18);
+  color: var(--green-text);
+  background: rgba(255, 255, 255, .48);
+}
+
+.smart-sidebar__toggle:hover {
+  color: var(--green-text);
+  background: rgba(255, 255, 255, .72);
+}
+
+.smart-sidebar__link,
+.smart-sidebar__logout {
+  color: var(--text-secondary);
+  border-color: transparent;
+}
+
+.smart-sidebar__link:hover,
+.smart-sidebar__logout:hover {
+  color: var(--green-text);
+  border-color: rgba(74, 124, 89, .14);
+  background: rgba(255, 255, 255, .58);
+}
+
+.smart-sidebar__link.active {
+  color: var(--green-text);
+  border-color: rgba(74, 124, 89, .18);
+  background: rgba(127, 166, 111, .18);
+  box-shadow: inset 2px 2px 5px rgba(74, 124, 89, .07);
+}
+
+.smart-sidebar__icon {
+  width: 24px;
+  height: 24px;
+  flex-basis: 24px;
+  border-radius: 0;
+  color: currentColor;
+  background: transparent;
+  box-shadow: none;
+}
+
+.smart-sidebar__nav .smart-sidebar__link:nth-child(2) .smart-sidebar__icon,
+.smart-sidebar__nav .smart-sidebar__link:nth-child(3) .smart-sidebar__icon,
+.smart-sidebar__nav .smart-sidebar__link:nth-child(4) .smart-sidebar__icon,
+.smart-sidebar__nav .smart-sidebar__link:nth-child(5) .smart-sidebar__icon,
+.smart-sidebar__nav .smart-sidebar__link:nth-child(6) .smart-sidebar__icon,
+.smart-sidebar__footer .smart-sidebar__link .smart-sidebar__icon,
+.smart-sidebar__logout .smart-sidebar__icon {
+  background: transparent;
+}
+
+.smart-sidebar__count {
+  color: var(--text-primary);
+  background: var(--accent-soft);
+}
+
+.smart-sidebar__profile {
+  border-top-color: rgba(83, 74, 61, .14);
+}
+
+.smart-sidebar__profile-copy strong {
+  color: var(--text-primary);
+}
+
+.smart-sidebar__profile-copy span {
+  color: var(--text-muted);
+}
+
+.smart-sidebar__link::after,
+.smart-sidebar__logout::after {
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border-color: rgba(74, 124, 89, .16);
+}
+
+@media (min-width: 769px) {
+  .smart-sidebar {
+    width: var(--smart-sidebar-width);
+    padding: 18px 8px;
+    pointer-events: none;
+  }
+
+  .smart-sidebar__inner {
+    padding: 16px 10px;
+    pointer-events: auto;
+  }
+
+  .app-shell.sidebar-collapsed .smart-sidebar__inner {
+    padding-inline: 4px;
+  }
+
+  .app-shell.sidebar-collapsed .smart-sidebar__icon {
+    width: 24px;
+    flex-basis: 24px;
+  }
+}
+
+@media (max-width: 1100px) and (min-width: 769px) {
+  .dashboard-footer {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-footer > .floating-add {
+    grid-column: 1 / -1;
+    min-height: 58px;
+  }
+}
+
+@media (max-width: 768px) {
+  .smart-sidebar {
+    width: min(300px, 88vw);
+    padding: 10px;
+  }
+
+  .smart-sidebar__inner {
+    padding: 16px 12px;
+  }
+
+  .dashboard-footer {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  .dashboard-footer > .footer-stat,
+  .dashboard-footer > .macro-stat,
+  .dashboard-footer > .health-tip,
+  .dashboard-footer > .floating-add {
+    grid-column: 1 / -1;
+    min-height: 72px;
+  }
+
+  .dashboard-footer > .footer-stat,
+  .dashboard-footer > .macro-stat,
+  .dashboard-footer > .health-tip {
+    padding: 12px 14px;
+  }
+
+  .dashboard-footer > .floating-add {
+    min-height: 48px;
+  }
+}
