@@ -1,0 +1,138 @@
+import { expect, test, type Page } from '@playwright/test';
+
+const viewports = [
+  { name: 'phone', width: 390, height: 844 },
+  { name: 'tablet', width: 834, height: 1112 },
+  { name: 'desktop', width: 1440, height: 900 },
+] as const;
+
+const shelfTones = ['protein', 'vegetables', 'fruit', 'dairy', 'drinks', 'ready'];
+
+async function seedDemoSession(page: Page) {
+  await page.addInitScript(() => {
+    const user = {
+      id: 'responsive-layout-test-user',
+      name: 'Responsive Test',
+      email: 'responsive@example.test',
+      password: 'test-password',
+      gender: 'female',
+    };
+
+    localStorage.setItem('smart_fridge_users', JSON.stringify([user]));
+    localStorage.setItem('smart_fridge_session', user.id);
+    localStorage.setItem('smart_fridge_language', 'en');
+    localStorage.removeItem('smart_fridge_read_notifications');
+  });
+}
+
+async function measureLayout(page: Page) {
+  return page.evaluate(() => {
+    const rect = (selector: string) => {
+      const element = document.querySelector<HTMLElement>(selector);
+      if (!element) return null;
+      const box = element.getBoundingClientRect();
+      return { left: box.left, right: box.right, width: box.width, top: box.top, height: box.height };
+    };
+
+    return {
+      viewportWidth: window.innerWidth,
+      documentScrollWidth: document.documentElement.scrollWidth,
+      bodyScrollWidth: document.body.scrollWidth,
+      main: rect('.dashboard-main'),
+      shelf: rect('.smart-shelf-card'),
+      categories: Array.from(document.querySelectorAll<HTMLElement>('.smart-shelf-section')).map(element => {
+        const box = element.getBoundingClientRect();
+        return { left: box.left, right: box.right, width: box.width, height: box.height };
+      }),
+      bottomCards: Array.from(document.querySelectorAll<HTMLElement>('.dashboard-footer > *')).map(element => {
+        const box = element.getBoundingClientRect();
+        return { left: box.left, right: box.right, width: box.width, height: box.height };
+      }),
+      sidebar: rect('.smart-sidebar'),
+      sidebarPosition: getComputedStyle(document.querySelector('.smart-sidebar')!).position,
+      sidebarZIndex: getComputedStyle(document.querySelector('.smart-sidebar')!).zIndex,
+      sidebarLabels: Array.from(document.querySelectorAll<HTMLElement>('.smart-sidebar__label')).map(
+        element => getComputedStyle(element).display,
+      ),
+    };
+  });
+}
+
+function expectContained(
+  boxes: Array<{ left: number; right: number; width: number; height: number }> | null,
+  viewportWidth: number,
+  label: string,
+) {
+  expect(boxes, `${label} should exist`).not.toBeNull();
+  for (const box of boxes ?? []) {
+    expect(box.width, `${label} should have width`).toBeGreaterThan(0);
+    expect(box.height, `${label} should have height`).toBeGreaterThan(0);
+    expect(box.left, `${label} should not start outside the viewport`).toBeGreaterThanOrEqual(-1);
+    expect(box.right, `${label} should not exceed the viewport`).toBeLessThanOrEqual(viewportWidth + 1);
+  }
+}
+
+for (const viewport of viewports) {
+  test(`Smart Shelf remains contained at ${viewport.name} size`, async ({ page }) => {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await seedDemoSession(page);
+    await page.goto('/');
+    await expect(page.locator('.smart-shelf-card')).toBeVisible();
+
+    const initial = await measureLayout(page);
+
+    expect(initial.documentScrollWidth, `${viewport.name} document width`).toBeLessThanOrEqual(
+      initial.viewportWidth + 1,
+    );
+    expect(initial.bodyScrollWidth, `${viewport.name} body width`).toBeLessThanOrEqual(initial.viewportWidth + 1);
+    expect(initial.sidebarPosition, `${viewport.name} dock positioning`).toBe('fixed');
+    expect(initial.sidebarLabels.every(display => display === 'none')).toBe(true);
+
+    expectContained([initial.main!], initial.viewportWidth, `${viewport.name} dashboard`);
+    expectContained([initial.shelf!], initial.viewportWidth, `${viewport.name} Smart Shelf`);
+    expectContained(initial.categories, initial.viewportWidth, `${viewport.name} Smart Shelf category`);
+    expectContained(initial.bottomCards, initial.viewportWidth, `${viewport.name} bottom card`);
+
+    await expect(page.locator('.smart-shelf-section')).toHaveCount(shelfTones.length);
+    for (const tone of shelfTones) {
+      await expect(page.locator(`[data-testid="shelf-items-${tone}"]`)).toBeVisible();
+    }
+    await expect(page.locator('.dashboard-footer > .macro-stat')).toBeVisible();
+    await expect(page.locator('.dashboard-footer > .health-tip')).toBeVisible();
+    await expect(page.locator('.dashboard-footer > .floating-add')).toBeVisible();
+
+    if (viewport.name === 'phone') {
+      const mainWidthBeforeDock = initial.main?.width;
+      const scrollWidthBeforeDock = initial.documentScrollWidth;
+
+      await expect(page.getByTestId('button-mobile-menu')).toBeVisible();
+      await page.getByTestId('button-mobile-menu').click();
+      await expect(page.locator('.smart-sidebar-scrim')).toHaveClass(/is-open/);
+      await expect
+        .poll(() => page.locator('.smart-sidebar').evaluate(element => element.getBoundingClientRect().right))
+        .toBeGreaterThan(0);
+
+      const open = await measureLayout(page);
+      expect(open.sidebarPosition, 'open mobile dock positioning').toBe('fixed');
+      expect(open.sidebar).not.toBeNull();
+      expect(Number(open.sidebarZIndex), 'open mobile dock should layer above content').toBeGreaterThan(0);
+      expect(open.sidebar!.right).toBeGreaterThan(open.main!.left);
+      expect(open.sidebar!.left).toBeLessThan(open.main!.right);
+      expect(open.sidebar!.top + open.sidebar!.height).toBeGreaterThan(open.main!.top);
+      expect(open.sidebar!.top).toBeLessThan(open.main!.top + open.main!.height);
+      expect(open.main?.width).toBeCloseTo(mainWidthBeforeDock ?? 0, 0);
+      expect(open.documentScrollWidth).toBeLessThanOrEqual(open.viewportWidth + 1);
+      expect(open.documentScrollWidth).toBe(scrollWidthBeforeDock);
+      expect(open.main?.width).toBeLessThanOrEqual(open.viewportWidth + 1);
+      expect(
+        await page.locator('.smart-sidebar-scrim').evaluate(element => getComputedStyle(element).display),
+      ).toBe('block');
+      expectContained([open.main!, open.shelf!], open.viewportWidth, 'open mobile content');
+
+      await page.locator('.smart-sidebar-scrim').click({
+        position: { x: viewport.width - 20, y: Math.floor(viewport.height / 2) },
+      });
+      await expect(page.locator('.smart-sidebar-scrim')).not.toHaveClass(/is-open/);
+    }
+  });
+}

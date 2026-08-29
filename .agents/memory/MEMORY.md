@@ -1,2 +1,3 @@
 - [Recipe image provider](recipe-image-provider.md) — keep the temporary Unsplash source until Spoonacular credentials return a valid response.
 - [Layered responsive styling](layered-fridge-styling.md) — keep final fridge, navigation, and auth responsive overrides together at the end because legacy rules are layered above one another.
+- [Responsive browser test runtime](responsive-browser-tests.md) — Playwright Chromium needs Nix graphics/runtime libraries in the minimal workspace image.
