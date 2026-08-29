@@ -62,7 +62,7 @@ button { cursor: pointer; }
 ::selection { background: hsl(35 71% 65% / .45); }
 
 .fridge-app { min-height: 100%; }
-.app-shell { display: grid; grid-template-columns: 205px minmax(0, 1fr); min-height: 100%; direction: ltr; }
+.app-shell { display: block; min-height: 100%; direction: ltr; }
 .app-main { direction: rtl; min-width: 0; padding: 34px clamp(18px, 4vw, 58px) 48px; max-width: 1700px; width: 100%; margin: 0 auto; }
 .sidebar { direction: rtl; background: hsl(var(--sidebar)); color: hsl(var(--sidebar-foreground)); padding: 28px 20px; display: flex; flex-direction: column; gap: 30px; position: sticky; top: 0; height: 100dvh; }
 .brand-mark { width: 44px; height: 44px; border-radius: 15px 15px 5px 15px; display: grid; place-items: center; background: hsl(var(--accent)); color: hsl(var(--foreground)); box-shadow: 5px 5px 0 hsl(155 24% 12% / .25); }
@@ -232,7 +232,6 @@ button { cursor: pointer; }
 @keyframes fade-in { from { opacity:0 } to { opacity:1 } }
 @keyframes modal-in { from { opacity:0; transform:translateY(12px) scale(.98) } to { opacity:1; transform:none } }
 @media (max-width: 1050px) {
-  .app-shell { grid-template-columns: 80px minmax(0,1fr); }
   .sidebar { padding-inline:12px; align-items:center; }
   .brand { justify-content:center; }
   .brand-copy, .nav-label, .sidebar-footer .profile-mini div, .logout-btn span { display:none; }
@@ -1431,11 +1430,9 @@ button:active, .nav-item:active, .icon-btn:active, .secondary-btn:active { box-s
 .theme-dark .real-fridge-cabinet .freezer-section { background: linear-gradient(180deg, rgba(54,90,97,.85), rgba(24,48,54,.92)); }
 
 @media (max-width: 1120px) {
-  .app-shell { grid-template-columns: 214px minmax(0, 1fr); }
   .real-fridge-body { grid-template-columns: clamp(168px, 24%, 220px) minmax(0, 1fr); }
 }
 @media (max-width: 1050px) {
-  .app-shell { grid-template-columns: 86px minmax(0, 1fr); }
   .sidebar { padding: 24px 12px 17px; align-items: center; }
   .sidebar .brand { justify-content: center; padding-inline: 0; }
   .sidebar .brand-copy,
@@ -3314,10 +3311,6 @@ html[dir="ltr"] .settings-nav button {
 }
 
 /* Collapsible navigation and a focused dashboard header. */
-.app-shell {
-  transition: grid-template-columns .24s ease;
-}
-
 .sidebar-header {
   display: flex;
   align-items: center;
