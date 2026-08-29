@@ -4147,96 +4147,6 @@ html[dir="ltr"] .smart-sidebar__profile-copy {
   }
 }
 
-@media (max-width: 767px) {
-  .app-shell,
-  .app-shell.sidebar-open,
-  .app-shell.sidebar-collapsed {
-    display: block;
-    grid-template-columns: none;
-    transition: none;
-  }
-
-  .smart-sidebar-scrim {
-    position: fixed;
-    inset: 0;
-    z-index: 70;
-    display: block;
-    width: 100%;
-    height: 100%;
-    border: 0;
-    padding: 0;
-    background: rgba(44, 44, 44, .32);
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity .32s ease, visibility 0s linear .32s;
-  }
-
-  .smart-sidebar-scrim.is-open {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transition-delay: 0s;
-  }
-
-  .smart-sidebar {
-    position: fixed;
-    inset: 0 auto 0 0;
-    z-index: 80;
-    width: min(286px, 88vw);
-    height: 100dvh;
-    padding: 12px;
-    transform: translateX(-105%);
-    transition: transform .36s cubic-bezier(.22, .61, .36, 1);
-  }
-
-  html[dir="rtl"] .smart-sidebar {
-    inset: 0 0 0 auto;
-    transform: translateX(105%);
-  }
-
-  .app-shell.sidebar-open .smart-sidebar {
-    transform: translateX(0);
-  }
-
-  .smart-sidebar__inner {
-    padding: 14px 12px;
-    border-radius: 20px;
-  }
-
-  .smart-sidebar__brand-copy,
-  .smart-sidebar__label,
-  .smart-sidebar__profile-copy,
-  .smart-sidebar__count {
-    max-width: none;
-    opacity: 1;
-    transform: none;
-    pointer-events: auto;
-  }
-
-  .smart-sidebar__profile {
-    max-height: none;
-    padding-block: 13px 3px;
-    border-top-color: rgba(83, 74, 61, .14);
-  }
-
-  .smart-sidebar__link,
-  .smart-sidebar__logout {
-    min-height: 48px;
-    padding-inline: 12px;
-  }
-
-  .smart-sidebar__link::after,
-  .smart-sidebar__logout::after {
-    display: none;
-  }
-
-  .mobile-topbar {
-    position: sticky;
-    z-index: 20;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .app-shell,
   .smart-sidebar,
@@ -5274,40 +5184,6 @@ body {
   top: 0;
   z-index: 100;
   background: hsl(var(--background));
-}
-
-@media (max-width: 768px) {
-  .smart-sidebar {
-    position: fixed;
-    z-index: 999;
-  }
-
-  body.sidebar-is-open {
-    overflow: hidden;
-  }
-}
-
-@media (min-width: 769px) {
-  .app-shell,
-  .app-shell.sidebar-open,
-  .app-shell.sidebar-collapsed {
-    grid-template-columns: 78px minmax(0, 1fr);
-  }
-
-  .app-shell > div {
-    grid-column: 2;
-    grid-row: 1;
-    min-width: 0;
-  }
-
-  .smart-sidebar {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: var(--smart-sidebar-width);
-    z-index: 999;
-  }
 }
 
 /* Final dashboard refinement: a dark floating dock, clean quantity badges,
