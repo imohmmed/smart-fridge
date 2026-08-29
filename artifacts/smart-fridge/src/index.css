@@ -6689,3 +6689,297 @@ html[dir="rtl"] .smart-sidebar {
     transition-duration: .01ms !important;
   }
 }
+
+/* Final interaction refinement: compact health cards, a persistent FAB,
+   actionable notification cards, and a polished mobile brand lockup. */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  gap: 9px;
+}
+
+.brand-mark {
+  display: grid;
+  flex: 0 0 34px;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255, 255, 255, .26);
+  border-radius: 11px;
+  color: #263a32;
+  background: #e6c36f;
+  box-shadow: 0 4px 10px rgba(13, 25, 20, .2);
+}
+
+.brand-copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+  direction: ltr;
+  text-align: left;
+}
+
+.brand-copy strong {
+  overflow: hidden;
+  color: #f7f4ea;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.brand-copy small {
+  overflow: hidden;
+  margin: 0;
+  color: rgba(247, 244, 234, .62);
+  font-size: 9px;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notification-dropdown {
+  width: min(370px, calc(100vw - 24px));
+  padding: 12px;
+  border: 1px solid hsl(var(--border));
+  border-radius: 18px;
+  background: hsl(var(--card) / .98);
+  box-shadow: 0 18px 42px hsl(155 20% 26% / .16);
+}
+
+.notification-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 1px 2px 5px;
+}
+
+.notification-head strong {
+  color: hsl(var(--foreground));
+  font-size: 14px;
+}
+
+.notification-head .link-btn {
+  min-height: 28px;
+  padding: 4px 7px;
+  border-radius: 8px;
+  font-size: 10px;
+}
+
+.notification-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  margin-top: 8px;
+  padding: 10px;
+  gap: 10px;
+  border: 1px solid hsl(var(--notification-color, 152 44% 29%) / .16);
+  border-inline-start: 4px solid hsl(var(--notification-color, 152 44% 29%));
+  border-radius: 13px;
+  color: hsl(var(--foreground));
+  background: hsl(var(--notification-color, 152 44% 29%) / .07);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition: background-color .2s ease, border-color .2s ease, transform .2s ease, opacity .2s ease;
+}
+
+.notification-item:hover,
+.notification-item:focus-visible {
+  border-color: hsl(var(--notification-color, 152 44% 29%) / .38);
+  outline: none;
+  background: hsl(var(--notification-color, 152 44% 29%) / .13);
+  transform: translateY(-1px);
+}
+
+.notification-item.is-read {
+  opacity: .62;
+}
+
+.notification-danger { --notification-color: 6 58% 52%; }
+.notification-warning { --notification-color: 35 71% 45%; }
+.notification-info { --notification-color: 196 48% 42%; }
+.notification-success { --notification-color: 152 44% 29%; }
+
+.notification-icon {
+  display: grid;
+  flex: 0 0 34px;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: hsl(var(--notification-color) / .15);
+  font-size: 17px;
+  line-height: 1;
+}
+
+.notification-copy {
+  display: grid;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 2px;
+}
+
+.notification-copy strong,
+.notification-copy > span,
+.notification-copy small {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notification-copy strong {
+  color: hsl(var(--foreground));
+  font-size: 11px;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.notification-copy > span {
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.notification-copy small {
+  color: hsl(var(--muted-foreground));
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.notification-arrow {
+  display: grid;
+  flex: 0 0 24px;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  color: hsl(var(--notification-color));
+  background: hsl(var(--notification-color) / .1);
+}
+
+.dashboard-footer {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) !important;
+  gap: 10px !important;
+  margin-top: 12px !important;
+  padding-bottom: 2px;
+}
+
+.dashboard-footer > .macro-stat,
+.dashboard-footer > .health-tip {
+  min-height: 0 !important;
+  padding: 12px 14px !important;
+  border-radius: 14px;
+}
+
+.dashboard-footer > .macro-stat {
+  display: grid;
+  align-content: center;
+  gap: 7px;
+}
+
+.dashboard-footer > .health-tip {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.dashboard-footer > .health-tip strong {
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.floating-add {
+  position: fixed !important;
+  right: 20px !important;
+  bottom: 20px !important;
+  z-index: 9999 !important;
+  display: grid !important;
+  place-items: center;
+  width: 56px !important;
+  min-width: 56px !important;
+  height: 56px;
+  min-height: 56px !important;
+  padding: 0 !important;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 18px;
+  color: hsl(var(--primary-foreground));
+  background: hsl(var(--primary));
+  box-shadow: 0 12px 24px hsl(155 22% 17% / .25), 0 0 0 5px hsl(var(--primary) / .1);
+}
+
+.floating-add:hover,
+.floating-add:focus-visible {
+  background: hsl(var(--primary) / .9);
+  outline: 3px solid hsl(var(--accent) / .65);
+  outline-offset: 3px;
+  transform: translateY(-3px);
+}
+
+.floating-add span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .mobile-topbar .brand {
+    justify-self: center;
+    max-width: 155px;
+  }
+
+  .mobile-topbar .brand-mark {
+    flex-basis: 31px;
+    width: 31px;
+    height: 31px;
+    border-radius: 10px;
+  }
+
+  .mobile-topbar .brand-copy strong {
+    font-size: 12px;
+  }
+
+  .mobile-topbar .brand-copy small {
+    font-size: 8px;
+  }
+
+  .notification-dropdown {
+    top: 82px !important;
+    right: 12px !important;
+    width: min(370px, calc(100vw - 24px));
+    max-height: calc(100dvh - 98px);
+  }
+
+  .dashboard-footer {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 7px !important;
+    margin-top: 8px !important;
+  }
+
+  .dashboard-footer > .macro-stat,
+  .dashboard-footer > .health-tip {
+    grid-column: 1 / -1 !important;
+  }
+
+  .floating-add {
+    right: 20px !important;
+    bottom: 20px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notification-item,
+  .floating-add,
+  .brand-mark {
+    transition-duration: .01ms !important;
+  }
+}

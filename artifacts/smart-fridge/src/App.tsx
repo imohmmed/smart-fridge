@@ -555,7 +555,10 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
     <div style={{ minWidth: 0 }}>
        <header className="mobile-topbar">
          <button className="menu-toggle icon-btn" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-mobile-menu">{sidebarOpen ? <X size={19} /> : <Menu size={19} />}</button>
-         <div className="brand"><div className="brand-mark"><Refrigerator size={19} /></div><h1>{text(language, 'ثلاجتي', 'Smart Fridge')}</h1></div>
+          <div className="brand" aria-label={text(language, 'ثلاجتي الذكية', 'Smart Fridge')}>
+            <span className="brand-mark" aria-hidden="true"><Refrigerator size={19} /></span>
+            <span className="brand-copy"><strong>{text(language, 'ثلاجتي', 'Smart Fridge')}</strong><small>{text(language, 'مساحتك الطازجة', 'Fresh space')}</small></span>
+          </div>
          <button className="icon-btn" onClick={onLogout} aria-label={text(language, 'تسجيل الخروج', 'Sign out')} data-testid="button-mobile-logout"><LogOut size={17} /></button>
        </header>
       {children}
@@ -613,17 +616,6 @@ function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; sele
     {daysUntil(item.expiry) <= 2 && <i className="food-dot" aria-hidden="true" />}
   </button>;
   return <div className="smart-shelf-card">
-    <div className="smart-shelf-toolbar">
-      <div>
-        <span className="eyebrow">{text(language, 'تنظيم ذكي', 'Smart storage')}</span>
-        <h3>{text(language, 'رفوف ثلاجتك', 'Your smart shelves')}</h3>
-        <p>{text(language, 'كل ما تحتاجه، مرتب وواضح في مكان واحد.', 'Everything you need, organized in one clear view.')}</p>
-      </div>
-      <div className="smart-shelf-temperatures" aria-label={text(language, 'درجات التخزين', 'Storage temperatures')}>
-        <span><Refrigerator size={14} aria-hidden="true" /> 4°C</span>
-        <span><Zap size={13} aria-hidden="true" /> -18°C</span>
-      </div>
-    </div>
     <div className="smart-shelf-grid">
       {categories.map(category => {
         const categoryItems = items.filter(item => item.category === category.match).slice(0, 8);
@@ -678,6 +670,14 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
     setReadIds(ids);
     localStorage.setItem('smart_fridge_read_notifications', JSON.stringify(ids));
   };
+  const markRead = (id: string) => {
+    setReadIds(previous => {
+      if (previous.includes(id)) return previous;
+      const next = [...previous, id];
+      localStorage.setItem('smart_fridge_read_notifications', JSON.stringify(next));
+      return next;
+    });
+  };
   return <main className="app-main dashboard-main">
     <div className="dashboard-topbar">
        <div className="dashboard-header-context">
@@ -704,7 +704,7 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
            {unreadCount > 0 && <b className="notification-count">{toWesternNums(unreadCount)}</b>}
            {notificationsOpen && <div className="notification-dropdown" role="region" aria-label={text(language, 'قائمة التنبيهات', 'Notifications list')}>
              <div className="notification-head"><strong>{text(language, 'التنبيهات', 'Notifications')}</strong>{notifications.length > 0 && <button className="link-btn" onClick={markAllRead}>{text(language, 'تعليم الكل كمقروء', 'Mark all as read')}</button>}</div>
-             {notifications.length ? notifications.map(item => <div className={`notification-item notification-${item.type}`} key={item.id}><span className="notification-icon" aria-hidden="true">{item.icon}</span><div><strong>{item.title}</strong><p>{item.message}</p><small>{item.time}</small></div></div>) : <div className="notification-empty">{text(language, 'لا توجد إشعارات جديدة 🎉', 'No new notifications 🎉')}</div>}
+              {notifications.length ? notifications.map(item => <button type="button" className={`notification-item notification-${item.type} ${readIds.includes(item.id) ? 'is-read' : ''}`} key={item.id} onClick={() => markRead(item.id)} aria-label={`${item.title}: ${item.message}`}><span className="notification-icon" aria-hidden="true">{item.icon}</span><span className="notification-copy"><strong>{item.title}</strong><span>{item.message}</span><small>{item.time}</small></span><span className="notification-arrow" aria-hidden="true"><ChevronLeft size={14} /></span></button>) : <div className="notification-empty">{text(language, 'لا توجد إشعارات جديدة 🎉', 'No new notifications 🎉')}</div>}
            </div>}
          </div>
          <div className="dashboard-profile" aria-label={text(language, 'تفاصيل الملف الشخصي', 'Profile details')}>
