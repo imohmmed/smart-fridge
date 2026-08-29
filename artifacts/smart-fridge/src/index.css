@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
@@ -35,14 +36,14 @@
   --chart-3: 6 58% 58%;
   --chart-4: 196 48% 51%;
   --chart-5: 274 35% 61%;
-  --app-font-sans: 'Noto Naskh Arabic', serif;
-  --app-font-serif: 'Noto Naskh Arabic', serif;
-  --app-font-mono: 'Noto Naskh Arabic', serif;
+  --app-font-sans: 'Inter', 'Cairo', 'Noto Sans Arabic', sans-serif;
+  --app-font-serif: 'Cairo', 'Inter', 'Noto Sans Arabic', sans-serif;
+  --app-font-mono: 'Inter', 'Cairo', 'Noto Sans Arabic', sans-serif;
   --radius: 1.1rem;
 }
 
 * { box-sizing: border-box; font-variant-numeric: normal; }
-html { direction: rtl; background: hsl(var(--background)); }
+html { direction: rtl; background: hsl(var(--background)); scrollbar-gutter: stable; }
 body {
   margin: 0;
   min-width: 320px;
@@ -4953,5 +4954,274 @@ html[dir="ltr"] .smart-sidebar__profile-copy {
 
   .dashboard-health-card .macro-lines span {
     font-size: 9px;
+  }
+}
+
+/* Mobile stability pass: lock the document behind the drawer and keep each
+   dashboard region independent of the legacy desktop layout. */
+body * {
+  font-family: var(--app-font-sans);
+}
+
+body.sidebar-is-open {
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  body.sidebar-is-open {
+    overscroll-behavior: none;
+    touch-action: none;
+  }
+
+  .smart-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    z-index: 100;
+    width: min(286px, 88vw);
+    max-width: 100vw;
+  }
+
+  .smart-sidebar-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    width: 100vw;
+    height: 100dvh;
+  }
+
+  .dashboard-topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    min-height: 0;
+    margin-bottom: 10px;
+    padding: 0;
+    gap: 7px 10px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .dashboard-header-context {
+    display: grid;
+    flex: 1 1 auto;
+    min-width: 0;
+    order: 1;
+  }
+
+  .dashboard-actions {
+    display: flex;
+    flex: 0 0 auto;
+    order: 2;
+    min-width: max-content;
+  }
+
+  .dashboard-metrics {
+    display: flex;
+    flex: 1 0 100%;
+    order: 3;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .dashboard-metrics .dashboard-stat {
+    flex: 1 1 0;
+    min-width: 0;
+    border: 1px solid rgba(83, 74, 61, .13);
+    border-radius: 12px;
+    background: var(--bg-card);
+    box-shadow: 2px 2px 6px var(--shadow-dark), -2px -2px 6px var(--shadow-light);
+  }
+
+  .dashboard-metrics .dashboard-stat + .dashboard-stat {
+    border-left: 1px solid rgba(83, 74, 61, .13);
+  }
+
+  .notification-wrap {
+    position: static;
+  }
+
+  .notification-dropdown {
+    position: fixed;
+    top: 106px;
+    right: 12px;
+    left: auto;
+    z-index: 200;
+    width: min(360px, 90vw);
+    max-width: 90vw;
+    max-height: calc(100dvh - 122px);
+    margin: 0;
+    overflow-y: auto;
+  }
+
+  .reference-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    padding: 4px 0 10px;
+  }
+
+  .reference-heading h2 {
+    min-width: 0;
+    margin: 0;
+    font-size: clamp(24px, 7vw, 31px);
+    line-height: 1.2;
+  }
+
+  .dashboard-date {
+    flex: 0 0 auto;
+    color: var(--text-secondary);
+    font-size: 11px;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .reference-dashboard {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .reference-fridge {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .real-fridge-card {
+    width: 100%;
+    min-height: 0;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .real-fridge-body {
+    display: grid;
+    grid-template-columns: minmax(88px, 29%) minmax(0, 1fr);
+    align-items: stretch;
+    width: 100%;
+    min-height: 0;
+    height: auto;
+    padding: 9px;
+    gap: 7px;
+  }
+
+  .real-fridge-door,
+  .real-fridge-cabinet {
+    min-width: 0;
+    min-height: 500px;
+    height: auto;
+  }
+
+  .real-fridge-door {
+    padding: 31px 7px 10px;
+  }
+
+  .real-fridge-cabinet {
+    padding: 18px 7px 9px;
+  }
+
+  .real-fridge-cabinet .cabinet-shelves {
+    gap: 5px;
+  }
+
+  .real-fridge-cabinet .cabinet-shelf {
+    min-width: 0;
+    min-height: 91px;
+    padding: 5px 5px 8px;
+  }
+
+  .real-fridge-cabinet .shelf-title {
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    padding-inline: 5px;
+    font-size: 9px;
+  }
+
+  .real-fridge-cabinet .shelf-title span,
+  .real-fridge-cabinet .shelf-title small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .real-fridge-cabinet .shelf-items {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: end;
+    min-width: 0;
+    min-height: 58px;
+    gap: 6px;
+    padding: 2px 0 3px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+  }
+
+  .real-fridge-cabinet .shelf-items::-webkit-scrollbar {
+    display: none;
+  }
+
+  .real-fridge-cabinet .food-badge {
+    flex: 0 0 63px;
+    width: 63px;
+    min-width: 63px;
+    padding: 3px 2px 2px;
+  }
+
+  .real-fridge-cabinet .food-badge .food-name {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    font-size: 9px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .real-fridge-cabinet .food-badge small {
+    font-size: 8px;
+  }
+
+  .real-fridge-cabinet .food-art {
+    margin-bottom: 1px;
+  }
+
+  .real-fridge-door .door-rack {
+    min-width: 0;
+    margin-inline: 0;
+  }
+
+  .real-fridge-door .door-food {
+    min-width: 0;
+    gap: 4px;
+    padding-block: 2px;
+  }
+
+  .real-fridge-door .door-food .food-name {
+    min-width: 0;
+    font-size: 8px;
+  }
+
+  .real-fridge-door .door-note {
+    min-width: 0;
+    margin-inline: 0;
+    padding-inline: 5px;
+  }
+
+  .real-fridge-cabinet .produce-drawers,
+  .real-fridge-cabinet .freezer-section {
+    min-width: 0;
+  }
+
+  .real-fridge-cabinet .freezer-tray {
+    gap: 4px;
+    padding-inline: 2px;
   }
 }

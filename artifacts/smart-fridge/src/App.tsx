@@ -378,19 +378,6 @@ function checkAndGenerateNotifications(data: UserData, language: Language): AppN
   return notifications;
 }
 
-const foodEmojiMap: Record<string, string> = {
-  برتقال: '🍊', موز: '🍌', تفاح: '🍎', 'تفاح أحمر': '🍎', عنب: '🍇', فراولة: '🍓', بطيخ: '🍉',
-  مانجو: '🥭', كمثرى: '🍐', خوخ: '🍑', أناناس: '🍍', توت: '🫐', ليمون: '🍋', كيوي: '🥝',
-  رمان: '🍎', تمر: '🌴', طماطم: '🍅', 'طماطم كرزية': '🍅', خس: '🥬', 'خس طازج': '🥬',
-  جزر: '🥕', بروكلي: '🥦', فلفل: '🫑', خيار: '🥒', بصل: '🧅', ثوم: '🧄', بطاطس: '🥔',
-  ذرة: '🌽', باذنجان: '🍆', أفوكادو: '🥑', فطر: '🍄', دجاج: '🍗', 'صدور دجاج': '🍗',
-  لحم: '🥩', سمك: '🐟', بيض: '🥚', روبيان: '🦐', حليب: '🥛', جبن: '🧀', زبدة: '🧈',
-  زبادي: '🥛', كريمة: '🥛', 'عصير برتقال': '🍊', 'عصير تفاح': '🍎', ماء: '💧', default: '🍽️',
-};
-function getFoodEmoji(foodName: string) {
-  return foodEmojiMap[foodName] || Object.keys(foodEmojiMap).find(key => key !== 'default' && foodName.includes(key)) && foodEmojiMap[Object.keys(foodEmojiMap).find(key => key !== 'default' && foodName.includes(key)) as string] || foodEmojiMap.default;
-}
-
 const removedBrokenImageItemIds = new Set([
   'broccoli', 'avocado', 'corn', 'romaine', 'carrots', 'red-apple', 'bananas',
   'kiwi', 'green-apple', 'lime', 'mandarins', 'steak', 'water-bottle', 'juice-bottles',
@@ -402,9 +389,6 @@ function FoodArt({ item, size = 40 }: { item?: FridgeItem; size?: number }) {
     : art === 'tomato' ? tomatoPhoto : art === 'milk' ? milkPhoto : art === 'egg' ? eggsPhoto : art === 'chicken' ? proteinPhoto
     : art === 'leaf' ? vegetablesPhoto : art === 'apple' || art === 'orange' ? fruitPhoto
     : art === 'cheese' ? cheesePhoto : art === 'hummus' ? cheesePhoto : art === 'package' ? milkPhoto : freezerPhoto;
-  const emoji = art === 'strawberry' ? '🍓' : art === 'cherries' ? '🍒' : art === 'grapes' ? '🍇' : art === 'milk' ? '🥛' : art === 'egg' ? '🥚' : art === 'cheese' ? '🧀' : art === 'apple' ? '🍎'
-    : art === 'orange' ? '🍊' : art === 'leaf' ? '🥦' : art === 'tomato' ? '🍅' : art === 'chicken' ? '🍗'
-    : art === 'hummus' ? '🥫' : art === 'package' ? '🧃' : '🥕';
   const style = art === 'apple' ? { color: 'hsl(6 58% 48%)' }
     : art === 'orange' ? { color: 'hsl(32 69% 44%)' }
     : art === 'leaf' ? { color: 'hsl(152 44% 29%)' }
@@ -412,7 +396,7 @@ function FoodArt({ item, size = 40 }: { item?: FridgeItem; size?: number }) {
     : art === 'chicken' ? { color: 'hsl(274 35% 48%)' }
     : art === 'egg' ? { color: 'hsl(34 52% 40%)' }
     : { color: 'hsl(196 48% 40%)' };
-  return <div className={`food-art art-${art}`} style={{ ...style, width: size, height: size }}><span className="food-shadow" aria-hidden="true" /><TransparentFoodImage src={photo} alt="" width={size * 1.5} height={size * 1.5} /><span className="food-emoji" aria-hidden="true">{emoji}</span></div>;
+  return <div className={`food-art art-${art}`} style={{ ...style, width: size, height: size }}><span className="food-shadow" aria-hidden="true" /><TransparentFoodImage src={photo} alt="" width={size * 1.5} height={size * 1.5} /></div>;
 }
 
 function LanguageSwitcher() {
@@ -545,6 +529,11 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
+
+  useEffect(() => {
+    document.body.classList.toggle('sidebar-is-open', sidebarOpen);
+    return () => document.body.classList.remove('sidebar-is-open');
+  }, [sidebarOpen]);
 
   useEffect(() => {
     if (window.innerWidth < 768) closeSidebar();
@@ -732,7 +721,7 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
          </div>
        </div>
     </div>
-      <div className="reference-heading"><div><span className="eyebrow">{text(language, 'مساحتي اليومية', 'My daily space')}</span><h2>{text(language, 'محتويات ثلاجتك', 'Your fridge contents')}</h2></div><span className="date-chip" data-testid="text-current-date">{formatArabicDate(language)}</span></div>
+       <div className="reference-heading"><h2>{text(language, 'محتويات ثلاجتك', 'Your fridge contents')}</h2><span className="dashboard-date" data-testid="text-current-date">{formatArabicDate(language)}</span></div>
     <div className="reference-dashboard">
       <section className="reference-fridge"><FridgeVisual items={data.items} selected={selected} onSelect={item => setSelectedId(item.id)} /></section>
       <aside className="reference-rail">
