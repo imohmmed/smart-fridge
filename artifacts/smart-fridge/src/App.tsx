@@ -6,7 +6,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import {
   Apple, ArrowLeft, Bell, BookOpen, Check, CheckCircle2, ChevronLeft, CircleHelp,
   ClipboardCopy, Droplets, Egg, Fish, Flame, Heart, Home, Leaf, LogOut, Minus,
-  Package, Pencil, Plus, Refrigerator, Search, Settings, ShoppingBasket, Sparkles,
+  Menu, Package, Pencil, Plus, Refrigerator, Search, Settings, ShoppingBasket, Sparkles,
   Trash2, UserRound, Utensils, X, Zap, Eye, EyeOff, Globe2, LockKeyhole, Mail,
 } from 'lucide-react';
 import { Link, Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
@@ -301,7 +301,6 @@ function saveData(userId: string, data: UserData) {
   localStorage.setItem(DATA_KEY, JSON.stringify({ ...stored, [userId]: data }));
 }
 function initials(name: string) { return name.trim().slice(0, 1) || 'ت'; }
-function genderSticker(_gender?: User['gender']) { return '🧑🏻‍🍳'; }
 function TransparentFoodImage({ src, alt, width, height }: { src: string; alt: string; width: number; height: number }) {
   const [transparentSrc, setTransparentSrc] = useState('');
   useEffect(() => {
@@ -531,20 +530,50 @@ const navItems = [
 function AppShell({ user, shoppingCount, children, onLogout }: { user: User; shoppingCount: number; children: ReactNode; onLogout: () => void }) {
   const [location] = useLocation();
   const { language } = useLanguage();
-  return <div className="app-shell">
+  const [sidebarOpen, setSidebarOpen] = useState(() => typeof window === 'undefined' || window.innerWidth >= 768);
+  const toggleSidebar = () => setSidebarOpen(value => !value);
+  const closeSidebar = () => setSidebarOpen(false);
+
+  useEffect(() => {
+    const syncWithViewport = () => setSidebarOpen(window.innerWidth >= 768);
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') closeSidebar();
+    };
+    window.addEventListener('resize', syncWithViewport);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('resize', syncWithViewport);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (window.innerWidth < 768) closeSidebar();
+  }, [location]);
+
+  return <div className={`app-shell ${sidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'}`}>
+     {sidebarOpen && <button className="sidebar-scrim" type="button" aria-label={text(language, 'إغلاق القائمة', 'Close menu')} onClick={closeSidebar} />}
      <aside className="sidebar">
-       <div className="brand"><div className="brand-mark"><Refrigerator size={24} /></div><div className="brand-copy"><h1>{text(language, 'ثلاجتي', 'Smart Fridge')}</h1><small>{text(language, 'رفيق البيت الطازج', 'Fresh home companion')}</small></div></div>
+       <div className="sidebar-header">
+         <div className="brand"><div className="brand-mark"><Refrigerator size={24} /></div><div className="brand-copy"><h1>{text(language, 'ثلاجتي', 'Smart Fridge')}</h1><small>{text(language, 'رفيق البيت الطازج', 'Fresh home companion')}</small></div></div>
+         <button className="sidebar-toggle icon-btn" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'طي القائمة', 'Collapse menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-sidebar-toggle">{sidebarOpen ? <X size={19} /> : <Menu size={19} />}</button>
+       </div>
        <nav className="nav-list" aria-label={text(language, 'التنقل الرئيسي', 'Main navigation')}>
-          {navItems.map(item => { const Icon = item.icon; const label = text(language, item.ar, item.en); return <Link key={item.href} href={item.href} aria-label={label} className={`nav-item ${location === item.href ? 'active' : ''}`} data-testid={`link-nav-${item.ar}`}><Icon size={18} /><span className="nav-label">{label}</span>{item.href === '/shopping' && <b className="nav-count">{shoppingCount}</b>}</Link>; })}
+          {navItems.map(item => { const Icon = item.icon; const label = text(language, item.ar, item.en); return <Link key={item.href} href={item.href} onClick={closeSidebar} aria-label={label} className={`nav-item ${location === item.href ? 'active' : ''}`} data-testid={`link-nav-${item.ar}`}><Icon size={18} /><span className="nav-label">{label}</span>{item.href === '/shopping' && <b className="nav-count">{shoppingCount}</b>}</Link>; })}
       </nav>
       <div className="sidebar-footer">
-         <Link href="/settings" aria-label={text(language, 'الإعدادات', 'Settings')} className={`nav-item ${location === '/settings' ? 'active' : ''}`} data-testid="link-nav-settings"><Settings size={18} /><span className="nav-label">{text(language, 'الإعدادات', 'Settings')}</span></Link>
+          <LanguageSwitcher />
+          <Link href="/settings" onClick={closeSidebar} aria-label={text(language, 'الإعدادات', 'Settings')} className={`nav-item ${location === '/settings' ? 'active' : ''}`} data-testid="link-nav-settings"><Settings size={18} /><span className="nav-label">{text(language, 'الإعدادات', 'Settings')}</span></Link>
          <div className="profile-mini"><div className="avatar">{initials(user.name)}</div><div><strong>{user.name}</strong><span>{text(language, 'مساحتي الشخصية', 'My space')}</span></div></div>
          <button className="logout-btn" onClick={onLogout} data-testid="button-logout"><LogOut size={15} /><span>{text(language, 'تسجيل الخروج', 'Sign out')}</span></button>
       </div>
     </aside>
     <div style={{ minWidth: 0 }}>
-       <header className="mobile-topbar"><div className="brand"><div className="brand-mark"><Refrigerator size={19} /></div><h1>{text(language, 'ثلاجتي', 'Smart Fridge')}</h1></div><button className="icon-btn" onClick={onLogout} data-testid="button-mobile-logout"><LogOut size={17} /></button></header>
+       <header className="mobile-topbar">
+         <button className="menu-toggle icon-btn" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-mobile-menu">{sidebarOpen ? <X size={19} /> : <Menu size={19} />}</button>
+         <div className="brand"><div className="brand-mark"><Refrigerator size={19} /></div><h1>{text(language, 'ثلاجتي', 'Smart Fridge')}</h1></div>
+         <button className="icon-btn" onClick={onLogout} aria-label={text(language, 'تسجيل الخروج', 'Sign out')} data-testid="button-mobile-logout"><LogOut size={17} /></button>
+       </header>
       {children}
     </div>
   </div>;
@@ -640,7 +669,7 @@ function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; sele
   </div>;
 }
 
-function Dashboard({ userName, userGender, data, setData, onAdd, setNotice }: { userName: string; userGender?: User['gender']; data: UserData; setData: Dispatch<SetStateAction<UserData>>; onAdd: () => void; setNotice: (value: string) => void }) {
+function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: string; data: UserData; setData: Dispatch<SetStateAction<UserData>>; onAdd: () => void; setNotice: (value: string) => void }) {
   const { language } = useLanguage();
   const [selectedId, setSelectedId] = useState(data.items.find(item => item.id === 'eggs')?.id || data.items[0]?.id);
   const selected = data.items.find(item => item.id === selectedId) || data.items[0];
@@ -675,17 +704,34 @@ function Dashboard({ userName, userGender, data, setData, onAdd, setNotice }: { 
   };
   return <main className="app-main dashboard-main">
     <div className="dashboard-topbar">
-       <div className="dashboard-greeting"><span className="user-sticker" aria-label={text(language, 'مستخدم', 'User')}>{genderSticker(userGender)}</span><span>{text(language, 'مساء الخير،', 'Good evening,')}</span><strong>{userName}</strong><ChevronLeft size={15} /></div>
-        <div className="dashboard-stat"><Flame size={21} /><div><small>{text(language, 'هدفك اليومي', 'Daily goal')}</small><strong>{toWesternNums(data.calorieGoal.toLocaleString('en-US'))} {text(language, 'سعرة', 'kcal')}</strong></div></div>
-        <div className="dashboard-stat"><div className="mini-ring" style={{ '--ring-progress': `${percentage}%` } as CSSProperties}><strong>{toWesternNums(percentage)}%</strong></div><div><small>{text(language, 'استهلاكك اليوم', 'Today’s intake')}</small><strong>{toWesternNums(totalCalories.toLocaleString('en-US'))} {text(language, 'سعرة', 'kcal')}</strong></div></div>
-       <div className="notification-wrap">
-          <button className="topbar-bell icon-btn" aria-label={`${text(language, 'التنبيهات', 'Notifications')}${unreadCount ? `، ${toWesternNums(unreadCount)} ${text(language, 'جديدة', 'new')}` : ''}`} aria-expanded={notificationsOpen} onClick={() => setNotificationsOpen(value => !value)} data-testid="button-notifications"><Bell size={20} />{unreadCount > 0 && <b className="notification-count">{toWesternNums(unreadCount)}</b>}</button>
-          {notificationsOpen && <div className="notification-dropdown" role="region" aria-label={text(language, 'قائمة التنبيهات', 'Notifications list')}>
-            <div className="notification-head"><strong>{text(language, 'التنبيهات', 'Notifications')}</strong>{notifications.length > 0 && <button className="link-btn" onClick={markAllRead}>{text(language, 'تعليم الكل كمقروء', 'Mark all as read')}</button>}</div>
-            {notifications.length ? notifications.map(item => <div className={`notification-item notification-${item.type}`} key={item.id}><span className="notification-icon" aria-hidden="true">{item.icon}</span><div><strong>{item.title}</strong><p>{item.message}</p><small>{item.time}</small></div></div>) : <div className="notification-empty">{text(language, 'لا توجد إشعارات جديدة 🎉', 'No new notifications 🎉')}</div>}
-         </div>}
+       <div className="dashboard-header-context">
+         <span className="eyebrow">{text(language, 'ملخص اليوم', 'Today at a glance')}</span>
+         <strong>{text(language, 'أهلاً بعودتك', 'Welcome back')}</strong>
        </div>
-        <LanguageSwitcher />
+       <div className="dashboard-metrics" aria-label={text(language, 'ملخص السعرات اليومي', 'Daily calorie summary')}>
+         <div className="dashboard-stat">
+           <Flame size={21} aria-hidden="true" />
+           <div><small>{text(language, 'الهدف اليومي', 'Daily goal')}</small><strong>{toWesternNums(data.calorieGoal.toLocaleString('en-US'))} {text(language, 'سعرة', 'kcal')}</strong></div>
+         </div>
+         <div className="dashboard-stat">
+           <div className="mini-ring" style={{ '--ring-progress': `${percentage}%` } as CSSProperties}><strong>{toWesternNums(percentage)}%</strong></div>
+           <div><small>{text(language, 'المتناول اليوم', 'Calories eaten')}</small><strong>{toWesternNums(totalCalories.toLocaleString('en-US'))} {text(language, 'سعرة', 'kcal')}</strong></div>
+         </div>
+       </div>
+       <div className="dashboard-actions">
+         <div className="notification-wrap">
+           <button className="topbar-bell icon-btn" aria-label={`${text(language, 'التنبيهات', 'Notifications')}${unreadCount ? `، ${toWesternNums(unreadCount)} ${text(language, 'جديدة', 'new')}` : ''}`} aria-expanded={notificationsOpen} onClick={() => setNotificationsOpen(value => !value)} data-testid="button-notifications"><Bell size={20} />{unreadCount > 0 && <b className="notification-count">{toWesternNums(unreadCount)}</b>}</button>
+           {notificationsOpen && <div className="notification-dropdown" role="region" aria-label={text(language, 'قائمة التنبيهات', 'Notifications list')}>
+             <div className="notification-head"><strong>{text(language, 'التنبيهات', 'Notifications')}</strong>{notifications.length > 0 && <button className="link-btn" onClick={markAllRead}>{text(language, 'تعليم الكل كمقروء', 'Mark all as read')}</button>}</div>
+             {notifications.length ? notifications.map(item => <div className={`notification-item notification-${item.type}`} key={item.id}><span className="notification-icon" aria-hidden="true">{item.icon}</span><div><strong>{item.title}</strong><p>{item.message}</p><small>{item.time}</small></div></div>) : <div className="notification-empty">{text(language, 'لا توجد إشعارات جديدة 🎉', 'No new notifications 🎉')}</div>}
+           </div>}
+         </div>
+         <div className="dashboard-profile" aria-label={text(language, 'تفاصيل الملف الشخصي', 'Profile details')}>
+           <div className="avatar">{initials(userName)}</div>
+           <div><strong>{userName}</strong><small>{text(language, 'مساحتي الشخصية', 'My space')}</small></div>
+         </div>
+         <LanguageSwitcher />
+       </div>
     </div>
       <div className="reference-heading"><div><span className="eyebrow">{text(language, 'مساحتي اليومية', 'My daily space')}</span><h2>{text(language, 'محتويات ثلاجتك', 'Your fridge contents')}</h2></div><span className="date-chip" data-testid="text-current-date">{formatArabicDate(language)}</span></div>
     <div className="reference-dashboard">
@@ -814,7 +860,7 @@ function SettingsPage({ user, data, setData, setNotice, onLogout }: { user: User
 function RoutedPages({ user, data, setData, onLogout, setNotice }: { user: User; data: UserData; setData: Dispatch<SetStateAction<UserData>>; onLogout: () => void; setNotice: (v: string) => void }) {
   const { language } = useLanguage();
   const [addOpen, setAddOpen] = useState(false);
-  return <AppShell user={user} shoppingCount={data.shopping.filter(item => !item.done).length} onLogout={onLogout}><Switch><Route path="/"><Dashboard userName={user.name} userGender={user.gender} data={data} setData={setData} onAdd={() => setAddOpen(true)} setNotice={setNotice} /></Route><Route path="/meals"><MealsPage data={data} setData={setData} setNotice={setNotice} /></Route><Route path="/daily-analysis"><DailyAnalysis data={data} /></Route><Route path="/shopping"><ShoppingPage data={data} setData={setData} setNotice={setNotice} onAdd={() => setAddOpen(true)} /></Route><Route path="/settings"><SettingsPage user={user} data={data} setData={setData} setNotice={setNotice} onLogout={onLogout} /></Route><Route component={NotFound} /></Switch>{addOpen && <AddFoodModal onClose={() => setAddOpen(false)} onAdd={item => { setData(prev => ({ ...prev, items: [...prev.items, { ...item, id: `food-${Date.now()}` }] })); flash(setNotice, text(language, 'أضيف الطعام إلى ثلاجتك', 'Food added to your fridge')); }} />}</AppShell>;
+  return <AppShell user={user} shoppingCount={data.shopping.filter(item => !item.done).length} onLogout={onLogout}><Switch><Route path="/"><Dashboard userName={user.name} data={data} setData={setData} onAdd={() => setAddOpen(true)} setNotice={setNotice} /></Route><Route path="/meals"><MealsPage data={data} setData={setData} setNotice={setNotice} /></Route><Route path="/daily-analysis"><DailyAnalysis data={data} /></Route><Route path="/shopping"><ShoppingPage data={data} setData={setData} setNotice={setNotice} onAdd={() => setAddOpen(true)} /></Route><Route path="/settings"><SettingsPage user={user} data={data} setData={setData} setNotice={setNotice} onLogout={onLogout} /></Route><Route component={NotFound} /></Switch>{addOpen && <AddFoodModal onClose={() => setAddOpen(false)} onAdd={item => { setData(prev => ({ ...prev, items: [...prev.items, { ...item, id: `food-${Date.now()}` }] })); flash(setNotice, text(language, 'أضيف الطعام إلى ثلاجتك', 'Food added to your fridge')); }} />}</AppShell>;
 }
 
 function App() {
