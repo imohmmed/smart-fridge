@@ -39,6 +39,9 @@ test.describe('Smart Fridge food interactions', () => {
     await page.getByTestId('button-food-eggs').click();
     await expect(page.getByRole('dialog')).toBeVisible();
     await expect(page.getByTestId('input-food-details-quantity')).toHaveValue('8');
+    const dialogBox = await page.getByRole('dialog').boundingBox();
+    expect(dialogBox?.width).toBeLessThanOrEqual(332);
+    expect(dialogBox?.height).toBeLessThan(520);
 
     await page.getByTestId('input-food-details-quantity').fill('12');
     await page.getByTestId('button-save-food-details').click();
@@ -84,6 +87,16 @@ test.describe('Smart Fridge food interactions', () => {
     await expect(page.getByRole('dialog')).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(page.getByRole('dialog')).toBeHidden();
+  });
+
+  test('uses the side details panel instead of a dialog on desktop', async ({ page }) => {
+    await seedDemoSession(page);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/');
+
+    await page.getByTestId('button-food-eggs').click();
+    await expect(page.getByRole('dialog')).toBeHidden();
+    await expect(page.locator('.item-detail-panel')).toContainText('Farm eggs');
   });
 
   test('locks page scrolling while food details are open on phone', async ({ page }) => {

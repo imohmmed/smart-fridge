@@ -8027,24 +8027,98 @@ body {
   }
 
   .food-details-dialog {
+    width: min(332px, calc(100vw - 32px));
     max-height: calc(100dvh - 20px);
-    border-radius: 20px 20px 12px 12px;
+    border-radius: 18px 18px 12px 12px;
   }
 
   .food-details-head {
-    padding: 19px 16px 11px;
+    gap: 10px;
+    padding: 16px 14px 9px;
+  }
+
+  .food-details-head .eyebrow {
+    font-size: 9px;
+  }
+
+  .food-details-head h2 {
+    font-size: 19px;
+  }
+
+  .food-details-head p {
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  .food-details-head .icon-btn {
+    width: 32px;
+    height: 32px;
   }
 
   .food-details-summary {
     margin-inline: 16px;
+    gap: 10px;
+    padding: 9px 11px;
+    border-radius: 14px;
+  }
+
+  .food-details-summary .food-art {
+    width: 70px !important;
+    height: 70px !important;
+  }
+
+  .food-details-summary .food-art img {
+    width: 105px !important;
+    height: 105px !important;
+  }
+
+  .food-details-summary strong {
+    font-size: 14px;
+  }
+
+  .food-details-summary span {
+    font-size: 10px;
   }
 
   .food-details-stats {
     margin-inline: 16px;
+    gap: 8px;
+    margin-top: 13px;
+    padding: 10px 0;
+  }
+
+  .food-details-stats small {
+    font-size: 9px;
+  }
+
+  .food-details-stats strong {
+    font-size: 11px;
   }
 
   .food-details-form {
-    padding: 16px;
+    gap: 12px;
+    padding: 13px 16px 16px;
+  }
+
+  .food-details-form .field {
+    gap: 4px;
+  }
+
+  .food-details-form .field label {
+    font-size: 11px;
+  }
+
+  .food-details-form .field input {
+    min-height: 40px;
+  }
+
+  .food-details-actions {
+    gap: 6px;
+  }
+
+  .food-details-actions > button {
+    min-height: 38px;
+    font-size: 11px;
   }
 }
 
