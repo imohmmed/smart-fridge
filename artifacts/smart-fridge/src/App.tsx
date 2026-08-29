@@ -553,22 +553,24 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
     if (window.innerWidth < 768) closeSidebar();
   }, [location]);
 
-  return <div className={`app-shell ${sidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'}`}>
-     {sidebarOpen && <button className="sidebar-scrim" type="button" aria-label={text(language, 'إغلاق القائمة', 'Close menu')} onClick={closeSidebar} />}
-     <aside className="sidebar">
-       <div className="sidebar-header">
-         <div className="brand"><div className="brand-mark"><Refrigerator size={24} /></div><div className="brand-copy"><h1>{text(language, 'ثلاجتي', 'Smart Fridge')}</h1><small>{text(language, 'رفيق البيت الطازج', 'Fresh home companion')}</small></div></div>
-         <button className="sidebar-toggle icon-btn" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'طي القائمة', 'Collapse menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-sidebar-toggle">{sidebarOpen ? <X size={19} /> : <Menu size={19} />}</button>
-       </div>
-       <nav className="nav-list" aria-label={text(language, 'التنقل الرئيسي', 'Main navigation')}>
-          {navItems.map(item => { const Icon = item.icon; const label = text(language, item.ar, item.en); return <Link key={item.href} href={item.href} onClick={closeSidebar} aria-label={label} className={`nav-item ${location === item.href ? 'active' : ''}`} data-testid={`link-nav-${item.ar}`}><Icon size={18} /><span className="nav-label">{label}</span>{item.href === '/shopping' && <b className="nav-count">{shoppingCount}</b>}</Link>; })}
-      </nav>
-      <div className="sidebar-footer">
-          <Link href="/settings" onClick={closeSidebar} aria-label={text(language, 'الإعدادات', 'Settings')} className={`nav-item ${location === '/settings' ? 'active' : ''}`} data-testid="link-nav-settings"><Settings size={18} /><span className="nav-label">{text(language, 'الإعدادات', 'Settings')}</span></Link>
-         <div className="profile-mini"><div className="avatar">{initials(user.name)}</div><div><strong>{user.name}</strong><span>{text(language, 'مساحتي الشخصية', 'My space')}</span></div></div>
-         <button className="logout-btn" onClick={onLogout} data-testid="button-logout"><LogOut size={15} /><span>{text(language, 'تسجيل الخروج', 'Sign out')}</span></button>
-      </div>
-    </aside>
+   return <div className={`app-shell ${sidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'}`}>
+      <button className={`smart-sidebar-scrim ${sidebarOpen ? 'is-open' : ''}`} type="button" aria-hidden={!sidebarOpen} tabIndex={sidebarOpen ? 0 : -1} aria-label={text(language, 'إغلاق القائمة', 'Close menu')} onClick={closeSidebar} />
+      <aside className="smart-sidebar" aria-label={text(language, 'القائمة الجانبية', 'Sidebar navigation')}>
+        <div className="smart-sidebar__inner">
+          <div className="smart-sidebar__header">
+            <div className="smart-sidebar__brand"><div className="brand-mark"><Refrigerator size={24} /></div><div className="smart-sidebar__brand-copy"><h1>{text(language, 'ثلاجتي', 'Smart Fridge')}</h1><small>{text(language, 'رفيق البيت الطازج', 'Fresh home companion')}</small></div></div>
+            <button className="smart-sidebar__toggle icon-btn" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'طي القائمة', 'Collapse menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-sidebar-toggle">{sidebarOpen ? <X size={19} /> : <Menu size={19} />}</button>
+          </div>
+          <nav className="smart-sidebar__nav" aria-label={text(language, 'التنقل الرئيسي', 'Main navigation')}>
+             {navItems.map(item => { const Icon = item.icon; const label = text(language, item.ar, item.en); return <Link key={item.href} href={item.href} onClick={closeSidebar} aria-label={label} data-tooltip={label} className={`smart-sidebar__link ${location === item.href ? 'active' : ''}`} data-testid={`link-nav-${item.ar}`}><span className="smart-sidebar__icon"><Icon size={18} /></span><span className="smart-sidebar__label">{label}</span>{item.href === '/shopping' && <b className="smart-sidebar__count">{shoppingCount}</b>}</Link>; })}
+          </nav>
+          <div className="smart-sidebar__footer">
+              <Link href="/settings" onClick={closeSidebar} aria-label={text(language, 'الإعدادات', 'Settings')} data-tooltip={text(language, 'الإعدادات', 'Settings')} className={`smart-sidebar__link ${location === '/settings' ? 'active' : ''}`} data-testid="link-nav-settings"><span className="smart-sidebar__icon"><Settings size={18} /></span><span className="smart-sidebar__label">{text(language, 'الإعدادات', 'Settings')}</span></Link>
+             <div className="smart-sidebar__profile"><div className="avatar">{initials(user.name)}</div><div className="smart-sidebar__profile-copy"><strong>{user.name}</strong><span>{text(language, 'مساحتي الشخصية', 'My space')}</span></div></div>
+             <button className="smart-sidebar__logout" onClick={onLogout} data-tooltip={text(language, 'تسجيل الخروج', 'Sign out')} aria-label={text(language, 'تسجيل الخروج', 'Sign out')} data-testid="button-logout"><span className="smart-sidebar__icon"><LogOut size={15} /></span><span className="smart-sidebar__label">{text(language, 'تسجيل الخروج', 'Sign out')}</span></button>
+          </div>
+        </div>
+      </aside>
     <div style={{ minWidth: 0 }}>
        <header className="mobile-topbar">
          <button className="menu-toggle icon-btn" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-mobile-menu">{sidebarOpen ? <X size={19} /> : <Menu size={19} />}</button>
