@@ -517,8 +517,19 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
   const [location] = useLocation();
   const { language } = useLanguage();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
   const toggleSidebar = () => setSidebarOpen(value => !value);
   const closeSidebar = () => setSidebarOpen(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const nextIsMobile = window.innerWidth < 768;
+      setIsMobile(nextIsMobile);
+      if (!nextIsMobile) setSidebarOpen(false);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -531,9 +542,9 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
   }, []);
 
   useEffect(() => {
-    document.body.classList.toggle('sidebar-is-open', sidebarOpen);
+    document.body.classList.toggle('sidebar-is-open', sidebarOpen && isMobile);
     return () => document.body.classList.remove('sidebar-is-open');
-  }, [sidebarOpen]);
+  }, [sidebarOpen, isMobile]);
 
   useEffect(() => {
     if (window.innerWidth < 768) closeSidebar();
@@ -543,6 +554,13 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
       <button className={`smart-sidebar-scrim ${sidebarOpen ? 'is-open' : ''}`} type="button" aria-hidden={!sidebarOpen} tabIndex={sidebarOpen ? 0 : -1} aria-label={text(language, 'إغلاق القائمة', 'Close menu')} onClick={closeSidebar} />
       <aside className="smart-sidebar" aria-label={text(language, 'القائمة الجانبية', 'Sidebar navigation')}>
         <div className="smart-sidebar__inner">
+          <div className="smart-sidebar__head">
+            <div className="smart-sidebar__brand" aria-label={text(language, 'ثلاجتي الذكية', 'Smart Fridge')}>
+              <span className="smart-sidebar__brand-mark" aria-hidden="true"><Refrigerator size={18} /></span>
+              <span className="smart-sidebar__brand-copy"><strong>{text(language, 'ثلاجتي', 'Smart Fridge')}</strong><small>{text(language, 'مساحتك الطازجة', 'Fresh space')}</small></span>
+            </div>
+            <button className="smart-sidebar__toggle" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-sidebar-toggle">{sidebarOpen ? <X size={18} /> : <Menu size={18} />}</button>
+          </div>
           <nav className="smart-sidebar__nav" aria-label={text(language, 'التنقل الرئيسي', 'Main navigation')}>
              {navItems.map(item => { const Icon = item.icon; const label = text(language, item.ar, item.en); return <Link key={item.href} href={item.href} onClick={closeSidebar} aria-label={label} data-tooltip={label} className={`smart-sidebar__link ${location === item.href ? 'active' : ''}`} data-testid={`link-nav-${item.ar}`}><span className="smart-sidebar__icon"><Icon size={18} aria-hidden="true" /></span><span className="smart-sidebar__label">{label}</span>{item.href === '/shopping' && <b className="smart-sidebar__count">{shoppingCount}</b>}</Link>; })}
           </nav>
