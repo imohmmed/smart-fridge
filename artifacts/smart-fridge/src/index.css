@@ -5666,3 +5666,355 @@ body {
     grid-column: 1 / -1;
   }
 }
+
+/* Critical responsive layout correction. Keep the viewport and every
+   dashboard region inside its available width, regardless of older rules. */
+html,
+body,
+#root,
+.fridge-app,
+.app-shell,
+.app-shell > div,
+.app-main,
+.dashboard-main {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.app-shell > div,
+.app-main,
+.reference-dashboard,
+.reference-fridge,
+.reference-rail,
+.real-fridge-card {
+  min-width: 0;
+}
+
+/* Restore the requested dark floating dock without allowing it to affect
+   the content column when it expands. */
+.smart-sidebar__inner {
+  border-color: rgba(255, 255, 255, .12);
+  border-radius: 30px;
+  background: linear-gradient(160deg, #2d443d 0%, #1d302a 100%);
+  box-shadow: 9px 12px 24px rgba(25, 35, 31, .24), inset 0 1px rgba(255, 255, 255, .08);
+}
+
+.smart-sidebar__brand .brand-mark {
+  background: #e6c36f;
+  color: #263a32;
+}
+
+.smart-sidebar__brand-copy h1,
+.smart-sidebar__profile-copy strong {
+  color: #f7f4ea;
+}
+
+.smart-sidebar__brand-copy small,
+.smart-sidebar__profile-copy span {
+  color: rgba(247, 244, 234, .58);
+}
+
+.smart-sidebar__toggle {
+  border-color: rgba(255, 255, 255, .16);
+  color: #f7f4ea;
+  background: rgba(255, 255, 255, .08);
+}
+
+.smart-sidebar__toggle:hover {
+  color: #263a32;
+  background: #e6c36f;
+}
+
+.smart-sidebar__link,
+.smart-sidebar__logout {
+  color: rgba(247, 244, 234, .72);
+}
+
+.smart-sidebar__link:hover,
+.smart-sidebar__logout:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, .12);
+  background: rgba(255, 255, 255, .09);
+}
+
+.smart-sidebar__link.active {
+  color: #fff;
+  border-color: rgba(230, 195, 111, .24);
+  background: rgba(230, 195, 111, .16);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .03);
+}
+
+.smart-sidebar__icon {
+  width: 36px;
+  height: 36px;
+  flex-basis: 36px;
+  border-radius: 12px;
+  color: #fff;
+  background: #6f9c78;
+  box-shadow: 0 5px 9px rgba(13, 25, 20, .18);
+}
+
+.smart-sidebar__nav .smart-sidebar__link:nth-child(2) .smart-sidebar__icon { background: #d98a68; }
+.smart-sidebar__nav .smart-sidebar__link:nth-child(3) .smart-sidebar__icon { background: #c96b63; }
+.smart-sidebar__nav .smart-sidebar__link:nth-child(4) .smart-sidebar__icon { background: #6f9fc1; }
+.smart-sidebar__nav .smart-sidebar__link:nth-child(5) .smart-sidebar__icon { background: #c19a59; }
+.smart-sidebar__nav .smart-sidebar__link:nth-child(6) .smart-sidebar__icon { background: #b27b9b; }
+.smart-sidebar__footer .smart-sidebar__link .smart-sidebar__icon { background: #758a82; }
+.smart-sidebar__logout .smart-sidebar__icon { background: #596d65; }
+
+.smart-sidebar__count {
+  color: #263a32;
+  background: #e6c36f;
+}
+
+.smart-sidebar__profile {
+  border-top-color: rgba(255, 255, 255, .14);
+}
+
+.smart-sidebar__link::after,
+.smart-sidebar__logout::after {
+  color: #263a32;
+  background: #f7f4ea;
+}
+
+.real-fridge-cabinet .cabinet-shelf,
+.real-fridge-cabinet .shelf-items {
+  min-width: 0;
+}
+
+@media (min-width: 769px) {
+  .smart-sidebar {
+    pointer-events: none;
+    width: var(--smart-sidebar-width);
+  }
+
+  .smart-sidebar__inner {
+    pointer-events: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .smart-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 999;
+    width: min(300px, 88vw);
+    max-width: 100vw;
+    height: 100dvh;
+    pointer-events: auto;
+  }
+
+  html[dir="rtl"] .smart-sidebar {
+    inset: 0 0 0 auto;
+  }
+
+  .smart-sidebar-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 998;
+    width: 100vw;
+    height: 100dvh;
+  }
+
+  .dashboard-topbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "context actions"
+      "metrics metrics";
+    width: 100%;
+    min-width: 0;
+    padding: 6px;
+    gap: 6px;
+  }
+
+  .dashboard-header-context {
+    grid-area: context;
+    min-width: 0;
+  }
+
+  .dashboard-actions {
+    grid-area: actions;
+    min-width: max-content;
+  }
+
+  .dashboard-metrics {
+    display: grid;
+    grid-area: metrics;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    min-width: 0;
+    gap: 5px;
+  }
+
+  .dashboard-metrics .dashboard-stat {
+    display: flex;
+    min-width: 0;
+    min-height: 35px;
+    padding: 4px 5px;
+    gap: 5px;
+    overflow: hidden;
+  }
+
+  .dashboard-metrics .dashboard-stat > svg {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+  }
+
+  .dashboard-metrics .dashboard-stat > div:last-child {
+    min-width: 0;
+  }
+
+  .dashboard-metrics .dashboard-stat small {
+    font-size: 7px;
+    line-height: 1.1;
+  }
+
+  .dashboard-metrics .dashboard-stat strong {
+    font-size: 9px;
+    line-height: 1.15;
+  }
+
+  .dashboard-metrics .mini-ring {
+    width: 27px;
+    height: 27px;
+    flex-basis: 27px;
+    font-size: 8px;
+  }
+
+  .reference-fridge {
+    width: 100%;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .real-fridge-card {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .real-fridge-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    height: auto;
+    padding: 10px;
+    gap: 12px;
+  }
+
+  .real-fridge-door,
+  .real-fridge-cabinet {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    height: auto;
+    transform: none;
+  }
+
+  .real-fridge-door {
+    min-height: 360px;
+    padding: 42px 10px 14px;
+  }
+
+  .real-fridge-cabinet {
+    min-height: 0;
+    padding: 22px 8px 10px;
+  }
+
+  .real-fridge-cabinet .cabinet-shelves {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 7px;
+    min-width: 0;
+  }
+
+  .real-fridge-cabinet .cabinet-shelf {
+    min-height: 86px;
+    height: auto;
+    overflow: hidden;
+    padding: 5px 5px 8px;
+  }
+
+  .real-fridge-cabinet .cabinet-shelf::after {
+    right: 0;
+    left: 0;
+    bottom: 0;
+    height: 6px;
+  }
+
+  .real-fridge-cabinet .shelf-title {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .real-fridge-cabinet .shelf-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(58px, 1fr));
+    align-items: end;
+    min-width: 0;
+    min-height: 60px;
+    max-width: 100%;
+    gap: 5px;
+    padding: 2px 0 4px;
+    overflow: hidden;
+  }
+
+  .real-fridge-cabinet .food-badge {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding-inline: 2px;
+  }
+
+  .real-fridge-cabinet .food-badge .food-visual {
+    width: 42px;
+    max-width: 100%;
+    height: 42px;
+  }
+
+  .real-fridge-cabinet .food-badge .food-name {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .real-fridge-cabinet .produce-drawers,
+  .real-fridge-cabinet .freezer-section {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .real-fridge-cabinet .produce-drawers {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .real-fridge-cabinet .freezer-tray {
+    display: flex;
+    min-width: 0;
+  }
+
+  .real-fridge-cabinet .freezer-bin {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .real-fridge-card {
+    min-width: 0;
+  }
+
+  .real-fridge-body {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 10px;
+  }
+}
