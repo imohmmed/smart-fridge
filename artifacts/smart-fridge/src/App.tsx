@@ -517,19 +517,8 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
   const [location] = useLocation();
   const { language } = useLanguage();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
   const toggleSidebar = () => setSidebarOpen(value => !value);
   const closeSidebar = () => setSidebarOpen(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const nextIsMobile = window.innerWidth < 768;
-      setIsMobile(nextIsMobile);
-      if (!nextIsMobile) setSidebarOpen(false);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -542,12 +531,7 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
   }, []);
 
   useEffect(() => {
-    document.body.classList.toggle('sidebar-is-open', sidebarOpen && isMobile);
-    return () => document.body.classList.remove('sidebar-is-open');
-  }, [sidebarOpen, isMobile]);
-
-  useEffect(() => {
-    if (window.innerWidth < 768) closeSidebar();
+    closeSidebar();
   }, [location]);
 
     return <div className={`app-shell ${sidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'}`}>
