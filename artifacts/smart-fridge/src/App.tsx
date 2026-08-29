@@ -39,6 +39,9 @@ type AppNotification = { id: string; type: 'danger' | 'warning' | 'success' | 'i
 type Language = 'ar' | 'en';
 const LanguageContext = createContext<{ language: Language; setLanguage: (language: Language) => void }>({ language: 'ar', setLanguage: () => undefined });
 const useLanguage = () => useContext(LanguageContext);
+type SidebarControls = { sidebarOpen: boolean; toggleSidebar: () => void };
+const SidebarContext = createContext<SidebarControls>({ sidebarOpen: false, toggleSidebar: () => undefined });
+const useSidebarControls = () => useContext(SidebarContext);
 const text = (language: Language, ar: string, en: string) => language === 'ar' ? ar : en;
 const getInitialLanguage = (): Language => {
   const saved = localStorage.getItem('smart_fridge_language');
@@ -534,9 +537,9 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
     closeSidebar();
   }, [location]);
 
-    return <div className={`app-shell ${sidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'}`}>
+    return <SidebarContext.Provider value={{ sidebarOpen, toggleSidebar }}>
+      <div className={`app-shell ${sidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'}`}>
       <button className={`smart-sidebar-scrim ${sidebarOpen ? 'is-open' : ''}`} type="button" aria-hidden={!sidebarOpen} tabIndex={sidebarOpen ? 0 : -1} aria-label={text(language, 'إغلاق القائمة', 'Close menu')} onClick={closeSidebar} />
-      <button className={`sidebar-launcher ${sidebarOpen ? 'is-hidden' : ''}`} type="button" onClick={toggleSidebar} aria-label={text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} aria-hidden={sidebarOpen} tabIndex={sidebarOpen ? -1 : 0} data-testid="button-sidebar-launcher"><Menu size={19} /></button>
       <aside className="smart-sidebar" aria-label={text(language, 'القائمة الجانبية', 'Sidebar navigation')}>
         <div className="smart-sidebar__inner">
           <div className="smart-sidebar__head">
@@ -566,12 +569,20 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
        </header>
       {children}
     </div>
-  </div>;
+      </div>
+    </SidebarContext.Provider>;
 }
 
 function PageHeading({ title, description, action, eyebrow }: { title: string; description?: string; action?: ReactNode; eyebrow?: string }) {
   const { language } = useLanguage();
-  return <div className="page-heading"><div><div className="eyebrow">{eyebrow || text(language, 'مساحتي اليومية', 'My daily space')}</div><h2>{title}</h2>{description && <p>{description}</p>}</div>{action}</div>;
+  const { sidebarOpen, toggleSidebar } = useSidebarControls();
+  return <div className="page-heading">
+    <button className="sidebar-inline-toggle page-heading-menu" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-page-menu">
+      {sidebarOpen ? <X size={19} /> : <Menu size={19} />}
+    </button>
+    <div className="page-heading-copy"><div className="eyebrow">{eyebrow || text(language, 'مساحتي اليومية', 'My daily space')}</div><h2>{title}</h2>{description && <p>{description}</p>}</div>
+    {action && <div className="page-heading-action">{action}</div>}
+  </div>;
 }
 
 function AddFoodModal({ onClose, onAdd }: { onClose: () => void; onAdd: (item: Omit<FridgeItem, 'id'>) => void }) {
@@ -641,6 +652,7 @@ function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; sele
 
 function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: string; data: UserData; setData: Dispatch<SetStateAction<UserData>>; onAdd: () => void; setNotice: (value: string) => void }) {
   const { language } = useLanguage();
+  const { sidebarOpen, toggleSidebar } = useSidebarControls();
   const [selectedId, setSelectedId] = useState(data.items.find(item => item.id === 'eggs')?.id || data.items[0]?.id);
   const selected = data.items.find(item => item.id === selectedId) || data.items[0];
   const totalCalories = data.items.reduce((sum, item) => sum + item.calories * item.quantity, 0);
@@ -682,6 +694,9 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
   };
   return <main className="app-main dashboard-main">
     <div className="dashboard-topbar">
+       <button className="sidebar-inline-toggle" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-sidebar-launcher">
+         {sidebarOpen ? <X size={19} /> : <Menu size={19} />}
+       </button>
        <div className="dashboard-header-context">
          <span className="eyebrow">{text(language, 'ملخص اليوم', 'Today at a glance')}</span>
          <strong>{text(language, 'أهلاً بعودتك', 'Welcome back')}</strong>
