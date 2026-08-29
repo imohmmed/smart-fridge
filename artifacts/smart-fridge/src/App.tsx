@@ -532,19 +532,16 @@ const navItems = [
 function AppShell({ user, shoppingCount, children, onLogout }: { user: User; shoppingCount: number; children: ReactNode; onLogout: () => void }) {
   const [location] = useLocation();
   const { language } = useLanguage();
-  const [sidebarOpen, setSidebarOpen] = useState(() => typeof window === 'undefined' || window.innerWidth >= 768);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const toggleSidebar = () => setSidebarOpen(value => !value);
   const closeSidebar = () => setSidebarOpen(false);
 
   useEffect(() => {
-    const syncWithViewport = () => setSidebarOpen(window.innerWidth >= 768);
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') closeSidebar();
     };
-    window.addEventListener('resize', syncWithViewport);
     window.addEventListener('keydown', handleKeyDown);
     return () => {
-      window.removeEventListener('resize', syncWithViewport);
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);

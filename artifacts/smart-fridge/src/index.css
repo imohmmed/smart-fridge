@@ -4773,3 +4773,185 @@ html[dir="ltr"] .smart-sidebar__profile-copy {
     font-size: 7px;
   }
 }
+
+/* Final layout correction: the dashboard header must size to its content,
+   not inherit the old wide minimum tracks. */
+.dashboard-topbar {
+  min-height: 48px;
+  height: auto;
+  padding: 5px 9px;
+  gap: 7px;
+  grid-template-columns: minmax(150px, .8fr) minmax(0, 1fr) auto;
+  grid-template-areas: "context metrics actions";
+}
+
+.dashboard-header-context {
+  grid-area: context;
+}
+
+.dashboard-metrics {
+  grid-area: metrics;
+}
+
+.dashboard-actions {
+  grid-area: actions;
+}
+
+.dashboard-metrics .dashboard-stat {
+  min-width: 0;
+  min-height: 38px;
+  padding: 4px 9px;
+}
+
+.dashboard-metrics .dashboard-stat small {
+  margin-bottom: 1px;
+  font-size: 9px;
+}
+
+.dashboard-metrics .dashboard-stat strong {
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.dashboard-metrics .mini-ring {
+  width: 34px;
+  height: 34px;
+}
+
+.dashboard-profile .avatar {
+  width: 32px;
+  height: 32px;
+  flex-basis: 32px;
+}
+
+@media (max-width: 1100px) and (min-width: 768px) {
+  .dashboard-topbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "metrics actions";
+  }
+}
+
+@media (max-width: 767px) {
+  .dashboard-topbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "context actions"
+      "metrics metrics";
+    min-height: 0;
+    padding: 6px 7px;
+    gap: 5px 7px;
+  }
+
+  .dashboard-header-context {
+    display: grid;
+  }
+
+  .dashboard-header-context .eyebrow {
+    font-size: 8px;
+  }
+
+  .dashboard-header-context strong {
+    font-size: 11px;
+  }
+
+  .dashboard-actions {
+    align-self: center;
+  }
+
+  .dashboard-metrics {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .dashboard-metrics .dashboard-stat {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 36px;
+    padding: 4px 6px;
+  }
+
+  .dashboard-metrics .dashboard-stat > svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .dashboard-metrics .dashboard-stat small {
+    font-size: 8px;
+  }
+
+  .dashboard-metrics .dashboard-stat strong {
+    font-size: 10px;
+  }
+
+  .dashboard-metrics .mini-ring {
+    flex-basis: 30px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .dashboard-health-card .footer-stat small,
+  .dashboard-health-card .macro-stat small {
+    font-size: 10px;
+  }
+
+  .dashboard-health-card .footer-stat strong {
+    font-size: 12px;
+  }
+
+  .dashboard-health-card .macro-lines span {
+    font-size: 10px;
+  }
+
+  .dashboard-health-card .macro-lines b {
+    font-size: 11px;
+  }
+
+  .dashboard-footer {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  .health-tip {
+    grid-column: 1;
+    min-width: 0;
+    min-height: 46px;
+    padding: 8px 10px;
+  }
+
+  .health-tip strong {
+    font-size: 11px;
+  }
+
+  .floating-add {
+    grid-column: 2;
+    align-self: stretch;
+    min-width: 48px;
+    width: 48px;
+    min-height: 46px;
+    padding: 0;
+  }
+
+  .floating-add span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 390px) {
+  .dashboard-health-card .footer-stat small,
+  .dashboard-health-card .macro-stat small {
+    font-size: 9px;
+  }
+
+  .dashboard-health-card .footer-stat strong {
+    font-size: 11px;
+  }
+
+  .dashboard-health-card .macro-lines span {
+    font-size: 9px;
+  }
+}
