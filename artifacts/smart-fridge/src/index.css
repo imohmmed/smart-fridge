@@ -6018,3 +6018,674 @@ body {
     padding: 10px;
   }
 }
+
+/* Smart Shelf redesign: the dashboard no longer uses the physical fridge
+   composition. These selectors are intentionally isolated from the legacy
+   refrigerator classes so old geometry cannot affect the new layout. */
+html,
+body,
+#root,
+.fridge-app,
+.app-shell,
+.app-shell > div,
+.app-main,
+.dashboard-main,
+.reference-dashboard,
+.reference-fridge,
+.reference-rail {
+  width: 100%;
+  max-width: 100vw;
+  min-width: 0;
+}
+
+html,
+body,
+#root,
+.fridge-app,
+.app-shell,
+.app-main,
+.dashboard-main {
+  overflow-x: hidden;
+}
+
+.smart-shelf-card {
+  display: grid;
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid hsl(var(--border));
+  border-radius: 22px;
+  background: hsl(var(--card) / .72);
+  box-shadow: 0 12px 30px hsl(155 20% 26% / .06);
+}
+
+.smart-shelf-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+  padding-bottom: 4px;
+}
+
+.smart-shelf-toolbar > div:first-child {
+  min-width: 0;
+}
+
+.smart-shelf-toolbar h3 {
+  margin: 3px 0 0;
+  color: hsl(var(--foreground));
+  font-size: clamp(20px, 2vw, 28px);
+  letter-spacing: -.04em;
+}
+
+.smart-shelf-toolbar p {
+  max-width: 520px;
+  margin: 5px 0 0;
+  color: hsl(var(--muted-foreground));
+  font-size: 12px;
+}
+
+.smart-shelf-temperatures {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 6px;
+  padding: 5px;
+  border: 1px solid hsl(var(--border));
+  border-radius: 12px;
+  background: hsl(var(--muted) / .62);
+}
+
+.smart-shelf-temperatures span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.smart-shelf-temperatures span:first-child svg {
+  color: hsl(196 48% 51%);
+}
+
+.smart-shelf-temperatures span:last-child svg {
+  color: hsl(205 55% 56%);
+}
+
+.smart-shelf-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px;
+  min-width: 0;
+}
+
+.smart-shelf-section {
+  display: grid;
+  align-content: start;
+  gap: 11px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid hsl(var(--border));
+  border-radius: 17px;
+  background: hsl(var(--background) / .72);
+}
+
+.smart-shelf-section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.smart-shelf-section-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.smart-shelf-emoji {
+  display: grid;
+  flex: 0 0 35px;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 12px;
+  background: hsl(var(--shelf-tint, 152 44% 29%) / .12);
+  font-size: 18px;
+}
+
+.smart-shelf-section-title > div {
+  min-width: 0;
+}
+
+.smart-shelf-section h4 {
+  overflow: hidden;
+  margin: 0;
+  color: hsl(var(--foreground));
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.smart-shelf-section p {
+  overflow: hidden;
+  margin: 2px 0 0;
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.smart-shelf-count {
+  flex: 0 0 auto;
+  padding: 4px 7px;
+  border-radius: 999px;
+  color: hsl(var(--shelf-tint, 152 44% 29%));
+  background: hsl(var(--shelf-tint, 152 44% 29%) / .11);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.smart-shelf-count small {
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.smart-shelf-section.protein { --shelf-tint: 6 58% 58%; }
+.smart-shelf-section.vegetables { --shelf-tint: 152 44% 29%; }
+.smart-shelf-section.fruit { --shelf-tint: 35 71% 55%; }
+.smart-shelf-section.dairy { --shelf-tint: 196 48% 51%; }
+.smart-shelf-section.drinks { --shelf-tint: 205 55% 56%; }
+.smart-shelf-section.ready { --shelf-tint: 274 35% 61%; }
+
+.smart-shelf-foods {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  align-items: stretch;
+  gap: 7px;
+  min-width: 0;
+}
+
+.smart-food-card {
+  position: relative;
+  display: grid;
+  grid-template-rows: 56px minmax(17px, auto);
+  align-items: center;
+  justify-items: center;
+  min-width: 0;
+  min-height: 84px;
+  padding: 7px 5px 6px;
+  border: 1px solid hsl(var(--border));
+  border-radius: 12px;
+  color: hsl(var(--foreground));
+  background: hsl(var(--card));
+  box-shadow: 0 4px 10px hsl(155 20% 26% / .05);
+  text-align: center;
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.smart-food-card:hover,
+.smart-food-card.selected,
+.smart-food-card:focus-visible {
+  border-color: hsl(var(--shelf-tint, 152 44% 29%) / .6);
+  outline: none;
+  box-shadow: 0 7px 15px hsl(155 20% 26% / .11);
+  transform: translateY(-2px);
+}
+
+.smart-food-visual {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  min-width: 0;
+}
+
+.smart-food-visual .food-art {
+  width: 52px !important;
+  height: 52px !important;
+  margin: 0;
+}
+
+.smart-food-visual .food-photo {
+  max-width: 52px;
+  max-height: 52px;
+  object-fit: contain;
+}
+
+.smart-food-card .quantity-badge {
+  top: -2px;
+  right: -4px;
+  left: auto;
+  min-width: 18px;
+  height: 18px;
+  padding: 1px 4px;
+  color: hsl(var(--foreground));
+  background: hsl(var(--card));
+  border-color: hsl(var(--shelf-tint, 152 44% 29%) / .28);
+  font-size: 9px;
+}
+
+.smart-food-name {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  color: hsl(var(--foreground));
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.smart-food-card .food-dot {
+  top: 5px;
+  right: 5px;
+  left: auto;
+  border-color: hsl(var(--card));
+}
+
+.smart-shelf-empty {
+  grid-column: 1 / -1;
+  padding: 12px 4px;
+  color: hsl(var(--muted-foreground));
+  font-size: 11px;
+  text-align: center;
+}
+
+.smart-shelf-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+  padding-top: 2px;
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+}
+
+.smart-shelf-foot span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.smart-shelf-foot svg {
+  color: hsl(var(--primary));
+}
+
+.smart-shelf-foot strong {
+  color: hsl(var(--foreground));
+  font-size: 11px;
+}
+
+/* Slim icon-only dock. The accessible labels remain in the DOM but never
+   occupy layout space or appear inside the dock. */
+.app-shell,
+.app-shell.sidebar-open,
+.app-shell.sidebar-collapsed {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.app-shell > div {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.smart-sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 9999;
+  width: 78px;
+  height: 100dvh;
+  padding: 14px 8px;
+  pointer-events: none;
+}
+
+html[dir="rtl"] .smart-sidebar {
+  right: 0;
+  left: auto;
+}
+
+.smart-sidebar__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 16px 7px;
+  gap: 16px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 32px;
+  background: linear-gradient(160deg, #2d443d 0%, #1d302a 100%);
+  box-shadow: 9px 12px 24px rgba(25, 35, 31, .24), inset 0 1px rgba(255, 255, 255, .08);
+  pointer-events: auto;
+}
+
+.smart-sidebar__header,
+.smart-sidebar__brand,
+.smart-sidebar__brand-copy,
+.smart-sidebar__toggle,
+.smart-sidebar__profile,
+.smart-sidebar__label {
+  display: none !important;
+}
+
+.smart-sidebar__nav,
+.smart-sidebar__footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  gap: 10px;
+}
+
+.smart-sidebar__nav {
+  flex: 1 1 auto;
+  justify-content: flex-start;
+}
+
+.smart-sidebar__footer {
+  flex: 0 0 auto;
+}
+
+.smart-sidebar__link,
+.smart-sidebar__logout {
+  position: relative;
+  display: grid;
+  flex: 0 0 48px;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: 15px;
+  color: rgba(247, 244, 234, .76);
+  background: transparent;
+  text-decoration: none;
+  transition: transform .2s ease, background-color .2s ease, color .2s ease;
+}
+
+.smart-sidebar__link:hover,
+.smart-sidebar__logout:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, .1);
+  transform: translateY(-2px);
+}
+
+.smart-sidebar__link.active {
+  color: #fff;
+  background: rgba(230, 195, 111, .16);
+  box-shadow: inset 0 0 0 1px rgba(230, 195, 111, .28);
+}
+
+.smart-sidebar__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border-radius: 12px;
+  color: #fff;
+  background: #6f9c78;
+  box-shadow: 0 5px 9px rgba(13, 25, 20, .18);
+}
+
+.smart-sidebar__nav .smart-sidebar__link:nth-child(2) .smart-sidebar__icon { background: #d98a68; }
+.smart-sidebar__nav .smart-sidebar__link:nth-child(3) .smart-sidebar__icon { background: #c96b63; }
+.smart-sidebar__nav .smart-sidebar__link:nth-child(4) .smart-sidebar__icon { background: #6f9fc1; }
+.smart-sidebar__nav .smart-sidebar__link:nth-child(5) .smart-sidebar__icon { background: #c19a59; }
+.smart-sidebar__nav .smart-sidebar__link:nth-child(6) .smart-sidebar__icon { background: #b27b9b; }
+.smart-sidebar__footer .smart-sidebar__link .smart-sidebar__icon { background: #758a82; }
+.smart-sidebar__logout .smart-sidebar__icon { background: #596d65; }
+
+.smart-sidebar__count {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  display: grid;
+  place-items: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  border: 2px solid #243a32;
+  border-radius: 999px;
+  color: #243a32;
+  background: #e6c36f;
+  font-size: 8px;
+  line-height: 1;
+}
+
+.smart-sidebar__link::after,
+.smart-sidebar__logout::after {
+  display: none !important;
+}
+
+.smart-sidebar-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: none;
+  width: 100vw;
+  height: 100dvh;
+  border: 0;
+  background: rgba(20, 32, 27, .42);
+}
+
+@media (max-width: 767px) {
+  .app-shell,
+  .app-shell.sidebar-open,
+  .app-shell.sidebar-collapsed {
+    display: block;
+    grid-template-columns: none;
+  }
+
+  .smart-sidebar {
+    inset: 12px auto 12px 12px;
+    width: 78px;
+    height: calc(100dvh - 24px);
+    padding: 0;
+    transform: translateX(-120%);
+    transition: transform .24s ease;
+  }
+
+  html[dir="rtl"] .smart-sidebar {
+    right: auto;
+    left: 12px;
+    transform: translateX(120%);
+  }
+
+  .app-shell.sidebar-open .smart-sidebar {
+    transform: translateX(0);
+  }
+
+  html[dir="rtl"] .app-shell.sidebar-open .smart-sidebar {
+    transform: translateX(0);
+  }
+
+  .smart-sidebar-scrim {
+    display: block;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity .24s ease, visibility 0s linear .24s;
+  }
+
+  .smart-sidebar-scrim.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
+  }
+
+  body.sidebar-is-open {
+    overflow: hidden;
+  }
+
+  .dashboard-topbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "context actions"
+      "metrics metrics";
+    width: 100%;
+    min-width: 0;
+    padding: 6px;
+    gap: 6px;
+  }
+
+  .dashboard-header-context {
+    grid-area: context;
+    min-width: 0;
+  }
+
+  .dashboard-actions {
+    grid-area: actions;
+    min-width: max-content;
+  }
+
+  .dashboard-metrics {
+    display: grid;
+    grid-area: metrics;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    min-width: 0;
+    gap: 5px;
+  }
+
+  .dashboard-metrics .dashboard-stat {
+    display: flex;
+    min-width: 0;
+    min-height: 36px;
+    padding: 4px 5px;
+    gap: 5px;
+    overflow: hidden;
+  }
+
+  .dashboard-metrics .dashboard-stat > svg {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+  }
+
+  .dashboard-metrics .dashboard-stat > div:last-child {
+    min-width: 0;
+  }
+
+  .dashboard-metrics .dashboard-stat small {
+    overflow: hidden;
+    font-size: 7px;
+    line-height: 1.1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dashboard-metrics .dashboard-stat strong {
+    overflow: hidden;
+    font-size: 9px;
+    line-height: 1.15;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dashboard-metrics .mini-ring {
+    width: 27px;
+    height: 27px;
+    flex: 0 0 27px;
+    font-size: 8px;
+  }
+
+  .reference-dashboard {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .reference-rail {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .smart-shelf-card {
+    padding: 13px;
+    border-radius: 17px;
+  }
+
+  .smart-shelf-toolbar {
+    gap: 8px;
+  }
+
+  .smart-shelf-toolbar p {
+    font-size: 10px;
+  }
+
+  .smart-shelf-temperatures {
+    display: grid;
+    flex: 0 0 auto;
+    gap: 2px;
+    padding: 3px;
+  }
+
+  .smart-shelf-temperatures span {
+    padding: 4px 5px;
+    font-size: 8px;
+  }
+
+  .smart-shelf-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .smart-shelf-section {
+    padding: 11px;
+  }
+
+  .smart-shelf-foods {
+    grid-template-columns: repeat(auto-fill, minmax(66px, 1fr));
+  }
+
+  .dashboard-footer {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .dashboard-footer > .macro-stat,
+  .dashboard-footer > .health-tip,
+  .dashboard-footer > .floating-add {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1120px) {
+  .smart-shelf-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dashboard-footer {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-footer > .floating-add {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .smart-food-card,
+  .smart-sidebar,
+  .smart-sidebar__link,
+  .smart-sidebar__logout,
+  .smart-sidebar-scrim {
+    transition-duration: .01ms !important;
+  }
+}

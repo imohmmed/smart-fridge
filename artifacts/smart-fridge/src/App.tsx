@@ -539,21 +539,16 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
     if (window.innerWidth < 768) closeSidebar();
   }, [location]);
 
-   return <div className={`app-shell ${sidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'}`}>
+    return <div className={`app-shell ${sidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'}`}>
       <button className={`smart-sidebar-scrim ${sidebarOpen ? 'is-open' : ''}`} type="button" aria-hidden={!sidebarOpen} tabIndex={sidebarOpen ? 0 : -1} aria-label={text(language, 'إغلاق القائمة', 'Close menu')} onClick={closeSidebar} />
       <aside className="smart-sidebar" aria-label={text(language, 'القائمة الجانبية', 'Sidebar navigation')}>
         <div className="smart-sidebar__inner">
-          <div className="smart-sidebar__header">
-            <div className="smart-sidebar__brand"><div className="brand-mark"><Refrigerator size={24} /></div><div className="smart-sidebar__brand-copy"><h1>{text(language, 'ثلاجتي', 'Smart Fridge')}</h1><small>{text(language, 'رفيق البيت الطازج', 'Fresh home companion')}</small></div></div>
-            <button className="smart-sidebar__toggle icon-btn" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'طي القائمة', 'Collapse menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-sidebar-toggle">{sidebarOpen ? <X size={19} /> : <Menu size={19} />}</button>
-          </div>
           <nav className="smart-sidebar__nav" aria-label={text(language, 'التنقل الرئيسي', 'Main navigation')}>
-             {navItems.map(item => { const Icon = item.icon; const label = text(language, item.ar, item.en); return <Link key={item.href} href={item.href} onClick={closeSidebar} aria-label={label} data-tooltip={label} className={`smart-sidebar__link ${location === item.href ? 'active' : ''}`} data-testid={`link-nav-${item.ar}`}><span className="smart-sidebar__icon"><Icon size={18} /></span><span className="smart-sidebar__label">{label}</span>{item.href === '/shopping' && <b className="smart-sidebar__count">{shoppingCount}</b>}</Link>; })}
+             {navItems.map(item => { const Icon = item.icon; const label = text(language, item.ar, item.en); return <Link key={item.href} href={item.href} onClick={closeSidebar} aria-label={label} data-tooltip={label} className={`smart-sidebar__link ${location === item.href ? 'active' : ''}`} data-testid={`link-nav-${item.ar}`}><span className="smart-sidebar__icon"><Icon size={18} aria-hidden="true" /></span><span className="smart-sidebar__label">{label}</span>{item.href === '/shopping' && <b className="smart-sidebar__count">{shoppingCount}</b>}</Link>; })}
           </nav>
           <div className="smart-sidebar__footer">
-              <Link href="/settings" onClick={closeSidebar} aria-label={text(language, 'الإعدادات', 'Settings')} data-tooltip={text(language, 'الإعدادات', 'Settings')} className={`smart-sidebar__link ${location === '/settings' ? 'active' : ''}`} data-testid="link-nav-settings"><span className="smart-sidebar__icon"><Settings size={18} /></span><span className="smart-sidebar__label">{text(language, 'الإعدادات', 'Settings')}</span></Link>
-             <div className="smart-sidebar__profile"><div className="avatar">{initials(user.name)}</div><div className="smart-sidebar__profile-copy"><strong>{user.name}</strong><span>{text(language, 'مساحتي الشخصية', 'My space')}</span></div></div>
-             <button className="smart-sidebar__logout" onClick={onLogout} data-tooltip={text(language, 'تسجيل الخروج', 'Sign out')} aria-label={text(language, 'تسجيل الخروج', 'Sign out')} data-testid="button-logout"><span className="smart-sidebar__icon"><LogOut size={15} /></span><span className="smart-sidebar__label">{text(language, 'تسجيل الخروج', 'Sign out')}</span></button>
+              <Link href="/settings" onClick={closeSidebar} aria-label={text(language, 'الإعدادات', 'Settings')} data-tooltip={text(language, 'الإعدادات', 'Settings')} className={`smart-sidebar__link ${location === '/settings' ? 'active' : ''}`} data-testid="link-nav-settings"><span className="smart-sidebar__icon"><Settings size={18} aria-hidden="true" /></span><span className="smart-sidebar__label">{text(language, 'الإعدادات', 'Settings')}</span></Link>
+             <button className="smart-sidebar__logout" onClick={onLogout} data-tooltip={text(language, 'تسجيل الخروج', 'Sign out')} aria-label={text(language, 'تسجيل الخروج', 'Sign out')} data-testid="button-logout"><span className="smart-sidebar__icon"><LogOut size={15} aria-hidden="true" /></span><span className="smart-sidebar__label">{text(language, 'تسجيل الخروج', 'Sign out')}</span></button>
           </div>
         </div>
       </aside>
@@ -605,55 +600,48 @@ function AddFoodModal({ onClose, onAdd }: { onClose: () => void; onAdd: (item: O
 function FridgeVisual({ items, selected, onSelect }: { items: FridgeItem[]; selected: FridgeItem | undefined; onSelect: (item: FridgeItem) => void }) {
   const { language } = useLanguage();
   const categories = [
-    { name: text(language, '🍗 البروتينات', '🍗 Proteins'), match: 'لحوم', tint: 'meat', note: text(language, 'طازج وجاهز', 'Fresh and ready') },
-    { name: text(language, '🥗 الخضروات', '🥗 Vegetables'), match: 'خضروات', tint: 'greens', note: text(language, 'خضروات طازجة', 'Fresh vegetables') },
-    { name: text(language, '🍎 الفواكه', '🍎 Fruits'), match: 'فواكه', tint: 'fruit', note: text(language, 'بارد ومنعش', 'Chilled and fresh') },
-    { name: text(language, '🥛 الألبان', '🥛 Dairy'), match: 'ألبان', tint: 'dairy', note: '4° C' },
-    { name: text(language, '🧃 العصائر والمشروبات', '🧃 Juices and drinks'), match: 'مشروبات', tint: 'drinks', note: text(language, 'بارد ومنعش', 'Chilled and fresh') },
+    { title: text(language, 'البروتينات', 'Proteins'), match: 'لحوم', tone: 'protein', emoji: '🍗', note: text(language, 'جاهز للطهي', 'Ready to cook') },
+    { title: text(language, 'الخضروات', 'Vegetables'), match: 'خضروات', tone: 'vegetables', emoji: '🥗', note: text(language, 'طازجة ومقرمشة', 'Fresh and crisp') },
+    { title: text(language, 'الفواكه', 'Fruits'), match: 'فواكه', tone: 'fruit', emoji: '🍎', note: text(language, 'باردة ومنعشة', 'Chilled and fresh') },
+    { title: text(language, 'الألبان', 'Dairy'), match: 'ألبان', tone: 'dairy', emoji: '🥛', note: text(language, 'محفوظة ببرودة', 'Kept chilled') },
+    { title: text(language, 'المشروبات', 'Drinks'), match: 'مشروبات', tone: 'drinks', emoji: '🧃', note: text(language, 'جاهزة للتقديم', 'Ready to serve') },
+    { title: text(language, 'وجبات جاهزة', 'Ready meals'), match: 'جاهز', tone: 'ready', emoji: '🍱', note: text(language, 'حل سريع ولذيذ', 'Quick and easy') },
   ];
-  const doorDairy = items.filter(item => item.category === 'ألبان').slice(0, 3);
-  const doorDrinks = items.filter(item => ['مشروبات', 'جاهز'].includes(item.category)).slice(0, 4);
-  const renderFood = (item: FridgeItem, size = 43, door = false) => <button key={item.id} className={`${door ? 'door-food' : 'food-badge'} ${selected?.id === item.id ? 'selected' : ''}`} onClick={() => onSelect(item)} aria-pressed={selected?.id === item.id} aria-label={`${displayFoodName(item.name, language)}، ${toWesternNums(item.quantity)} ${item.unit}`} data-testid={`button-food-${door ? 'door-' : ''}${item.id}`}>
-     <span className="food-visual"><FoodArt item={item} size={door ? size + 8 : size + 12} /><b className="quantity-badge" aria-hidden="true">{toWesternNums(item.quantity)}</b></span>
-     <span className="food-name">{displayFoodName(item.name, language)}</span>
-    {daysUntil(item.expiry) <= 2 && <i className="food-dot" />}
+  const renderFood = (item: FridgeItem) => <button key={item.id} className={`smart-food-card ${selected?.id === item.id ? 'selected' : ''}`} onClick={() => onSelect(item)} aria-pressed={selected?.id === item.id} aria-label={`${displayFoodName(item.name, language)}، ${toWesternNums(item.quantity)} ${item.unit}`} data-testid={`button-food-${item.id}`}>
+    <span className="smart-food-visual"><FoodArt item={item} size={52} /><b className="quantity-badge" aria-hidden="true">{toWesternNums(item.quantity)}</b></span>
+    <span className="smart-food-name">{displayFoodName(item.name, language)}</span>
+    {daysUntil(item.expiry) <= 2 && <i className="food-dot" aria-hidden="true" />}
   </button>;
-  return <div className="fridge-card real-fridge-card">
-     <div className="fridge-temperature"><span><Refrigerator size={15} /> {text(language, 'الثلاجة', 'Fridge')}</span><strong>4°C</strong><span><Zap size={14} /> {text(language, 'الفريزر', 'Freezer')}</span><strong>-18°C</strong></div>
-    <div className="fridge-body real-fridge-body">
-      <div className="fridge-door real-fridge-door">
-        <span className="door-edge-shadow" />
-        <span className="fridge-door-handle" />
-         <div className="door-status"><span>{text(language, 'منطقة الطزاجة', 'Fresh zone')}</span><i /></div>
-         <div className="door-rack rack-dairy"><h4>{text(language, 'الألبان والمشروبات', 'Dairy and drinks')}</h4>{doorDairy.map(item => renderFood(item, 30, true))}</div>
-         <div className="door-rack rack-drinks"><h4>{text(language, 'الصلصات والمربيات', 'Sauces and jams')}</h4>{doorDrinks.map(item => renderFood(item, 28, true))}</div>
-         <div className="door-rack rack-low"><h4>{text(language, 'المشروبات والعصائر', 'Drinks and juices')}</h4><div className="door-bottles"><span /><span /><span /></div></div>
-         <div className="door-note"><span className="note-pin" /><span>{text(language, 'ملاحظة اليوم', 'Today’s note')}<br /><strong>{text(language, 'حضّر شيئاً طازجاً', 'Prepare something fresh')}</strong></span></div>
+  return <div className="smart-shelf-card">
+    <div className="smart-shelf-toolbar">
+      <div>
+        <span className="eyebrow">{text(language, 'تنظيم ذكي', 'Smart storage')}</span>
+        <h3>{text(language, 'رفوف ثلاجتك', 'Your smart shelves')}</h3>
+        <p>{text(language, 'كل ما تحتاجه، مرتب وواضح في مكان واحد.', 'Everything you need, organized in one clear view.')}</p>
       </div>
-      <div className="fridge-cabinet real-fridge-cabinet">
-        <div className="cabinet-side cabinet-side-left" />
-        <div className="cabinet-side cabinet-side-right" />
-        <div className="fridge-glow"><span /></div>
-        <div className="interior-light"><i /><i /><i /></div>
-        <div className="cabinet-shelves">{categories.map(category => {
-           const categoryItems = items.filter(item => item.category === category.match).slice(0, 10);
-          return <div className={`cabinet-shelf ${category.tint}`} key={category.name}>
-            <div className="shelf-title"><span>{category.name}</span><small>{category.note}</small></div>
-              <div className="shelf-items" aria-label={category.name} data-testid={`shelf-items-${category.tint}`}>{categoryItems.map(item => renderFood(item))}{!categoryItems.length && <span className="muted shelf-empty">{text(language, 'أضف صنفاً جديداً', 'Add a new item')}</span>}</div>
-            <div className="glass-front" />
-          </div>;
-        })}</div>
-        <div className="produce-drawers">
-            <div className="crisper-drawer"><span>{text(language, 'خضروات طازجة', 'Fresh vegetables')}</span><small>{toWesternNums(items.filter(item => item.category === 'خضروات').length || 0)} {text(language, 'أصناف', 'items')}</small><div className="drawer-handle" /></div>
-            <div className="crisper-drawer"><span>{text(language, 'جذور وبطاطا', 'Roots and potatoes')}</span><small>{toWesternNums(items.filter(item => item.category === 'فواكه').length || 0)} {text(language, 'أصناف', 'items')}</small><div className="drawer-handle" /></div>
-        </div>
-        <div className="freezer-section">
-           <div className="shelf-title"><span>{text(language, 'الفريزر', 'Freezer')}</span><small>-18° C</small></div>
-           <div className="freezer-tray"><div className="freezer-bin"><i /><span>{text(language, 'لحوم', 'Meat')}</span></div><div className="freezer-bin"><i /><span>{text(language, 'ثلج', 'Ice')}</span></div><div className="freezer-bin"><i /><span>{text(language, 'جاهز', 'Ready')}</span></div></div>
-        </div>
+      <div className="smart-shelf-temperatures" aria-label={text(language, 'درجات التخزين', 'Storage temperatures')}>
+        <span><Refrigerator size={14} aria-hidden="true" /> 4°C</span>
+        <span><Zap size={13} aria-hidden="true" /> -18°C</span>
       </div>
     </div>
-     <div className="fridge-foot"><span>{text(language, 'تبريد ذكي', 'Smart cooling')}</span><b>{text(language, 'تعمل بكفاءة', 'Running efficiently')}</b><i /></div>
+    <div className="smart-shelf-grid">
+      {categories.map(category => {
+        const categoryItems = items.filter(item => item.category === category.match).slice(0, 8);
+        return <section className={`smart-shelf-section ${category.tone}`} key={category.match} aria-labelledby={`smart-shelf-${category.match}`}>
+          <div className="smart-shelf-section-head">
+            <div className="smart-shelf-section-title">
+              <span className="smart-shelf-emoji" aria-hidden="true">{category.emoji}</span>
+              <div><h4 id={`smart-shelf-${category.match}`}>{category.title}</h4><p>{category.note}</p></div>
+            </div>
+            <span className="smart-shelf-count">{toWesternNums(categoryItems.length)} <small>{text(language, 'أصناف', 'items')}</small></span>
+          </div>
+          <div className="smart-shelf-foods" aria-label={category.title} data-testid={`shelf-items-${category.tone}`}>
+            {categoryItems.length ? categoryItems.map(renderFood) : <span className="smart-shelf-empty">{text(language, 'لا توجد أصناف بعد', 'No items yet')}</span>}
+          </div>
+        </section>;
+      })}
+    </div>
+    <div className="smart-shelf-foot"><span><CheckCircle2 size={15} aria-hidden="true" />{text(language, 'مساحتك مرتبة', 'Your space is organized')}</span><strong>{toWesternNums(items.length)} {text(language, 'أصناف محفوظة', 'items stored')}</strong></div>
   </div>;
 }
 
