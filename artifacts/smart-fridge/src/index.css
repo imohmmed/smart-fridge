@@ -1455,24 +1455,25 @@ button:active, .nav-item:active, .icon-btn:active, .secondary-btn:active { box-s
 
 /* Exact warm cream / green accessibility palette */
 :root {
-  --bg-main: #F5EFE6;
-  --bg-card: #F0EBE0;
-  --bg-fridge-interior: #FAFAF8;
-  --green-primary: #4A7C59;
-  --green-light: #E8F2EC;
-  --green-text: #3D6B4A;
-  --gold-button: #F0C674;
-  --gold-light: #FFF3CD;
-  --text-primary: #2C2C2C;
-  --text-secondary: #7A7A7A;
+  --bg-main: #FAF9F6;
+  --bg-card: #FFFFFF;
+  --bg-fridge-interior: #F4F8F2;
+  --green-primary: #2E7D32;
+  --green-light: #E8F5E9;
+  --green-text: #256B2A;
+  --gold-button: #E7B84B;
+  --gold-light: #FFF7DD;
+  --water-blue: #4BA9E8;
+  --text-primary: #203024;
+  --text-secondary: #68756C;
   --text-muted: #AAAAAA;
-  --shadow-dark: #D4CFC6;
+  --shadow-dark: rgba(24, 48, 32, .08);
   --shadow-light: #FFFFFF;
-  --bg-kitchen: #8B6F5E;
-  --auth-ivory: #F5EFE6;
-  --auth-white: #F0EBE0;
-  --auth-sage: #4A7C59;
-  --auth-forest: #2C2C2C;
+  --bg-kitchen: #315A3D;
+  --auth-ivory: #FAF9F6;
+  --auth-white: #FFFFFF;
+  --auth-sage: #6BBF72;
+  --auth-forest: #203024;
   --auth-beige: #D8C5AA;
   --auth-ice: #79B4D8;
 }
@@ -1801,7 +1802,6 @@ textarea:focus-visible, [tabindex]:focus-visible {
   .icon-btn, .nav-item, .primary-btn, .secondary-btn { min-height: 44px; }
 }
 @media (min-width: 769px) and (max-width: 1024px) {
-  .app-shell { grid-template-columns: 70px minmax(0, 1fr); }
   .sidebar { padding-inline: 11px; align-items: center; }
   .sidebar .brand-copy, .sidebar .nav-label, .sidebar .profile-mini > div:last-child,
   .sidebar .logout-btn span { display: none; }
@@ -2698,9 +2698,6 @@ textarea:focus-visible {
   body {
     overflow-x: hidden;
   }
-  .app-shell {
-    grid-template-columns: 60px minmax(0, 1fr);
-  }
   .sidebar {
     width: 60px;
     padding: 18px 6px;
@@ -2755,9 +2752,6 @@ textarea:focus-visible {
 }
 
 @media (min-width: 1025px) and (max-width: 1050px) {
-  .app-shell {
-    grid-template-columns: 205px minmax(0, 1fr);
-  }
   .sidebar {
     padding-inline: 20px;
     align-items: stretch;
@@ -4091,12 +4085,6 @@ html[dir="ltr"] .smart-sidebar__profile-copy {
 
 .smart-sidebar-scrim {
   display: none;
-}
-
-@media (min-width: 768px) and (max-width: 1100px) {
-  .app-shell.sidebar-open {
-    --smart-sidebar-width: 258px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -7053,6 +7041,421 @@ body,
     pointer-events: auto;
     transition-delay: 0s;
   }
+}
+
+/* Fresh Daylight theme: a clean, low-contrast canvas with bright elevated
+   surfaces and compact information density. */
+:root {
+  --background: 60 20% 97%;
+  --foreground: 150 20% 16%;
+  --card: 0 0% 100%;
+  --card-foreground: 150 20% 16%;
+  --border: 100 13% 89%;
+  --input: 100 13% 89%;
+  --primary: 123 46% 33%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 100 30% 94%;
+  --secondary-foreground: 150 20% 16%;
+  --muted: 100 25% 95%;
+  --muted-foreground: 145 12% 40%;
+  --accent: 45 83% 57%;
+  --accent-foreground: 35 45% 18%;
+}
+
+html,
+body {
+  background: #faf9f6;
+}
+
+body {
+  background-image:
+    radial-gradient(circle at 12% 0%, rgba(232, 245, 233, .72), transparent 28rem),
+    linear-gradient(180deg, #faf9f6 0%, #f4f6f2 100%);
+  color: var(--text-primary);
+}
+
+.app-main,
+.mobile-topbar {
+  background: transparent;
+}
+
+.dashboard-main {
+  padding-top: 14px;
+}
+
+.card,
+.dashboard-topbar,
+.date-chip,
+.item-detail-panel,
+.shopping-panel,
+.settings-nav,
+.smart-shelf-card {
+  border: 1px solid rgba(46, 125, 50, .09) !important;
+  border-radius: 20px !important;
+  background: #fff !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .03) !important;
+}
+
+.dashboard-topbar {
+  min-height: 64px;
+  margin-bottom: 13px;
+  padding: 8px 14px;
+}
+
+.dashboard-header-context strong {
+  color: #203024;
+}
+
+.dashboard-stat {
+  border-color: rgba(46, 125, 50, .1);
+}
+
+.dashboard-stat > svg {
+  color: #e1aa2e;
+}
+
+.dashboard-stat:nth-child(2) > .mini-ring {
+  background: conic-gradient(#2e7d32 var(--ring-progress), #e8f5e9 0);
+}
+
+.water-header-stat > svg {
+  color: #4ba9e8;
+}
+
+.dashboard-footer {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) !important;
+  gap: 12px !important;
+  margin-top: 13px !important;
+  padding-bottom: 2px;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.dashboard-footer > .macro-stat,
+.dashboard-footer > .health-tip {
+  border: 1px solid rgba(46, 125, 50, .09);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .03);
+}
+
+.dashboard-footer > .macro-stat {
+  padding: 13px 15px !important;
+}
+
+.dashboard-footer > .health-tip {
+  padding: 13px 15px !important;
+}
+
+.dashboard-footer > .health-tip > svg {
+  flex: 0 0 auto;
+  color: #2e7d32 !important;
+}
+
+.dashboard-footer > .health-tip strong {
+  color: #203024;
+}
+
+.macro-protein {
+  background: #2e7d32;
+}
+
+.macro-carb {
+  background: #e1aa2e;
+}
+
+.macro-fat {
+  background: #4ba9e8;
+}
+
+.smart-shelf-card {
+  padding: 16px;
+}
+
+.smart-shelf-section {
+  border-color: rgba(46, 125, 50, .1);
+  border-radius: 17px;
+  background: #fafdfa;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .72);
+}
+
+.smart-food-card {
+  border-color: rgba(46, 125, 50, .1);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(24, 68, 32, .07);
+}
+
+.smart-food-card:hover,
+.smart-food-card.selected,
+.smart-food-card:focus-visible {
+  border-color: rgba(46, 125, 50, .42);
+  box-shadow: 0 8px 18px rgba(24, 68, 32, .12);
+}
+
+.smart-food-card .quantity-badge {
+  display: grid;
+  place-items: center;
+  top: -6px;
+  right: -6px;
+  min-width: 22px;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  color: #fff !important;
+  background: #2e7d32 !important;
+  box-shadow: 0 2px 5px rgba(24, 68, 32, .18);
+  font-size: 10px;
+  line-height: 1;
+}
+
+.quantity-badge {
+  color: #fff !important;
+  background: #2e7d32 !important;
+}
+
+.water .progress i,
+.water-header-stat > svg {
+  color: #4ba9e8;
+}
+
+.water .progress i {
+  background: #4ba9e8;
+}
+
+.floating-add {
+  right: max(18px, env(safe-area-inset-right)) !important;
+  bottom: max(18px, env(safe-area-inset-bottom)) !important;
+  width: 58px !important;
+  min-width: 58px !important;
+  height: 58px;
+  min-height: 58px !important;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #2e7d32 !important;
+  box-shadow: 0 10px 24px rgba(24, 68, 32, .22), 0 0 0 5px rgba(46, 125, 50, .1);
+}
+
+.floating-add:hover,
+.floating-add:focus-visible {
+  background: #256b2a !important;
+  box-shadow: 0 13px 28px rgba(24, 68, 32, .28), 0 0 0 5px rgba(46, 125, 50, .14);
+}
+
+.smart-sidebar-scrim {
+  background: rgba(22, 39, 28, .42) !important;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+@media (max-width: 767px) {
+  .mobile-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    min-height: 52px;
+    height: 52px;
+    padding: 7px 12px;
+    border-bottom: 1px solid rgba(46, 125, 50, .08);
+    background: rgba(255, 255, 255, .88);
+    box-shadow: 0 2px 12px rgba(24, 68, 32, .05);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+  }
+
+  .dashboard-main {
+    padding: 8px 12px 86px;
+  }
+
+  .dashboard-topbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "context actions"
+      "metrics metrics";
+    gap: 8px;
+    padding: 8px 9px;
+    border-radius: 17px !important;
+  }
+
+  .dashboard-header-context .eyebrow {
+    font-size: 10px;
+  }
+
+  .dashboard-header-context strong {
+    display: block;
+    overflow: hidden;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dashboard-metrics {
+    display: flex !important;
+    grid-template-columns: none !important;
+    gap: 7px;
+    width: 100%;
+    padding: 1px 0 3px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+
+  .dashboard-metrics::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dashboard-metrics .dashboard-stat {
+    flex: 0 0 142px;
+    min-width: 142px;
+    min-height: 38px;
+    padding: 6px 8px;
+    border: 0;
+    border-radius: 13px;
+    background: #f7fbf7;
+    scroll-snap-align: start;
+  }
+
+  .dashboard-metrics .dashboard-stat:nth-child(1) {
+    background: #fff9e9;
+  }
+
+  .dashboard-metrics .dashboard-stat:nth-child(2) {
+    background: #f0faf2;
+  }
+
+  .dashboard-metrics .dashboard-stat:nth-child(3) {
+    background: #eef8ff;
+  }
+
+  .dashboard-metrics .dashboard-stat small {
+    font-size: 8px;
+  }
+
+  .dashboard-metrics .dashboard-stat strong {
+    font-size: 10px;
+  }
+
+  .dashboard-metrics .mini-ring {
+    width: 28px;
+    height: 28px;
+    flex-basis: 28px;
+    font-size: 8px;
+  }
+
+  .reference-heading {
+    align-items: center;
+    margin-bottom: 8px;
+    padding-top: 0;
+  }
+
+  .reference-heading h2 {
+    font-size: 22px;
+  }
+
+  .reference-dashboard {
+    gap: 11px;
+  }
+
+  .smart-shelf-card {
+    padding: 10px;
+    border-radius: 18px !important;
+  }
+
+  .smart-shelf-grid {
+    gap: 8px;
+  }
+
+  .smart-shelf-section {
+    gap: 8px;
+    padding: 10px;
+    border-radius: 15px;
+  }
+
+  .smart-shelf-foods {
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+    gap: 6px;
+  }
+
+  .smart-food-card {
+    min-height: 80px;
+    padding: 6px 4px;
+    border-radius: 14px;
+  }
+
+  .smart-food-visual,
+  .smart-food-visual .food-art {
+    width: 48px !important;
+    height: 48px !important;
+  }
+
+  .smart-food-visual .food-photo {
+    max-width: 48px;
+    max-height: 48px;
+  }
+
+  .smart-food-name {
+    font-size: 9px;
+  }
+
+  .dashboard-footer {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .dashboard-footer > .macro-stat,
+  .dashboard-footer > .health-tip {
+    grid-column: auto !important;
+    min-height: 94px !important;
+    padding: 10px !important;
+    border-radius: 16px;
+  }
+
+  .dashboard-footer > .macro-stat {
+    align-content: start;
+  }
+
+  .macro-lines {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .macro-lines span {
+    font-size: 8px;
+  }
+
+  .macro-lines b {
+    font-size: 9px;
+  }
+
+  .dashboard-footer > .health-tip strong {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 380px) {
+  .dashboard-metrics .dashboard-stat {
+    flex-basis: 134px;
+    min-width: 134px;
+  }
+
+  .dashboard-footer > .macro-stat,
+  .dashboard-footer > .health-tip {
+    min-height: 102px !important;
+  }
+}
+
+/* Keep the closed dock icon-only at every breakpoint. Expanded navigation
+   can reveal its labels without changing the page geometry underneath. */
+.app-shell.sidebar-collapsed .smart-sidebar__label {
+  display: none !important;
+}
+
+.app-shell.sidebar-open .smart-sidebar__label {
+  display: block !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

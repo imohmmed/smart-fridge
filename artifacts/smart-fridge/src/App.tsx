@@ -658,16 +658,9 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
   const percentage = Math.min(100, Math.round(totalCalories / data.calorieGoal * 100));
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [showFloatingAdd, setShowFloatingAdd] = useState(false);
   const [readIds, setReadIds] = useState<string[]>(() => {
     try { return JSON.parse(localStorage.getItem('smart_fridge_read_notifications') || '[]'); } catch { return []; }
   });
-  useEffect(() => {
-    const handleScroll = () => setShowFloatingAdd(window.scrollY > 120);
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
   const refreshNotifications = () => setNotifications(checkAndGenerateNotifications(data, language));
   useEffect(() => {
     refreshNotifications();
@@ -734,7 +727,7 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
          <div className="dashboard-footer">
            <div className="macro-stat" aria-label={text(language, 'إحصائية توزيع المغذيات', 'Nutrient distribution statistic')}><small>{text(language, 'توزيع المغذيات', 'Nutrients')}</small><div className="macro-lines"><span><i className="macro-protein" />{text(language, 'بروتين', 'Protein')} <b>35%</b></span><span><i className="macro-carb" />{text(language, 'كربوهيدرات', 'Carbohydrates')} <b>40%</b></span><span><i className="macro-fat" />{text(language, 'دهون صحية', 'Healthy fats')} <b>25%</b></span></div></div>
            <div className="health-tip" aria-label={text(language, 'نصيحة اليوم', 'Daily tip')}><Leaf size={20} /><div><small>{text(language, 'نصيحة اليوم', 'Tip of the day')}</small><strong>{text(language, 'تناول الخضروات في كل وجبة', 'Eat vegetables with every meal')}<br />{text(language, 'للحصول على صحة أفضل.', 'for better health.')}</strong></div></div>
-            {showFloatingAdd && <button className="floating-add" onClick={onAdd} data-testid="button-add-food-dashboard" aria-label={text(language, 'أضف طعاماً جديداً', 'Add new food')}><Plus size={26} /><span>{text(language, 'أضف طعاماً جديداً', 'Add new food')}</span></button>}
+            <button className="floating-add" onClick={onAdd} data-testid="button-add-food-dashboard" aria-label={text(language, 'أضف طعاماً جديداً', 'Add new food')}><Plus size={26} /><span>{text(language, 'أضف طعاماً جديداً', 'Add new food')}</span></button>
          </div>
   </main>;
 }
