@@ -7787,8 +7787,38 @@ body {
     flex: 0 0 34px;
   }
 
+  .dashboard-topbar .dashboard-metrics .dashboard-stat:nth-child(2) > .mini-ring strong {
+    font-size: 8px !important;
+    line-height: 1;
+  }
+
   .dashboard-topbar .dashboard-metrics .dashboard-stat:nth-child(2) > div:last-child {
     padding-top: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .reference-heading {
+    margin-top: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  html[dir="ltr"] .dashboard-topbar {
+    direction: ltr;
+  }
+
+  html[dir="ltr"] .dashboard-header-context {
+    direction: ltr;
+    text-align: left;
+  }
+
+  html[dir="ltr"] .dashboard-actions {
+    direction: ltr;
+  }
+
+  html[dir="ltr"] .dashboard-metrics {
+    direction: rtl;
   }
 }
 

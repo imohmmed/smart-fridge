@@ -733,7 +733,7 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
          </div>
        </div>
     </div>
-       <div className="reference-heading"><h2>{text(language, 'محتويات ثلاجتك', 'Your fridge contents')}</h2><span className="dashboard-date" data-testid="text-current-date">{formatArabicDate(language)}</span></div>
+        <div className="reference-heading"><h2>{text(language, 'محتويات ثلاجتك', 'Your fridge contents')}</h2></div>
     <div className="reference-dashboard">
       <section className="reference-fridge"><FridgeVisual items={data.items} selected={selected} onSelect={item => setSelectedId(item.id)} /></section>
       <aside className="reference-rail">
