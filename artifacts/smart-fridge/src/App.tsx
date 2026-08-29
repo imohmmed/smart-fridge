@@ -559,8 +559,8 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
         </div>
       </aside>
     <div style={{ minWidth: 0 }}>
-       <header className="mobile-topbar">
-         <button className="menu-toggle icon-btn" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-mobile-menu">{sidebarOpen ? <X size={19} /> : <Menu size={19} />}</button>
+        <header className={`mobile-topbar ${location === '/' ? 'mobile-topbar-dashboard' : ''}`}>
+         <button className="menu-toggle icon-btn" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-mobile-menu-legacy">{sidebarOpen ? <X size={19} /> : <Menu size={19} />}</button>
           <div className="brand" aria-label={text(language, 'ثلاجتي الذكية', 'Smart Fridge')}>
             <span className="brand-mark" aria-hidden="true"><Refrigerator size={19} /></span>
             <span className="brand-copy"><strong>{text(language, 'ثلاجتي', 'Smart Fridge')}</strong><small>{text(language, 'مساحتك الطازجة', 'Fresh space')}</small></span>
@@ -693,14 +693,16 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
     });
   };
   return <main className="app-main dashboard-main">
-    <div className="dashboard-topbar">
-       <button className="sidebar-inline-toggle" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-sidebar-launcher">
+     <div className="dashboard-topbar">
+       <div className="dashboard-header-start">
+        <button className="sidebar-inline-toggle" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-mobile-menu">
          {sidebarOpen ? <X size={19} /> : <Menu size={19} />}
        </button>
        <div className="dashboard-header-context">
          <span className="eyebrow">{text(language, 'ملخص اليوم', 'Today at a glance')}</span>
          <strong>{text(language, 'أهلاً بعودتك', 'Welcome back')}</strong>
         </div>
+       </div>
         <div className="dashboard-metrics" aria-label={text(language, 'ملخص اليوم', 'Daily summary')}>
          <div className="dashboard-stat">
            <Flame size={21} aria-hidden="true" />

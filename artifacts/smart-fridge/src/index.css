@@ -7597,6 +7597,101 @@ body {
   }
 }
 
+@media (min-width: 768px) {
+  .mobile-topbar {
+    display: none !important;
+  }
+}
+
+/* Mobile-only header cleanup. Desktop keeps its existing layout untouched. */
+.dashboard-header-start {
+  display: contents;
+}
+
+@media (max-width: 768px) {
+  .mobile-topbar-dashboard {
+    display: none !important;
+  }
+
+  .dashboard-topbar {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 0 12px;
+    min-height: 0;
+    margin-bottom: 0;
+    padding: 0;
+    direction: rtl;
+  }
+
+  .dashboard-header-start {
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+    align-items: center;
+    gap: 10px;
+    order: 1;
+  }
+
+  .dashboard-header-start .sidebar-inline-toggle {
+    display: flex !important;
+  }
+
+  .dashboard-header-context {
+    min-width: 0;
+  }
+
+  .dashboard-header-context .eyebrow,
+  .dashboard-header-context strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dashboard-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 7px;
+    order: 2;
+  }
+
+  .dashboard-topbar .dashboard-actions {
+    order: 2 !important;
+  }
+
+  .dashboard-profile > div:last-child {
+    display: none !important;
+  }
+
+  .dashboard-metrics {
+    display: flex;
+    flex: 1 0 100%;
+    width: 100%;
+    min-width: 0;
+    margin-top: 16px;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+    order: 3;
+  }
+
+  .dashboard-topbar .dashboard-metrics {
+    flex: 1 0 100% !important;
+    order: 3 !important;
+  }
+
+  .dashboard-metrics::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dashboard-metrics .dashboard-stat {
+    flex: 0 0 auto;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .smart-sidebar,
   .smart-sidebar__toggle,
