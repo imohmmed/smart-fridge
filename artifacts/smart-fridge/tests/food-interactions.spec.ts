@@ -148,4 +148,93 @@ test.describe('Smart Fridge food interactions', () => {
     expect((badgeBox?.y ?? 0) + (badgeBox?.height ?? 0)).toBeLessThan((iconBox?.y ?? 0) + (iconBox?.height ?? 0) / 2);
     await expect(countBadge).toHaveAttribute('aria-label', /items remaining/);
   });
+
+  test('floats the shopping count over the cart icon in the sidebar', async ({ page }) => {
+    await seedDemoSession(page);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/');
+    await page.getByTestId('button-mobile-menu').click();
+
+    const shoppingLink = page.getByTestId('link-nav-قائمة التسوق');
+    const iconWrapper = shoppingLink.locator('.smart-sidebar__shopping-icon');
+    const countBadge = shoppingLink.locator('.smart-sidebar__count');
+
+    await expect(iconWrapper).toBeVisible();
+    await expect(countBadge).toBeVisible();
+    await expect(iconWrapper).toHaveCSS('position', 'relative');
+    await expect(countBadge).toHaveCSS('position', 'absolute');
+    await expect(countBadge).toHaveCSS('top', '-4px');
+    await expect(countBadge).toHaveCSS('right', '-4px');
+    await expect(countBadge).toHaveCSS('z-index', '10');
+    await expect(countBadge).toHaveCSS('display', 'flex');
+    await expect(countBadge).toHaveCSS('border-top-width', '2px');
+    await expect(countBadge).toHaveCSS('border-top-color', 'rgb(255, 255, 255)');
+    await expect(countBadge).toHaveCSS('border-radius', '50%');
+
+    const iconBox = await iconWrapper.boundingBox();
+    const badgeBox = await countBadge.boundingBox();
+    expect(badgeBox?.y).toBeLessThan((iconBox?.y ?? 0) + (iconBox?.height ?? 0));
+    expect((badgeBox?.x ?? 0) + (badgeBox?.width ?? 0)).toBeGreaterThan((iconBox?.x ?? 0) + (iconBox?.width ?? 0) / 2);
+  });
+
+  test('returns to the dashboard with the native browser back button', async ({ page }) => {
+    await seedDemoSession(page);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+
+    for (const [testId, path] of [
+      ['link-nav-وجباتي', '/meals'],
+      ['link-nav-تحليل يومي', '/daily-analysis'],
+      ['link-nav-قائمة التسوق', '/shopping'],
+      ['link-nav-وصفات مقترحة', '/recipes'],
+      ['link-nav-المفضلة', '/favorites'],
+      ['link-nav-settings', '/settings'],
+    ] as const) {
+      await page.getByTestId('button-mobile-menu').click();
+      await page.getByTestId(testId).click();
+      await expect(page).toHaveURL(new RegExp(`${path.replace('/', '\\/')}$`));
+      await expect(page.locator('.app-shell.sidebar-open')).toHaveCount(0);
+      await expect(page.locator('main.app-main')).toHaveCount(1);
+
+      await page.goBack();
+      await expect(page).toHaveURL(/\/$/);
+      await expect(page.locator('main.dashboard-main')).toHaveCount(1);
+      await expect(page.locator('main.app-main')).toHaveCount(1);
+      await expect(page.locator('.app-shell.sidebar-open')).toHaveCount(0);
+    }
+  });
+
+  test('opens editable account settings from the dashboard profile', async ({ page }) => {
+    await seedDemoSession(page);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+
+    await page.getByTestId('link-dashboard-profile').click();
+    await expect(page).toHaveURL(/\/settings$/);
+    await expect(page.getByTestId('input-profile-name')).toHaveValue('Food Test');
+    await expect(page.getByTestId('input-profile-email')).toHaveValue('food-interaction@example.test');
+    await expect(page.getByTestId('input-profile-password')).toHaveValue('');
+
+    await page.getByTestId('input-profile-name').fill('Updated Food Test');
+    await page.getByTestId('input-profile-email').fill('updated-food@example.test');
+    await page.getByTestId('input-profile-password').fill('new-password');
+    await page.getByTestId('button-save-profile').click();
+    await expect(page.getByTestId('status-notice')).toContainText(/Account details saved|تم حفظ بيانات الحساب/);
+
+    await page.goBack();
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.getByTestId('link-dashboard-profile')).toContainText('Updated Food Test');
+  });
+
+  test('organizes notifications into a labeled list', async ({ page }) => {
+    await seedDemoSession(page);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+
+    await page.getByTestId('button-notifications').click();
+    await expect(page.locator('.notification-dropdown')).toBeVisible();
+    await expect(page.locator('.notification-head-copy')).toBeVisible();
+    await expect(page.locator('.notification-list')).toBeVisible();
+    await expect(page.locator('.notification-item')).not.toHaveCount(0);
+  });
 });

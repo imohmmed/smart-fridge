@@ -8,8 +8,8 @@ const viewports = [
 
 const shelfTones = ['protein', 'vegetables', 'fruit', 'dairy', 'drinks', 'ready'];
 
-async function seedDemoSession(page: Page) {
-  await page.addInitScript(() => {
+async function seedDemoSession(page: Page, language: 'ar' | 'en' = 'en') {
+  await page.addInitScript((initialLanguage: 'ar' | 'en') => {
     const user = {
       id: 'responsive-layout-test-user',
       name: 'Responsive Test',
@@ -20,9 +20,9 @@ async function seedDemoSession(page: Page) {
 
     localStorage.setItem('smart_fridge_users', JSON.stringify([user]));
     localStorage.setItem('smart_fridge_session', user.id);
-    localStorage.setItem('smart_fridge_language', 'en');
+    localStorage.setItem('smart_fridge_language', initialLanguage);
     localStorage.removeItem('smart_fridge_read_notifications');
-  });
+  }, language);
 }
 
 async function measureLayout(page: Page) {
@@ -141,3 +141,38 @@ for (const viewport of viewports) {
     }
   });
 }
+
+test('mobile sidebar slides from the correct edge in both languages', async ({ page }) => {
+  for (const [index, language] of ['en', 'ar'].entries()) {
+    const testPage = index === 0 ? page : await page.context().newPage();
+    await testPage.setViewportSize({ width: 390, height: 844 });
+    await seedDemoSession(testPage, language);
+    await testPage.goto('/');
+    await testPage.getByTestId('button-mobile-menu').click();
+    await expect(testPage.locator('.smart-sidebar')).toBeVisible();
+    await expect(testPage.locator('.smart-sidebar-scrim')).toHaveClass(/is-open/);
+    await testPage.waitForTimeout(400);
+
+    const openBox = await testPage.locator('.smart-sidebar').evaluate(element => {
+      const box = element.getBoundingClientRect();
+      return { left: box.left, right: box.right };
+    });
+    expect(openBox.left).toBeGreaterThanOrEqual(0);
+    expect(openBox.right).toBeLessThanOrEqual(390);
+    expect(await testPage.locator('html').getAttribute('dir')).toBe(language === 'ar' ? 'rtl' : 'ltr');
+
+    await testPage.locator('.smart-sidebar-scrim').click({ position: { x: 5, y: Math.floor(844 / 2) } });
+    await expect(testPage.locator('.smart-sidebar-scrim')).not.toHaveClass(/is-open/);
+    await testPage.waitForTimeout(400);
+    const closedBox = await testPage.locator('.smart-sidebar').evaluate(element => {
+      const box = element.getBoundingClientRect();
+      return { left: box.left, right: box.right };
+    });
+    if (language === 'ar') {
+      expect(closedBox.left).toBeGreaterThanOrEqual(390);
+    } else {
+      expect(closedBox.right).toBeLessThanOrEqual(0);
+    }
+    if (index > 0) await testPage.close();
+  }
+});

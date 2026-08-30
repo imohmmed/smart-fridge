@@ -8427,3 +8427,242 @@ html[dir="rtl"] .sidebar-launcher {
     transform: translate3d(0, 0, 0) !important;
   }
 }
+
+/* Keep the sidebar shopping count anchored to its cart icon only. */
+.smart-sidebar__shopping-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  overflow: visible;
+}
+
+.smart-sidebar__shopping-icon .smart-sidebar__icon {
+  width: 24px;
+  height: 24px;
+}
+
+.smart-sidebar__shopping-icon .smart-sidebar__count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  z-index: 10;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  color: #ffffff !important;
+  background: #2e7d32 !important;
+  box-sizing: border-box;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: 0 2px 5px rgba(24, 68, 32, .2);
+}
+
+.app-shell.sidebar-collapsed .smart-sidebar__shopping-icon .smart-sidebar__count {
+  top: -4px;
+  right: -4px;
+  z-index: 10;
+  display: flex !important;
+  width: 22px;
+  min-width: 22px;
+  max-width: 22px;
+  padding: 0;
+  opacity: 1;
+  transform: none;
+  pointer-events: none;
+}
+
+/* Account shortcut, organized notifications, and stable mobile drawer motion. */
+.dashboard-profile {
+  padding: 4px 6px;
+  margin: -4px -6px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
+}
+
+.dashboard-profile:hover {
+  border-color: rgba(74, 124, 89, .16);
+  background: rgba(127, 166, 111, .1);
+  transform: translateY(-1px);
+}
+
+.dashboard-profile:focus-visible {
+  outline: 3px solid hsl(var(--accent) / .48);
+  outline-offset: 2px;
+}
+
+.settings-profile-form {
+  margin: 0 0 22px;
+  padding: 18px;
+  border: 1px solid hsl(var(--border));
+  border-radius: 16px;
+  background: hsl(var(--muted) / .42);
+}
+
+.settings-profile-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 15px;
+}
+
+.settings-profile-heading h3 {
+  margin: 0;
+  color: hsl(var(--foreground));
+  font-size: 17px;
+}
+
+.settings-profile-heading p {
+  margin: 4px 0 0;
+  color: hsl(var(--muted-foreground));
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.settings-profile-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.settings-profile-fields .field {
+  min-width: 0;
+  margin: 0;
+}
+
+.settings-profile-fields .field.full {
+  grid-column: 1 / -1;
+}
+
+.settings-profile-fields input {
+  width: 100%;
+  min-width: 0;
+}
+
+.settings-profile-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 15px;
+}
+
+.settings-profile-actions > span {
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.settings-profile-actions .primary-btn {
+  flex: 0 0 auto;
+  min-height: 38px;
+  padding: 8px 13px;
+  font-size: 11px;
+}
+
+.notification-head-copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.notification-head-copy > span {
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+}
+
+.notification-list {
+  max-height: min(420px, calc(100dvh - 180px));
+  overflow-y: auto;
+  padding-inline-end: 2px;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.notification-list .notification-item:first-child {
+  margin-top: 6px;
+}
+
+@media (max-width: 640px) {
+  .settings-profile-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .settings-profile-fields .field.full {
+    grid-column: auto;
+  }
+
+  .settings-profile-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 767px) {
+  .smart-sidebar {
+    top: 12px !important;
+    right: auto !important;
+    bottom: 12px !important;
+    left: auto !important;
+    width: min(286px, calc(100vw - 24px)) !important;
+    height: calc(100dvh - 24px) !important;
+    max-height: none !important;
+    will-change: transform;
+    transition: transform .32s cubic-bezier(.22, .61, .36, 1), opacity .2s ease, visibility 0s linear .32s !important;
+  }
+
+  html[dir="ltr"] .smart-sidebar {
+    left: 12px !important;
+    right: auto !important;
+    transform: translate3d(calc(-100% - 32px), 0, 0) !important;
+  }
+
+  html[dir="rtl"] .smart-sidebar {
+    right: 12px !important;
+    left: auto !important;
+    transform: translate3d(calc(100% + 32px), 0, 0) !important;
+  }
+
+  .app-shell.sidebar-open .smart-sidebar,
+  html[dir="ltr"] .app-shell.sidebar-open .smart-sidebar,
+  html[dir="rtl"] .app-shell.sidebar-open .smart-sidebar {
+    transform: translate3d(0, 0, 0) !important;
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0s !important;
+  }
+
+  .smart-sidebar-scrim {
+    transition: opacity .24s ease, visibility 0s linear .24s !important;
+  }
+
+  .smart-sidebar-scrim.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-profile,
+  .smart-sidebar,
+  .smart-sidebar-scrim {
+    transition-duration: .01ms !important;
+    transition-delay: 0ms !important;
+  }
+}

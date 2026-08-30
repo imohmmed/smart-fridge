@@ -26,3 +26,9 @@ The sidebar reference pattern is best adapted as a warm, card-like rail with CSS
 **Why:** This preserves the reference interaction without replacing the existing navigation behavior or adding a language control outside Settings.
 
 **How to apply:** Keep the sidebar's navigation markup semantic and let CSS own width, label, tooltip, and scrim transitions; keep route selection, Escape, overlay clicks, and mobile link closing in React.
+
+For the mobile drawer, define separate final transforms for `html[dir="ltr"]` and `html[dir="rtl"]`; the closed drawer must travel beyond the viewport edge on both sides.
+
+**Why:** A single negative translate value makes the Arabic drawer animate in from the wrong side, while a small offset can leave part of the hidden drawer interactive or visible.
+
+**How to apply:** Keep direction-specific drawer positioning and transforms in the final CSS override block, and test both the open and fully closed bounding boxes.

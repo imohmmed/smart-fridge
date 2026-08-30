@@ -30,6 +30,7 @@ type FridgeItem = {
 };
 type ShoppingItem = { id: string; name: string; quantity: string; done: boolean };
 type User = { id: string; name: string; email: string; password: string; gender?: 'female' | 'male' };
+type UserProfileUpdate = Partial<Pick<User, 'name' | 'email' | 'password'>>;
 type UserData = {
   items: FridgeItem[]; shopping: ShoppingItem[]; note: string; water: number;
   calorieGoal: number; favorites: string[]; reminders: boolean; notifications: boolean; darkMode: boolean;
@@ -148,6 +149,14 @@ const queryClient = new QueryClient();
 const USERS_KEY = 'smart_fridge_users';
 const SESSION_KEY = 'smart_fridge_session';
 const DATA_KEY = 'smart_fridge_data';
+const readStoredUsers = (): User[] => {
+  try {
+    const stored = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+    return Array.isArray(stored) ? stored : [];
+  } catch {
+    return [];
+  }
+};
 
 const defaultItems: FridgeItem[] = [
   { id: 'milk', name: 'حليب طازج', quantity: 1, unit: 'علبة', category: 'ألبان', expiry: '2025-05-28', calories: 122, art: 'milk' },
@@ -554,7 +563,7 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
             <button className="smart-sidebar__toggle" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-sidebar-toggle">{sidebarOpen ? <X size={18} /> : <Menu size={18} />}</button>
           </div>
           <nav className="smart-sidebar__nav" aria-label={text(language, 'التنقل الرئيسي', 'Main navigation')}>
-             {navItems.map(item => { const Icon = item.icon; const label = text(language, item.ar, item.en); return <Link key={item.href} href={item.href} onClick={closeSidebar} aria-label={label} data-tooltip={label} className={`smart-sidebar__link ${location === item.href ? 'active' : ''}`} data-testid={`link-nav-${item.ar}`}><span className="smart-sidebar__icon"><Icon size={18} aria-hidden="true" /></span><span className="smart-sidebar__label">{label}</span>{item.href === '/shopping' && <b className="smart-sidebar__count">{shoppingCount}</b>}</Link>; })}
+             {navItems.map(item => { const Icon = item.icon; const label = text(language, item.ar, item.en); return <Link key={item.href} href={item.href} onClick={closeSidebar} aria-label={label} data-tooltip={label} className={`smart-sidebar__link ${location === item.href ? 'active' : ''}`} data-testid={`link-nav-${item.ar}`}>{item.href === '/shopping' ? <span className="smart-sidebar__shopping-icon"><span className="smart-sidebar__icon"><Icon size={18} aria-hidden="true" /></span><b className="smart-sidebar__count" aria-hidden="true">{shoppingCount}</b></span> : <span className="smart-sidebar__icon"><Icon size={18} aria-hidden="true" /></span>}<span className="smart-sidebar__label">{label}</span></Link>; })}
           </nav>
           <div className="smart-sidebar__footer">
               <Link href="/settings" onClick={closeSidebar} aria-label={text(language, 'الإعدادات', 'Settings')} data-tooltip={text(language, 'الإعدادات', 'Settings')} className={`smart-sidebar__link ${location === '/settings' ? 'active' : ''}`} data-testid="link-nav-settings"><span className="smart-sidebar__icon"><Settings size={18} aria-hidden="true" /></span><span className="smart-sidebar__label">{text(language, 'الإعدادات', 'Settings')}</span></Link>
@@ -866,14 +875,14 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
            <button className="topbar-bell icon-btn" aria-label={`${text(language, 'التنبيهات', 'Notifications')}${unreadCount ? `، ${toWesternNums(unreadCount)} ${text(language, 'جديدة', 'new')}` : ''}`} aria-expanded={notificationsOpen} onClick={() => setNotificationsOpen(value => !value)} data-testid="button-notifications"><Bell size={20} /></button>
            {unreadCount > 0 && <b className="notification-count">{toWesternNums(unreadCount)}</b>}
            {notificationsOpen && <div className="notification-dropdown" role="region" aria-label={text(language, 'قائمة التنبيهات', 'Notifications list')}>
-             <div className="notification-head"><strong>{text(language, 'التنبيهات', 'Notifications')}</strong>{notifications.length > 0 && <button className="link-btn" onClick={markAllRead}>{text(language, 'تعليم الكل كمقروء', 'Mark all as read')}</button>}</div>
-              {notifications.length ? notifications.map(item => <button type="button" className={`notification-item notification-${item.type} ${readIds.includes(item.id) ? 'is-read' : ''}`} key={item.id} onClick={() => markRead(item.id)} aria-label={`${item.title}: ${item.message}`}><span className="notification-icon" aria-hidden="true">{item.icon}</span><span className="notification-copy"><strong>{item.title}</strong><span>{item.message}</span><small>{item.time}</small></span><span className="notification-arrow" aria-hidden="true"><ChevronLeft size={14} /></span></button>) : <div className="notification-empty">{text(language, 'لا توجد إشعارات جديدة 🎉', 'No new notifications 🎉')}</div>}
+              <div className="notification-head"><div className="notification-head-copy"><strong>{text(language, 'التنبيهات', 'Notifications')}</strong><span>{unreadCount ? `${toWesternNums(unreadCount)} ${text(language, 'جديدة', 'new')}` : text(language, 'كل التنبيهات مقروءة', 'All caught up')}</span></div>{unreadCount > 0 && <button className="link-btn" onClick={markAllRead}>{text(language, 'تعليم الكل كمقروء', 'Mark all as read')}</button>}</div>
+              <div className="notification-list">{notifications.length ? notifications.map(item => <button type="button" className={`notification-item notification-${item.type} ${readIds.includes(item.id) ? 'is-read' : ''}`} key={item.id} onClick={() => markRead(item.id)} aria-label={`${item.title}: ${item.message}`}><span className="notification-icon" aria-hidden="true">{item.icon}</span><span className="notification-copy"><strong>{item.title}</strong><span>{item.message}</span><small>{item.time}</small></span><span className="notification-arrow" aria-hidden="true"><ChevronLeft size={14} /></span></button>) : <div className="notification-empty">{text(language, 'لا توجد إشعارات جديدة 🎉', 'No new notifications 🎉')}</div>}</div>
            </div>}
          </div>
-         <div className="dashboard-profile" aria-label={text(language, 'تفاصيل الملف الشخصي', 'Profile details')}>
+          <Link href="/settings" className="dashboard-profile" aria-label={text(language, 'فتح إعدادات الملف الشخصي', 'Open profile settings')} data-testid="link-dashboard-profile">
            <div className="avatar">{initials(userName)}</div>
            <div><strong>{userName}</strong><small>{text(language, 'مساحتي الشخصية', 'My space')}</small></div>
-         </div>
+          </Link>
        </div>
     </div>
         <div className="reference-heading"><h2>{text(language, 'محتويات ثلاجتك', 'Your fridge contents')}</h2></div>
@@ -954,7 +963,7 @@ function FavoritesPage({ data, setData }: { data: UserData; setData: Dispatch<Se
   return <main className="app-main"><PageHeading title="المفضلة" description="الوصفات التي نالت إعجابك، قريبة دائماً." /><div className="card card-pad">{favorites.length ? <div className="recipe-grid">{favorites.map(recipe => <RecipeCard key={recipe.id} recipe={recipe} favorite onFavorite={() => setData(prev => ({ ...prev, favorites: prev.favorites.filter(id => id !== recipe.id) }))} />)}</div> : <div className="empty-state"><Heart size={35} /><strong>لم تختر مفضلات بعد</strong><span>اضغط على القلب بجانب أي وصفة لحفظها هنا.</span><Link href="/recipes" className="primary-btn" style={{ marginTop: 18 }} data-testid="link-empty-favorites">تصفح الوصفات</Link></div>}</div></main>;
 }
 
-function SettingsPage({ user, data, setData, setNotice, onLogout }: { user: User; data: UserData; setData: Dispatch<SetStateAction<UserData>>; setNotice: (v: string) => void; onLogout: () => void }) {
+function SettingsPage({ user, data, setData, setNotice, onLogout, onUserUpdate }: { user: User; data: UserData; setData: Dispatch<SetStateAction<UserData>>; setNotice: (v: string) => void; onLogout: () => void; onUserUpdate: (updates: UserProfileUpdate) => void }) {
   const { language } = useLanguage();
   const sections = [
     ['عام', 'General'],
@@ -964,12 +973,40 @@ function SettingsPage({ user, data, setData, setNotice, onLogout }: { user: User
   ] as const;
   const [section, setSection] = useState<string>(sections[0][0]);
   const [goal, setGoal] = useState(String(data.calorieGoal));
+  const [profileName, setProfileName] = useState(user.name);
+  const [profileEmail, setProfileEmail] = useState(user.email);
+  const [profilePassword, setProfilePassword] = useState('');
+  const [profileError, setProfileError] = useState('');
   const saveGoal = () => {
     const number = Number(goal);
     if (number > 500) {
       setData(prev => ({ ...prev, calorieGoal: number }));
       flash(setNotice, text(language, 'تم تحديث هدف السعرات', 'Calorie goal updated'));
     }
+  };
+  const saveProfile = (event: FormEvent) => {
+    event.preventDefault();
+    const name = profileName.trim();
+    const email = profileEmail.trim().toLowerCase();
+    if (!name || !email) {
+      setProfileError(text(language, 'اكتب الاسم والبريد الإلكتروني أولاً.', 'Enter your name and email first.'));
+      return;
+    }
+    if (profilePassword && profilePassword.length < 4) {
+      setProfileError(text(language, 'كلمة السر يجب أن تكون 4 أحرف على الأقل.', 'Password must be at least 4 characters.'));
+      return;
+    }
+    const otherUserUsesEmail = readStoredUsers().some(candidate => candidate.id !== user.id && candidate.email === email);
+    if (otherUserUsesEmail) {
+      setProfileError(text(language, 'هذا البريد مستخدم لحساب آخر.', 'This email is already used by another account.'));
+      return;
+    }
+    onUserUpdate({ name, email, ...(profilePassword ? { password: profilePassword } : {}) });
+    setProfileName(name);
+    setProfileEmail(email);
+    setProfilePassword('');
+    setProfileError('');
+    flash(setNotice, text(language, 'تم حفظ بيانات الحساب', 'Account details saved'));
   };
   const sectionLabel = (item: typeof sections[number]) => text(language, item[0], item[1]);
   return <main className="app-main">
@@ -979,7 +1016,16 @@ function SettingsPage({ user, data, setData, setNotice, onLogout }: { user: User
       <div className="card card-pad">
         {section === 'عام' && <><div className="card-title"><div><h3>{text(language, 'تفضيلاتك', 'Your preferences')}</h3><p>{text(language, 'بعض اللمسات الصغيرة لمساحتك', 'A few small touches for your space')}</p></div><Settings size={20} color="hsl(var(--primary))" /></div>
            <div className="setting-line"><div><strong>{text(language, 'لغة التطبيق', 'App language')}</strong><p>{text(language, 'اختر اللغة المناسبة لك في كل الصفحات', 'Choose the language used throughout the app')}</p></div><LanguageSwitcher /></div>
-          <div className="setting-line"><div><strong>{text(language, 'الاسم', 'Name')}</strong><p>{user.name}</p></div><button className="secondary-btn" onClick={() => flash(setNotice, text(language, 'يمكن تعديل الاسم من صفحة الحساب قريباً', 'You can edit your name from the account page soon'))} data-testid="button-edit-name"><Pencil size={14} />{text(language, 'تعديل', 'Edit')}</button></div>
+           <form className="settings-profile-form" onSubmit={saveProfile}>
+             <div className="settings-profile-heading"><div><h3>{text(language, 'بيانات الحساب', 'Account details')}</h3><p>{text(language, 'حدّث الاسم والبريد الإلكتروني وكلمة السر من مكان واحد.', 'Update your name, email, and password in one place.')}</p></div><UserRound size={20} color="hsl(var(--primary))" /></div>
+             <div className="settings-profile-fields">
+               <div className="field"><label htmlFor="profile-name">{text(language, 'الاسم', 'Name')}</label><input id="profile-name" value={profileName} onChange={event => setProfileName(event.target.value)} autoComplete="name" data-testid="input-profile-name" /></div>
+               <div className="field"><label htmlFor="profile-email">{text(language, 'البريد الإلكتروني', 'Email')}</label><input id="profile-email" type="email" value={profileEmail} onChange={event => setProfileEmail(event.target.value)} autoComplete="email" dir="ltr" data-testid="input-profile-email" /></div>
+               <div className="field full"><label htmlFor="profile-password">{text(language, 'كلمة السر الجديدة', 'New password')}</label><input id="profile-password" type="password" value={profilePassword} onChange={event => setProfilePassword(event.target.value)} autoComplete="new-password" dir="ltr" placeholder="••••••••" aria-describedby={profileError ? 'profile-error' : undefined} data-testid="input-profile-password" /></div>
+             </div>
+             {profileError && <p id="profile-error" className="auth-error" role="alert" data-testid="status-profile-error">{profileError}</p>}
+             <div className="settings-profile-actions"><span>{text(language, 'اترك كلمة السر فارغة إذا لم ترد تغييرها.', 'Leave the password empty to keep it unchanged.')}</span><button className="primary-btn" type="submit" data-testid="button-save-profile"><Check size={15} />{text(language, 'حفظ بيانات الحساب', 'Save account details')}</button></div>
+           </form>
           <div className="setting-line"><div><strong>{text(language, 'هدف السعرات اليومي', 'Daily calorie goal')}</strong><p>{text(language, 'الرقم الذي يساعدك على توازن يومك', 'The number that helps balance your day')}</p></div><div className="setting-control"><input className="search-box" style={{ width: 100, minWidth: 100, height: 38 }} type="number" value={goal} onChange={e => setGoal(e.target.value)} aria-label={text(language, 'هدف السعرات اليومي', 'Daily calorie goal')} data-testid="input-calorie-goal" /><button className="primary-btn" style={{ padding: '7px 12px' }} onClick={saveGoal} data-testid="button-save-goal">{text(language, 'حفظ', 'Save')}</button></div></div>
           <div className="setting-line"><div><strong>{text(language, 'وحدات القياس', 'Measurement units')}</strong><p>{text(language, 'السعرات والكميات تظهر بالعربية', 'Calories and quantities are shown in Arabic')}</p></div><span className="status-pill">{text(language, 'عربي', 'Arabic')}</span></div>
         </>}
@@ -1000,24 +1046,31 @@ function SettingsPage({ user, data, setData, setNotice, onLogout }: { user: User
   </main>;
 }
 
-function RoutedPages({ user, data, setData, onLogout, setNotice }: { user: User; data: UserData; setData: Dispatch<SetStateAction<UserData>>; onLogout: () => void; setNotice: (v: string) => void }) {
+function RoutedPages({ user, data, setData, onLogout, setNotice, onUserUpdate }: { user: User; data: UserData; setData: Dispatch<SetStateAction<UserData>>; onLogout: () => void; setNotice: (v: string) => void; onUserUpdate: (updates: UserProfileUpdate) => void }) {
   const { language } = useLanguage();
   const [addOpen, setAddOpen] = useState(false);
-  return <AppShell user={user} shoppingCount={data.shopping.filter(item => !item.done).length} onLogout={onLogout}><Switch><Route path="/"><Dashboard userName={user.name} data={data} setData={setData} onAdd={() => setAddOpen(true)} setNotice={setNotice} /></Route><Route path="/meals"><MealsPage data={data} setData={setData} setNotice={setNotice} /></Route><Route path="/daily-analysis"><DailyAnalysis data={data} /></Route><Route path="/shopping"><ShoppingPage data={data} setData={setData} setNotice={setNotice} onAdd={() => setAddOpen(true)} /></Route><Route path="/recipes"><RecipesPage data={data} setData={setData} /></Route><Route path="/favorites"><FavoritesPage data={data} setData={setData} /></Route><Route path="/settings"><SettingsPage user={user} data={data} setData={setData} setNotice={setNotice} onLogout={onLogout} /></Route><Route component={NotFound} /></Switch>{addOpen && <AddFoodModal onClose={() => setAddOpen(false)} onAdd={item => { setData(prev => ({ ...prev, items: [...prev.items, { ...item, id: `food-${Date.now()}` }] })); flash(setNotice, text(language, 'أضيف الطعام إلى ثلاجتك', 'Food added to your fridge')); }} />}</AppShell>;
+  return <AppShell user={user} shoppingCount={data.shopping.filter(item => !item.done).length} onLogout={onLogout}><Switch><Route path="/"><Dashboard userName={user.name} data={data} setData={setData} onAdd={() => setAddOpen(true)} setNotice={setNotice} /></Route><Route path="/meals"><MealsPage data={data} setData={setData} setNotice={setNotice} /></Route><Route path="/daily-analysis"><DailyAnalysis data={data} /></Route><Route path="/shopping"><ShoppingPage data={data} setData={setData} setNotice={setNotice} onAdd={() => setAddOpen(true)} /></Route><Route path="/recipes"><RecipesPage data={data} setData={setData} /></Route><Route path="/favorites"><FavoritesPage data={data} setData={setData} /></Route><Route path="/settings"><SettingsPage user={user} data={data} setData={setData} setNotice={setNotice} onLogout={onLogout} onUserUpdate={onUserUpdate} /></Route><Route component={NotFound} /></Switch>{addOpen && <AddFoodModal onClose={() => setAddOpen(false)} onAdd={item => { setData(prev => ({ ...prev, items: [...prev.items, { ...item, id: `food-${Date.now()}` }] })); flash(setNotice, text(language, 'أضيف الطعام إلى ثلاجتك', 'Food added to your fridge')); }} />}</AppShell>;
 }
 
 function App() {
   const [session, setSession] = useState<string | null>(() => localStorage.getItem(SESSION_KEY));
+  const [users, setUsers] = useState<User[]>(readStoredUsers);
   const [notice, setNotice] = useState('');
   const [data, setData] = useState<UserData>(() => loadData(session || ''));
-  const users: User[] = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
   const user = users.find(item => item.id === session);
   useEffect(() => { if (session && user) { setData(loadData(session)); } }, [session]);
   useEffect(() => { if (session) saveData(session, data); }, [data, session]);
-  const login = (nextUser: User) => { localStorage.setItem(SESSION_KEY, nextUser.id); setSession(nextUser.id); setData(loadData(nextUser.id)); };
+  const login = (nextUser: User) => { setUsers(readStoredUsers()); localStorage.setItem(SESSION_KEY, nextUser.id); setSession(nextUser.id); setData(loadData(nextUser.id)); };
+  const updateUser = (updates: UserProfileUpdate) => {
+    setUsers(previous => {
+      const next = previous.map(candidate => candidate.id === session ? { ...candidate, ...updates } : candidate);
+      localStorage.setItem(USERS_KEY, JSON.stringify(next));
+      return next;
+    });
+  };
   const logout = () => { localStorage.removeItem(SESSION_KEY); setSession(null); setNotice(''); };
   if (!session || !user) return <AuthScreen onLogin={login} />;
-  return <div className={data.darkMode ? 'theme-dark' : ''} data-theme={data.darkMode ? 'dark' : undefined}><RoutedPages user={user} data={data} setData={setData} onLogout={logout} setNotice={setNotice} />{notice && <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 60, padding: '12px 17px', borderRadius: 12, background: 'hsl(var(--sidebar))', color: 'hsl(var(--card))', boxShadow: '0 10px 25px hsl(155 22% 17% / .2)', animation: 'modal-in .2s ease-out' }} role="status" data-testid="status-notice"><CheckCircle2 size={16} style={{ verticalAlign: 'middle', marginLeft: 7, color: 'hsl(var(--accent))' }} />{notice}</div>}</div>;
+  return <div className={data.darkMode ? 'theme-dark' : ''} data-theme={data.darkMode ? 'dark' : undefined}><RoutedPages user={user} data={data} setData={setData} onLogout={logout} setNotice={setNotice} onUserUpdate={updateUser} />{notice && <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 60, padding: '12px 17px', borderRadius: 12, background: 'hsl(var(--sidebar))', color: 'hsl(var(--card))', boxShadow: '0 10px 25px hsl(155 22% 17% / .2)', animation: 'modal-in .2s ease-out' }} role="status" data-testid="status-notice"><CheckCircle2 size={16} style={{ verticalAlign: 'middle', marginLeft: 7, color: 'hsl(var(--accent))' }} />{notice}</div>}</div>;
 }
 
 export default function AppWithProviders() {
