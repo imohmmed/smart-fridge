@@ -7860,6 +7860,42 @@ body {
   transform: scale(.82);
 }
 
+.shopping-heading {
+  align-items: center;
+  gap: 7px !important;
+}
+
+.shopping-heading-icon {
+  position: relative;
+  display: inline-grid !important;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: hsl(var(--primary));
+}
+
+.shopping-count-badge {
+  position: absolute;
+  top: -7px;
+  inset-inline-end: -7px;
+  display: grid;
+  place-items: center;
+  min-width: 19px !important;
+  height: 19px;
+  padding: 0 4px;
+  border: 2px solid hsl(var(--card));
+  border-radius: 50%;
+  color: #fff !important;
+  background: #2e7d32 !important;
+  box-shadow: 0 2px 5px rgba(24, 68, 32, .18);
+  font-size: 9px !important;
+  line-height: 1;
+}
+
+.shopping-heading-label {
+  min-width: 0;
+}
+
 .food-details-backdrop {
   z-index: 70;
 }

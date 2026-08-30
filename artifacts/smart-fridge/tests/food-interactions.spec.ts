@@ -133,4 +133,19 @@ test.describe('Smart Fridge food interactions', () => {
     await page.getByTestId('button-sidebar-toggle').click();
     await expect(addFoodButton).toBeVisible();
   });
+
+  test('places the shopping count above its icon on the home page', async ({ page }) => {
+    await seedDemoSession(page);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/');
+
+    const icon = page.locator('.shopping-heading-icon');
+    const countBadge = page.locator('.shopping-count-badge');
+    await expect(icon).toBeVisible();
+    await expect(countBadge).toBeVisible();
+    const iconBox = await icon.boundingBox();
+    const badgeBox = await countBadge.boundingBox();
+    expect((badgeBox?.y ?? 0) + (badgeBox?.height ?? 0)).toBeLessThan((iconBox?.y ?? 0) + (iconBox?.height ?? 0) / 2);
+    await expect(countBadge).toHaveAttribute('aria-label', /items remaining/);
+  });
 });
