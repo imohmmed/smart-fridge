@@ -176,3 +176,45 @@ test('mobile sidebar slides from the correct edge in both languages', async ({ p
     if (index > 0) await testPage.close();
   }
 });
+
+test('keeps sidebar icons and labels adjacent in RTL and LTR', async ({ page }) => {
+  for (const [index, language] of ['en', 'ar'].entries()) {
+    const testPage = index === 0 ? page : await page.context().newPage();
+    await testPage.setViewportSize({ width: 390, height: 844 });
+    await seedDemoSession(testPage, language);
+    await testPage.goto('/');
+    await testPage.getByTestId('button-mobile-menu').click();
+    await testPage.waitForTimeout(350);
+
+    const layout = await testPage.getByTestId('link-nav-ثلاجتي').evaluate(link => {
+      const icon = link.querySelector<HTMLElement>('.smart-sidebar__icon')!.getBoundingClientRect();
+      const label = link.querySelector<HTMLElement>('.smart-sidebar__label')!.getBoundingClientRect();
+      const styles = getComputedStyle(link);
+      return {
+        direction: styles.direction,
+        gap: styles.gap,
+        justifyContent: styles.justifyContent,
+        marginInlineStart: styles.marginInlineStart,
+        marginInlineEnd: styles.marginInlineEnd,
+        iconLeft: icon.left,
+        iconRight: icon.right,
+        labelLeft: label.left,
+        labelRight: label.right,
+      };
+    });
+
+    expect(layout.direction).toBe(language === 'ar' ? 'rtl' : 'ltr');
+    expect(layout.gap).toBe('12px');
+    expect(layout.justifyContent).toBe('flex-start');
+    expect(layout.marginInlineStart).toBe('0px');
+    expect(layout.marginInlineEnd).toBe('0px');
+    if (language === 'ar') {
+      expect(layout.iconLeft - layout.labelRight).toBeCloseTo(12, 0);
+    } else {
+      expect(layout.labelLeft - layout.iconRight).toBeCloseTo(12, 0);
+    }
+
+    await testPage.locator('.smart-sidebar-scrim').click({ position: { x: 5, y: 422 } });
+    if (index > 0) await testPage.close();
+  }
+});

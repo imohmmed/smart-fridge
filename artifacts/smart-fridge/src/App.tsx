@@ -553,7 +553,7 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
     return <SidebarContext.Provider value={{ sidebarOpen, toggleSidebar }}>
       <div className={`app-shell ${sidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'}`}>
       <button className={`smart-sidebar-scrim ${sidebarOpen ? 'is-open' : ''}`} type="button" aria-hidden={!sidebarOpen} tabIndex={sidebarOpen ? 0 : -1} aria-label={text(language, 'إغلاق القائمة', 'Close menu')} onClick={closeSidebar} />
-      <aside className="smart-sidebar" aria-label={text(language, 'القائمة الجانبية', 'Sidebar navigation')}>
+      <aside className="smart-sidebar" dir={language === 'ar' ? 'rtl' : 'ltr'} aria-label={text(language, 'القائمة الجانبية', 'Sidebar navigation')}>
         <div className="smart-sidebar__inner">
           <div className="smart-sidebar__head">
             <div className="smart-sidebar__brand" aria-label={text(language, 'ثلاجتي الذكية', 'Smart Fridge')}>

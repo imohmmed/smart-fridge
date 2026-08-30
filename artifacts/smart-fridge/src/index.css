@@ -3920,15 +3920,15 @@ html[dir="ltr"] .smart-sidebar__profile-copy {
   align-items: center;
   min-width: 0;
   min-height: 46px;
-  gap: 11px;
-  padding: 0 11px;
+  gap: 12px;
+  padding-inline: 11px;
   border: 1px solid transparent;
   border-radius: 14px;
   color: var(--text-secondary);
   background: transparent;
   text-decoration: none;
-  text-align: left;
-  direction: ltr;
+  text-align: start;
+  direction: inherit;
   transition: color .2s ease, background-color .2s ease, border-color .2s ease, transform .2s ease;
 }
 
@@ -4221,10 +4221,11 @@ html[dir="ltr"] .smart-sidebar__profile-copy {
 
 .smart-sidebar__link,
 .smart-sidebar__logout {
-  display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) max-content;
+  display: flex;
   align-items: center;
-  gap: 11px;
+  justify-content: flex-start;
+  gap: 12px;
+  direction: inherit;
 }
 
 .smart-sidebar__link svg,
@@ -6842,8 +6843,10 @@ body,
   width: 100% !important;
   min-width: 0;
   min-height: 46px !important;
-  padding: 0 8px !important;
-  gap: 10px;
+  padding-inline: 8px !important;
+  gap: 12px;
+  justify-content: flex-start;
+  direction: inherit;
   border: 1px solid transparent !important;
   border-radius: 13px !important;
   color: #68756c !important;
@@ -6884,7 +6887,7 @@ body,
 
 .smart-sidebar__label {
   display: block !important;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-width: 0;
   max-width: 180px;
   overflow: hidden;
