@@ -251,3 +251,26 @@ test('keeps the responsive header greeting and profile avatar contained', async 
     }
   }
 });
+
+test('keeps the desktop Arabic header in strict RTL group order', async ({ page }) => {
+  for (const viewport of [{ width: 834, height: 1112 }, { width: 1440, height: 900 }]) {
+    await page.setViewportSize(viewport);
+    await seedDemoSession(page, 'ar');
+    await page.goto('/');
+
+    const groups = await page.locator('.dashboard-topbar').evaluate(header => {
+      const getBox = (selector: string) => {
+        const box = header.querySelector<HTMLElement>(selector)!.getBoundingClientRect();
+        return { left: box.left, right: box.right };
+      };
+      return {
+        start: getBox('.dashboard-header-start'),
+        metrics: getBox('.dashboard-metrics'),
+        actions: getBox('.dashboard-actions'),
+      };
+    });
+
+    expect(groups.start.left).toBeGreaterThan(groups.metrics.right);
+    expect(groups.metrics.left).toBeGreaterThan(groups.actions.right);
+  }
+});

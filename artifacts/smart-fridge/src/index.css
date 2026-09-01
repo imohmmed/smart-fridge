@@ -8874,3 +8874,52 @@ html[dir="ltr"] .dashboard-welcome {
     text-align: left;
   }
 }
+
+/* Desktop keeps the same RTL grouping as the mobile header: navigation and
+   greeting on the right, metrics in the middle, and profile actions on the
+   left. The explicit flex order prevents wider breakpoints from reversing it. */
+@media (min-width: 769px) {
+  .dashboard-topbar {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    gap: 18px;
+    direction: rtl;
+  }
+
+  .dashboard-header-start {
+    display: flex !important;
+    order: 1;
+    flex: 0 1 auto;
+  }
+
+  .dashboard-metrics {
+    order: 2;
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: center;
+  }
+
+  .dashboard-actions {
+    order: 3;
+    flex: 0 0 auto;
+  }
+
+  html[dir="ltr"] .dashboard-topbar {
+    direction: ltr;
+  }
+
+  html[dir="ltr"] .dashboard-header-start {
+    direction: ltr;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1100px) {
+  .dashboard-header-start {
+    display: flex !important;
+  }
+
+  .dashboard-header-context {
+    display: grid !important;
+  }
+}
