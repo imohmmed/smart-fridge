@@ -221,7 +221,7 @@ test.describe('Smart Fridge food interactions', () => {
 
     await page.getByTestId('link-dashboard-profile').click();
     await expect(page).toHaveURL(/\/settings\?section=profile$/);
-    await expect(page.getByRole('heading', { name: 'Profile Information' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Profile' })).toBeVisible();
     await expect(page.getByTestId('input-profile-name')).toHaveValue('Food Test');
     await expect(page.getByTestId('input-profile-email')).toHaveValue('food-interaction@example.test');
     await expect(page.getByTestId('input-profile-password')).toHaveValue('');
@@ -245,6 +245,9 @@ test.describe('Smart Fridge food interactions', () => {
     await page.getByTestId('button-notifications').click();
     await expect(page.locator('.notification-dropdown')).toBeVisible();
     await expect(page.locator('.notification-scrim')).toBeVisible();
+    await expect(page.locator('.notification-dropdown')).toHaveCSS('opacity', '1');
+    const notificationBox = await page.locator('.notification-dropdown').boundingBox();
+    expect(notificationBox?.x).toBeGreaterThanOrEqual(0);
     await expect(page.locator('.notification-dropdown')).toHaveCSS('position', 'fixed');
     await expect(page.locator('.notification-head-copy')).toBeVisible();
     await expect(page.locator('.notification-list')).toBeVisible();

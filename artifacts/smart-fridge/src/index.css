@@ -8696,6 +8696,14 @@ html[dir="rtl"] .sidebar-launcher {
   transition-delay: 0s !important;
 }
 
+.dashboard-main.notifications-open .notification-dropdown {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: translate3d(0, 0, 0) !important;
+  transition: none !important;
+}
+
 html[dir="ltr"] .notification-dropdown {
   right: auto !important;
   left: 12px !important;
@@ -10461,4 +10469,58 @@ html[dir="ltr"] .settings-grid .settings-nav button {
     padding: 7px 11px;
     font-size: 10px;
   }
+}
+
+/* Settings use one clear vertical flow on phone, tablet, and desktop. */
+.settings-grid {
+  grid-template-columns: minmax(0, 1fr) !important;
+  width: min(100%, 760px);
+  margin-inline: auto;
+  gap: 14px;
+}
+
+.settings-nav {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  gap: 3px;
+  padding: 8px;
+}
+
+.settings-nav button {
+  min-height: 42px;
+  padding: 10px 12px;
+  text-align: start;
+}
+
+.settings-grid .setting-line {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 9px;
+  min-height: 0;
+  padding: 14px 0;
+}
+
+.settings-grid .setting-line > .toggle,
+.settings-grid .setting-line > .status-pill,
+.settings-grid .setting-line > .language-switcher,
+.settings-grid .setting-control {
+  justify-self: stretch;
+}
+
+.settings-grid .setting-control {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.settings-profile-fields {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.settings-profile-fields .field.full {
+  grid-column: auto;
+}
+
+.settings-profile-actions {
+  justify-content: flex-start;
 }

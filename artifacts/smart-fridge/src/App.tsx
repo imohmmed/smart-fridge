@@ -1116,16 +1116,16 @@ function FavoritesPage({ data, setData }: { data: UserData; setData: Dispatch<Se
 
 function SettingsPage({ user, data, setData, setNotice, onUserUpdate }: { user: User; data: UserData; setData: Dispatch<SetStateAction<UserData>>; setNotice: (v: string) => void; onUserUpdate: (updates: UserProfileUpdate) => void }) {
   const { language } = useLanguage();
-   const sections = [
-     ['عام', 'General'],
-     ['معلومات الملف الشخصي', 'Profile Information'],
-    ['المظهر', 'Appearance'],
-    ['التنبيهات', 'Notifications'],
-    ['الخصوصية', 'Privacy'],
-  ] as const;
+    const sections = [
+      { key: 'عام', ar: 'عام', en: 'General' },
+      { key: 'معلومات الملف الشخصي', ar: 'الحساب', en: 'Profile' },
+      { key: 'المظهر', ar: 'المظهر', en: 'Theme' },
+      { key: 'التنبيهات', ar: 'التنبيهات', en: 'Alerts' },
+      { key: 'الخصوصية', ar: 'الخصوصية', en: 'Privacy' },
+    ] as const;
    const [location] = useLocation();
    const requestedSection = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : location.split('?')[1] || '').get('section');
-   const [section, setSection] = useState<string>(requestedSection === 'profile' ? 'معلومات الملف الشخصي' : sections[0][0]);
+   const [section, setSection] = useState<string>(requestedSection === 'profile' ? 'معلومات الملف الشخصي' : sections[0].key);
   const [goal, setGoal] = useState(String(data.calorieGoal));
   const [profileName, setProfileName] = useState(user.name);
   const [profileEmail, setProfileEmail] = useState(user.email);
@@ -1162,38 +1162,38 @@ function SettingsPage({ user, data, setData, setNotice, onUserUpdate }: { user: 
     setProfileError('');
     flash(setNotice, text(language, 'تم حفظ بيانات الحساب', 'Account details saved'));
   };
-  const sectionLabel = (item: typeof sections[number]) => text(language, item[0], item[1]);
+   const sectionLabel = (item: typeof sections[number]) => language === 'ar' ? item.ar : item.en;
   return <main className="app-main">
     <PageHeading title={text(language, 'الإعدادات', 'Settings')} hideMenu />
     <div className="settings-grid">
-      <div className="card settings-nav">{sections.map(item => <button key={item[0]} className={section === item[0] ? 'active' : ''} onClick={() => setSection(item[0])} data-testid={`button-settings-${item[0]}`}>{sectionLabel(item)}</button>)}</div>
+       <div className="card settings-nav">{sections.map(item => <button key={item.key} className={section === item.key ? 'active' : ''} onClick={() => setSection(item.key)} data-testid={`button-settings-${item.key}`}>{sectionLabel(item)}</button>)}</div>
       <div className="card card-pad">
-            {section === 'عام' && <><div className="card-title"><h3>{text(language, 'تفضيلاتك', 'Your preferences')}</h3><Settings size={20} color="hsl(var(--primary))" /></div>
+            {section === 'عام' && <><div className="card-title"><h3>{text(language, 'عام', 'General')}</h3><Settings size={20} color="hsl(var(--primary))" /></div>
             <div className="setting-line"><strong>{text(language, 'لغة التطبيق', 'App language')}</strong><LanguageSwitcher /></div>
            <div className="setting-line"><strong>{text(language, 'هدف السعرات اليومي', 'Daily calorie goal')}</strong><div className="setting-control"><input className="search-box" style={{ width: 100, minWidth: 100, height: 38 }} type="number" value={goal} onChange={e => setGoal(e.target.value)} aria-label={text(language, 'هدف السعرات اليومي', 'Daily calorie goal')} data-testid="input-calorie-goal" /><button className="primary-btn" style={{ padding: '7px 12px' }} onClick={saveGoal} data-testid="button-save-goal">{text(language, 'حفظ', 'Save')}</button></div></div>
            <div className="setting-line"><strong>{text(language, 'وحدات القياس', 'Measurement units')}</strong><span className="status-pill">{text(language, 'عربي', 'Arabic')}</span></div>
         </>}
-          {section === 'معلومات الملف الشخصي' && <><div className="card-title"><h3>{text(language, 'معلومات الملف الشخصي', 'Profile Information')}</h3><UserRound size={20} color="hsl(var(--primary))" /></div>
+           {section === 'معلومات الملف الشخصي' && <><div className="card-title"><h3>{text(language, 'الحساب', 'Profile')}</h3><UserRound size={20} color="hsl(var(--primary))" /></div>
             <form className="settings-profile-form" onSubmit={saveProfile}>
                <div className="settings-profile-heading"><h3>{text(language, 'بيانات الحساب', 'Account details')}</h3><ProfileAvatar gender={user.gender} /></div>
               <div className="settings-profile-fields">
                 <div className="field"><label htmlFor="profile-name">{text(language, 'الاسم', 'Name')}</label><input id="profile-name" value={profileName} onChange={event => setProfileName(event.target.value)} autoComplete="name" data-testid="input-profile-name" /></div>
                 <div className="field"><label htmlFor="profile-email">{text(language, 'البريد الإلكتروني', 'Email')}</label><input id="profile-email" type="email" value={profileEmail} onChange={event => setProfileEmail(event.target.value)} autoComplete="email" dir="ltr" data-testid="input-profile-email" /></div>
-                <div className="field full"><label htmlFor="profile-password">{text(language, 'كلمة السر الجديدة', 'New password')}</label><input id="profile-password" type="password" value={profilePassword} onChange={event => setProfilePassword(event.target.value)} autoComplete="new-password" dir="ltr" placeholder="••••••••" aria-describedby={profileError ? 'profile-error' : undefined} data-testid="input-profile-password" /></div>
+                 <div className="field full"><label htmlFor="profile-password">{text(language, 'تغيير كلمة السر', 'Change password')}</label><input id="profile-password" type="password" value={profilePassword} onChange={event => setProfilePassword(event.target.value)} autoComplete="new-password" dir="ltr" placeholder="••••••••" aria-describedby={profileError ? 'profile-error' : undefined} data-testid="input-profile-password" /></div>
               </div>
               {profileError && <p id="profile-error" className="auth-error" role="alert" data-testid="status-profile-error">{profileError}</p>}
                <div className="settings-profile-actions"><button className="primary-btn" type="submit" data-testid="button-save-profile"><Check size={15} />{text(language, 'حفظ بيانات الحساب', 'Save account details')}</button></div>
             </form>
          </>}
-         {section === 'المظهر' && <><div className="card-title"><h3>{text(language, 'مظهر ثلاجتي', 'Smart Fridge appearance')}</h3><Sparkles size={20} color="hsl(var(--accent-foreground))" /></div>
+          {section === 'المظهر' && <><div className="card-title"><h3>{text(language, 'المظهر', 'Theme')}</h3><Sparkles size={20} color="hsl(var(--accent-foreground))" /></div>
            <div className="setting-line"><strong>{text(language, 'الوضع الليلي', 'Dark mode')}</strong><button className={`toggle ${data.darkMode ? 'on' : ''}`} onClick={() => setData(prev => ({ ...prev, darkMode: !prev.darkMode }))} aria-label={text(language, 'تبديل الوضع الليلي', 'Toggle dark mode')} aria-pressed={data.darkMode} data-testid="toggle-dark-mode"><i /></button></div>
           <div className={`theme-preview ${data.darkMode ? 'night' : ''}`}><span className="preview-light" /><strong>{data.darkMode ? text(language, 'إضاءة ليلية هادئة', 'Calm night lighting') : text(language, 'إضاءة نهارية مشرقة', 'Bright daytime lighting')}</strong></div>
         </>}
-         {section === 'التنبيهات' && <><div className="card-title"><h3>{text(language, 'تنبيهات لطيفة', 'Gentle reminders')}</h3><Bell size={20} color="hsl(var(--primary))" /></div>
+          {section === 'التنبيهات' && <><div className="card-title"><h3>{text(language, 'التنبيهات', 'Alerts')}</h3><Bell size={20} color="hsl(var(--primary))" /></div>
            <div className="setting-line"><strong>{text(language, 'تذكير انتهاء الصلاحية', 'Expiry reminder')}</strong><button className={`toggle ${data.reminders ? 'on' : ''}`} onClick={() => setData(prev => ({ ...prev, reminders: !prev.reminders }))} aria-label={text(language, 'تبديل تذكير انتهاء الصلاحية', 'Toggle expiry reminders')} aria-pressed={data.reminders} data-testid="toggle-reminders"><i /></button></div>
            <div className="setting-line"><strong>{text(language, 'ملخص نهاية اليوم', 'End-of-day summary')}</strong><button className={`toggle ${data.notifications ? 'on' : ''}`} onClick={() => setData(prev => ({ ...prev, notifications: !prev.notifications }))} aria-label={text(language, 'تبديل ملخص نهاية اليوم', 'Toggle end-of-day summary')} aria-pressed={data.notifications} data-testid="toggle-notifications"><i /></button></div>
         </>}
-         {section === 'الخصوصية' && <><div className="card-title"><h3>{text(language, 'خصوصيتك أولاً', 'Privacy first')}</h3><CircleHelp size={20} color="hsl(var(--primary))" /></div>
+          {section === 'الخصوصية' && <><div className="card-title"><h3>{text(language, 'الخصوصية', 'Privacy')}</h3><CircleHelp size={20} color="hsl(var(--primary))" /></div>
            <div className="empty-state" style={{ padding: 30 }}><CheckCircle2 size={32} /><strong>{text(language, 'بياناتك محلية تماماً', 'Your data is fully local')}</strong></div>
         </>}
       </div>

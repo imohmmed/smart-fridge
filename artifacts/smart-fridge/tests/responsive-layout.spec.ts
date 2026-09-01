@@ -346,6 +346,22 @@ test('keeps settings options free of secondary copy', async ({ page }) => {
   }
 });
 
+test('keeps settings vertical with simple labels', async ({ page }) => {
+  for (const [language, labels] of [
+    ['ar', ['عام', 'الحساب', 'المظهر', 'التنبيهات', 'الخصوصية']],
+    ['en', ['General', 'Profile', 'Theme', 'Alerts', 'Privacy']],
+  ] as const) {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await seedDemoSession(page, language);
+    await page.goto('/settings');
+
+    const gridColumns = await page.locator('.settings-grid').evaluate(element => getComputedStyle(element).gridTemplateColumns.trim().split(/\s+/).length);
+    expect(gridColumns).toBe(1);
+    await expect(page.locator('.settings-nav')).toHaveCSS('flex-direction', 'column');
+    await expect(page.locator('.settings-nav button')).toHaveText([...labels]);
+  }
+});
+
 test('keeps dark mode surfaces and text readable', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await seedDemoSession(page, 'en');
