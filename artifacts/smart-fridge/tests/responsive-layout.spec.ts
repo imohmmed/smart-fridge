@@ -218,3 +218,36 @@ test('keeps sidebar icons and labels adjacent in RTL and LTR', async ({ page }) 
     if (index > 0) await testPage.close();
   }
 });
+
+test('keeps the responsive header greeting and profile avatar contained', async ({ page }) => {
+  for (const viewport of viewports) {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await seedDemoSession(page, 'en');
+    await page.goto('/');
+
+    const header = page.locator('.dashboard-topbar');
+    const headerBox = await header.evaluate(element => {
+      const box = element.getBoundingClientRect();
+      return { left: box.left, right: box.right };
+    });
+    const avatar = page.locator('.dashboard-profile .profile-avatar-sticker');
+    const avatarBox = await avatar.evaluate(element => {
+      const box = element.getBoundingClientRect();
+      return { left: box.left, right: box.right };
+    });
+
+    expect(headerBox, `${viewport.name} header should exist`).not.toBeNull();
+    expect(avatarBox, `${viewport.name} profile avatar should exist`).not.toBeNull();
+    expect(headerBox!.left).toBeGreaterThanOrEqual(-1);
+    expect(headerBox!.right).toBeLessThanOrEqual(viewport.width + 1);
+    expect(avatarBox!.left).toBeGreaterThanOrEqual(-1);
+    expect(avatarBox!.right).toBeLessThanOrEqual(viewport.width + 1);
+    await expect(page.locator('.dashboard-welcome')).toContainText('Welcome back, Responsive Test');
+
+    if (viewport.name === 'phone') {
+      await expect(page.locator('.dashboard-profile > div:last-child')).toBeHidden();
+    } else {
+      await expect(page.locator('.dashboard-profile > div:last-child')).toBeVisible();
+    }
+  }
+});

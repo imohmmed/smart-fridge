@@ -53,6 +53,7 @@ const englishTranslations: Record<string, string> = {
   'ثلاجتي': 'Smart Fridge', 'رفيق البيت الطازج': 'Fresh home companion', 'وجباتي': 'My meals',
   'تحليل يومي': 'Daily analysis', 'قائمة التسوق': 'Shopping list', 'وصفات مقترحة': 'Suggested recipes',
   'المفضلة': 'Favorites', 'الإعدادات': 'Settings', 'مساحتي الشخصية': 'My space', 'تسجيل الخروج': 'Sign out',
+  'معلومات الملف الشخصي': 'Profile Information', 'فتح معلومات الملف الشخصي': 'Open profile information',
   'مساحتي اليومية': 'My daily space', 'محتويات ثلاجتك': 'Your fridge contents', 'تفاصيل العنصر': 'Item details',
   'قائمة التنبيهات': 'Notifications', 'التنبيهات': 'Notifications', 'تعليم الكل كمقروء': 'Mark all as read',
   'لا توجد إشعارات جديدة 🎉': 'No new notifications 🎉', 'قائمة التسوق ': 'Shopping list ',
@@ -316,7 +317,23 @@ function saveData(userId: string, data: UserData) {
   const stored = JSON.parse(localStorage.getItem(DATA_KEY) || '{}');
   localStorage.setItem(DATA_KEY, JSON.stringify({ ...stored, [userId]: data }));
 }
-function initials(name: string) { return name.trim().slice(0, 1) || 'ت'; }
+function ProfileAvatar({ gender = 'female' }: { gender?: User['gender'] }) {
+  const hairColor = gender === 'male' ? '#315b40' : '#5b3d35';
+  return <span className="profile-avatar-sticker" aria-hidden="true">
+    <svg viewBox="0 0 48 48" focusable="false">
+      <circle cx="24" cy="24" r="23" fill="#e8f4e8" />
+      <path d="M10 44c1.7-7.2 6.5-10.8 14-10.8S36.3 36.8 38 44" fill="#f0b957" />
+      <path d="M13.2 22.5c0-8.7 4.4-14.1 10.8-14.1 7 0 11.1 5.4 11.1 14.1v4.1H13.2z" fill={hairColor} />
+      <circle cx="24" cy="24.2" r="9.5" fill="#ffd9bf" />
+      <path d="M15 21.2c1.2-6.2 4.2-9.4 9.3-9.4 5.1 0 8.7 3.1 9.8 9.4-2.4-1.9-4.8-2.8-7.3-2.8-4.1 0-7.3 1.8-11.8 2.8z" fill={hairColor} />
+      <circle cx="20.4" cy="24.3" r="1" fill="#315b40" />
+      <circle cx="27.7" cy="24.3" r="1" fill="#315b40" />
+      <path d="M21 28c1.9 1.5 4.1 1.5 6 0" fill="none" stroke="#d17d73" strokeLinecap="round" strokeWidth="1.3" />
+      <circle cx="39.5" cy="9" r="3.2" fill="#f0b957" />
+      <path d="M39.5 6.9v4.2M37.4 9h4.2" stroke="#fff8e5" strokeLinecap="round" strokeWidth="1.1" />
+    </svg>
+  </span>;
+}
 function TransparentFoodImage({ src, alt, width, height }: { src: string; alt: string; width: number; height: number }) {
   const [transparentSrc, setTransparentSrc] = useState('');
   useEffect(() => {
@@ -763,7 +780,7 @@ function FoodDetailsDialog({
   </div>;
 }
 
-function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: string; data: UserData; setData: Dispatch<SetStateAction<UserData>>; onAdd: () => void; setNotice: (value: string) => void }) {
+function Dashboard({ user, data, setData, onAdd, setNotice }: { user: User; data: UserData; setData: Dispatch<SetStateAction<UserData>>; onAdd: () => void; setNotice: (value: string) => void }) {
   const { language } = useLanguage();
   const { sidebarOpen, toggleSidebar } = useSidebarControls();
   const [selectedId, setSelectedId] = useState(data.items.find(item => item.id === 'eggs')?.id || data.items[0]?.id);
@@ -852,7 +869,7 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
        </button>
        <div className="dashboard-header-context">
           <span className="eyebrow dashboard-header-label">{text(language, 'ملخص اليوم', 'Today at a glance')}</span>
-         <strong>{text(language, 'أهلاً بعودتك', 'Welcome back')}</strong>
+          <strong className="dashboard-welcome"><span>{text(language, 'أهلاً بعودتك،', 'Welcome back,')}</span> <b>{user.name}</b></strong>
           <span className="dashboard-header-date">{formatArabicDate(language)}</span>
         </div>
        </div>
@@ -879,9 +896,9 @@ function Dashboard({ userName, data, setData, onAdd, setNotice }: { userName: st
               <div className="notification-list">{notifications.length ? notifications.map(item => <button type="button" className={`notification-item notification-${item.type} ${readIds.includes(item.id) ? 'is-read' : ''}`} key={item.id} onClick={() => markRead(item.id)} aria-label={`${item.title}: ${item.message}`}><span className="notification-icon" aria-hidden="true">{item.icon}</span><span className="notification-copy"><strong>{item.title}</strong><span>{item.message}</span><small>{item.time}</small></span><span className="notification-arrow" aria-hidden="true"><ChevronLeft size={14} /></span></button>) : <div className="notification-empty">{text(language, 'لا توجد إشعارات جديدة 🎉', 'No new notifications 🎉')}</div>}</div>
            </div>}
          </div>
-          <Link href="/settings" className="dashboard-profile" aria-label={text(language, 'فتح إعدادات الملف الشخصي', 'Open profile settings')} data-testid="link-dashboard-profile">
-           <div className="avatar">{initials(userName)}</div>
-           <div><strong>{userName}</strong><small>{text(language, 'مساحتي الشخصية', 'My space')}</small></div>
+           <Link href="/settings?section=profile" className="dashboard-profile" aria-label={text(language, 'فتح معلومات الملف الشخصي', 'Open profile information')} data-testid="link-dashboard-profile">
+            <ProfileAvatar gender={user.gender} />
+            <div><strong>{user.name}</strong><small>{text(language, 'معلومات الملف الشخصي', 'Profile Information')}</small></div>
           </Link>
        </div>
     </div>
@@ -965,13 +982,16 @@ function FavoritesPage({ data, setData }: { data: UserData; setData: Dispatch<Se
 
 function SettingsPage({ user, data, setData, setNotice, onLogout, onUserUpdate }: { user: User; data: UserData; setData: Dispatch<SetStateAction<UserData>>; setNotice: (v: string) => void; onLogout: () => void; onUserUpdate: (updates: UserProfileUpdate) => void }) {
   const { language } = useLanguage();
-  const sections = [
-    ['عام', 'General'],
+   const sections = [
+     ['عام', 'General'],
+     ['معلومات الملف الشخصي', 'Profile Information'],
     ['المظهر', 'Appearance'],
     ['التنبيهات', 'Notifications'],
     ['الخصوصية', 'Privacy'],
   ] as const;
-  const [section, setSection] = useState<string>(sections[0][0]);
+   const [location] = useLocation();
+   const requestedSection = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : location.split('?')[1] || '').get('section');
+   const [section, setSection] = useState<string>(requestedSection === 'profile' ? 'معلومات الملف الشخصي' : sections[0][0]);
   const [goal, setGoal] = useState(String(data.calorieGoal));
   const [profileName, setProfileName] = useState(user.name);
   const [profileEmail, setProfileEmail] = useState(user.email);
@@ -1014,21 +1034,23 @@ function SettingsPage({ user, data, setData, setNotice, onLogout, onUserUpdate }
     <div className="settings-grid">
       <div className="card settings-nav">{sections.map(item => <button key={item[0]} className={section === item[0] ? 'active' : ''} onClick={() => setSection(item[0])} data-testid={`button-settings-${item[0]}`}>{sectionLabel(item)}</button>)}</div>
       <div className="card card-pad">
-        {section === 'عام' && <><div className="card-title"><div><h3>{text(language, 'تفضيلاتك', 'Your preferences')}</h3><p>{text(language, 'بعض اللمسات الصغيرة لمساحتك', 'A few small touches for your space')}</p></div><Settings size={20} color="hsl(var(--primary))" /></div>
+           {section === 'عام' && <><div className="card-title"><div><h3>{text(language, 'تفضيلاتك', 'Your preferences')}</h3><p>{text(language, 'بعض اللمسات الصغيرة لمساحتك', 'A few small touches for your space')}</p></div><Settings size={20} color="hsl(var(--primary))" /></div>
            <div className="setting-line"><div><strong>{text(language, 'لغة التطبيق', 'App language')}</strong><p>{text(language, 'اختر اللغة المناسبة لك في كل الصفحات', 'Choose the language used throughout the app')}</p></div><LanguageSwitcher /></div>
-           <form className="settings-profile-form" onSubmit={saveProfile}>
-             <div className="settings-profile-heading"><div><h3>{text(language, 'بيانات الحساب', 'Account details')}</h3><p>{text(language, 'حدّث الاسم والبريد الإلكتروني وكلمة السر من مكان واحد.', 'Update your name, email, and password in one place.')}</p></div><UserRound size={20} color="hsl(var(--primary))" /></div>
-             <div className="settings-profile-fields">
-               <div className="field"><label htmlFor="profile-name">{text(language, 'الاسم', 'Name')}</label><input id="profile-name" value={profileName} onChange={event => setProfileName(event.target.value)} autoComplete="name" data-testid="input-profile-name" /></div>
-               <div className="field"><label htmlFor="profile-email">{text(language, 'البريد الإلكتروني', 'Email')}</label><input id="profile-email" type="email" value={profileEmail} onChange={event => setProfileEmail(event.target.value)} autoComplete="email" dir="ltr" data-testid="input-profile-email" /></div>
-               <div className="field full"><label htmlFor="profile-password">{text(language, 'كلمة السر الجديدة', 'New password')}</label><input id="profile-password" type="password" value={profilePassword} onChange={event => setProfilePassword(event.target.value)} autoComplete="new-password" dir="ltr" placeholder="••••••••" aria-describedby={profileError ? 'profile-error' : undefined} data-testid="input-profile-password" /></div>
-             </div>
-             {profileError && <p id="profile-error" className="auth-error" role="alert" data-testid="status-profile-error">{profileError}</p>}
-             <div className="settings-profile-actions"><span>{text(language, 'اترك كلمة السر فارغة إذا لم ترد تغييرها.', 'Leave the password empty to keep it unchanged.')}</span><button className="primary-btn" type="submit" data-testid="button-save-profile"><Check size={15} />{text(language, 'حفظ بيانات الحساب', 'Save account details')}</button></div>
-           </form>
           <div className="setting-line"><div><strong>{text(language, 'هدف السعرات اليومي', 'Daily calorie goal')}</strong><p>{text(language, 'الرقم الذي يساعدك على توازن يومك', 'The number that helps balance your day')}</p></div><div className="setting-control"><input className="search-box" style={{ width: 100, minWidth: 100, height: 38 }} type="number" value={goal} onChange={e => setGoal(e.target.value)} aria-label={text(language, 'هدف السعرات اليومي', 'Daily calorie goal')} data-testid="input-calorie-goal" /><button className="primary-btn" style={{ padding: '7px 12px' }} onClick={saveGoal} data-testid="button-save-goal">{text(language, 'حفظ', 'Save')}</button></div></div>
           <div className="setting-line"><div><strong>{text(language, 'وحدات القياس', 'Measurement units')}</strong><p>{text(language, 'السعرات والكميات تظهر بالعربية', 'Calories and quantities are shown in Arabic')}</p></div><span className="status-pill">{text(language, 'عربي', 'Arabic')}</span></div>
         </>}
+         {section === 'معلومات الملف الشخصي' && <><div className="card-title"><div><h3>{text(language, 'معلومات الملف الشخصي', 'Profile Information')}</h3><p>{text(language, 'حدّث الاسم والبريد الإلكتروني وكلمة السر من مكان واحد.', 'Update your name, email, and password in one place.')}</p></div><UserRound size={20} color="hsl(var(--primary))" /></div>
+            <form className="settings-profile-form" onSubmit={saveProfile}>
+              <div className="settings-profile-heading"><div><h3>{text(language, 'بيانات الحساب', 'Account details')}</h3><p>{text(language, 'هذه المعلومات تخص ملفك الشخصي فقط.', 'These details belong to your personal profile.')}</p></div><ProfileAvatar gender={user.gender} /></div>
+              <div className="settings-profile-fields">
+                <div className="field"><label htmlFor="profile-name">{text(language, 'الاسم', 'Name')}</label><input id="profile-name" value={profileName} onChange={event => setProfileName(event.target.value)} autoComplete="name" data-testid="input-profile-name" /></div>
+                <div className="field"><label htmlFor="profile-email">{text(language, 'البريد الإلكتروني', 'Email')}</label><input id="profile-email" type="email" value={profileEmail} onChange={event => setProfileEmail(event.target.value)} autoComplete="email" dir="ltr" data-testid="input-profile-email" /></div>
+                <div className="field full"><label htmlFor="profile-password">{text(language, 'كلمة السر الجديدة', 'New password')}</label><input id="profile-password" type="password" value={profilePassword} onChange={event => setProfilePassword(event.target.value)} autoComplete="new-password" dir="ltr" placeholder="••••••••" aria-describedby={profileError ? 'profile-error' : undefined} data-testid="input-profile-password" /></div>
+              </div>
+              {profileError && <p id="profile-error" className="auth-error" role="alert" data-testid="status-profile-error">{profileError}</p>}
+              <div className="settings-profile-actions"><span>{text(language, 'اترك كلمة السر فارغة إذا لم ترد تغييرها.', 'Leave the password empty to keep it unchanged.')}</span><button className="primary-btn" type="submit" data-testid="button-save-profile"><Check size={15} />{text(language, 'حفظ بيانات الحساب', 'Save account details')}</button></div>
+            </form>
+         </>}
         {section === 'المظهر' && <><div className="card-title"><div><h3>{text(language, 'مظهر ثلاجتي', 'Smart Fridge appearance')}</h3><p>{text(language, 'اختر الإضاءة التي تناسب وقتك', 'Choose the lighting that suits your day')}</p></div><Sparkles size={20} color="hsl(var(--accent-foreground))" /></div>
           <div className="setting-line"><div><strong>{text(language, 'الوضع الليلي', 'Dark mode')}</strong><p>{text(language, 'يخفف إضاءة الثلاجة ويجعل الداخل أكثر هدوءاً', 'Softens the fridge light for a calmer interior')}</p></div><button className={`toggle ${data.darkMode ? 'on' : ''}`} onClick={() => setData(prev => ({ ...prev, darkMode: !prev.darkMode }))} aria-label={text(language, 'تبديل الوضع الليلي', 'Toggle dark mode')} aria-pressed={data.darkMode} data-testid="toggle-dark-mode"><i /></button></div>
           <div className={`theme-preview ${data.darkMode ? 'night' : ''}`}><span className="preview-light" /><strong>{data.darkMode ? text(language, 'إضاءة ليلية هادئة', 'Calm night lighting') : text(language, 'إضاءة نهارية مشرقة', 'Bright daytime lighting')}</strong></div>
@@ -1049,7 +1071,7 @@ function SettingsPage({ user, data, setData, setNotice, onLogout, onUserUpdate }
 function RoutedPages({ user, data, setData, onLogout, setNotice, onUserUpdate }: { user: User; data: UserData; setData: Dispatch<SetStateAction<UserData>>; onLogout: () => void; setNotice: (v: string) => void; onUserUpdate: (updates: UserProfileUpdate) => void }) {
   const { language } = useLanguage();
   const [addOpen, setAddOpen] = useState(false);
-  return <AppShell user={user} shoppingCount={data.shopping.filter(item => !item.done).length} onLogout={onLogout}><Switch><Route path="/"><Dashboard userName={user.name} data={data} setData={setData} onAdd={() => setAddOpen(true)} setNotice={setNotice} /></Route><Route path="/meals"><MealsPage data={data} setData={setData} setNotice={setNotice} /></Route><Route path="/daily-analysis"><DailyAnalysis data={data} /></Route><Route path="/shopping"><ShoppingPage data={data} setData={setData} setNotice={setNotice} onAdd={() => setAddOpen(true)} /></Route><Route path="/recipes"><RecipesPage data={data} setData={setData} /></Route><Route path="/favorites"><FavoritesPage data={data} setData={setData} /></Route><Route path="/settings"><SettingsPage user={user} data={data} setData={setData} setNotice={setNotice} onLogout={onLogout} onUserUpdate={onUserUpdate} /></Route><Route component={NotFound} /></Switch>{addOpen && <AddFoodModal onClose={() => setAddOpen(false)} onAdd={item => { setData(prev => ({ ...prev, items: [...prev.items, { ...item, id: `food-${Date.now()}` }] })); flash(setNotice, text(language, 'أضيف الطعام إلى ثلاجتك', 'Food added to your fridge')); }} />}</AppShell>;
+  return <AppShell user={user} shoppingCount={data.shopping.filter(item => !item.done).length} onLogout={onLogout}><Switch><Route path="/"><Dashboard user={user} data={data} setData={setData} onAdd={() => setAddOpen(true)} setNotice={setNotice} /></Route><Route path="/meals"><MealsPage data={data} setData={setData} setNotice={setNotice} /></Route><Route path="/daily-analysis"><DailyAnalysis data={data} /></Route><Route path="/shopping"><ShoppingPage data={data} setData={setData} setNotice={setNotice} onAdd={() => setAddOpen(true)} /></Route><Route path="/recipes"><RecipesPage data={data} setData={setData} /></Route><Route path="/favorites"><FavoritesPage data={data} setData={setData} /></Route><Route path="/settings"><SettingsPage user={user} data={data} setData={setData} setNotice={setNotice} onLogout={onLogout} onUserUpdate={onUserUpdate} /></Route><Route component={NotFound} /></Switch>{addOpen && <AddFoodModal onClose={() => setAddOpen(false)} onAdd={item => { setData(prev => ({ ...prev, items: [...prev.items, { ...item, id: `food-${Date.now()}` }] })); flash(setNotice, text(language, 'أضيف الطعام إلى ثلاجتك', 'Food added to your fridge')); }} />}</AppShell>;
 }
 
 function App() {

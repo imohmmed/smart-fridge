@@ -8669,3 +8669,208 @@ html[dir="rtl"] .sidebar-launcher {
     transition-delay: 0ms !important;
   }
 }
+
+/* Final responsive header pass: the greeting, metrics, and profile shortcut
+   keep their own space without allowing the dashboard to overflow. */
+.dashboard-topbar {
+  display: grid !important;
+  grid-template-columns: minmax(190px, .9fr) minmax(0, 1.55fr) auto !important;
+  grid-template-areas: "start metrics actions";
+  align-items: center !important;
+  gap: 12px;
+  min-width: 0;
+  min-height: 58px;
+  padding: 7px 12px;
+}
+
+.dashboard-header-start {
+  display: flex !important;
+  grid-area: start;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+  direction: rtl;
+}
+
+.dashboard-header-start .sidebar-inline-toggle {
+  flex: 0 0 38px;
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px;
+  min-height: 38px;
+}
+
+.dashboard-header-context {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.dashboard-welcome {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  direction: rtl;
+}
+
+.dashboard-welcome > span {
+  flex: 0 0 auto;
+}
+
+.dashboard-welcome > b {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-profile {
+  min-width: 0;
+  padding: 4px 6px;
+  margin: -4px -6px;
+}
+
+.profile-avatar-sticker {
+  display: grid;
+  place-items: center;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  overflow: hidden;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #e8f4e8;
+  box-shadow: 0 3px 9px rgba(49, 91, 64, .16);
+}
+
+.profile-avatar-sticker svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.dashboard-profile .profile-avatar-sticker {
+  width: 38px;
+  height: 38px;
+  flex-basis: 38px;
+}
+
+@media (min-width: 769px) and (max-width: 1100px) {
+  .dashboard-topbar {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    grid-template-areas: "metrics actions";
+  }
+
+  .dashboard-header-start {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-topbar {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    grid-template-areas:
+      "start actions"
+      "metrics metrics";
+    gap: 7px 9px;
+    min-height: 0;
+    padding: 5px 7px 8px;
+  }
+
+  .dashboard-header-start {
+    gap: 8px;
+  }
+
+  .dashboard-header-start .sidebar-inline-toggle {
+    flex-basis: 38px;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px;
+    min-height: 38px;
+  }
+
+  .dashboard-header-context .dashboard-header-date {
+    display: block;
+  }
+
+  .dashboard-header-context strong {
+    font-size: 15px;
+    line-height: 1.2;
+  }
+
+  .dashboard-welcome {
+    gap: 3px;
+  }
+
+  .dashboard-actions {
+    gap: 6px;
+  }
+
+  .dashboard-actions .topbar-bell {
+    width: 38px;
+    height: 38px;
+  }
+
+  .dashboard-profile {
+    padding: 0;
+    margin: 0;
+  }
+
+  .dashboard-profile > div:last-child {
+    display: none !important;
+  }
+
+  .dashboard-profile .profile-avatar-sticker {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+  }
+
+  .dashboard-topbar .dashboard-metrics {
+    grid-area: metrics;
+    width: 100%;
+    min-width: 0;
+    margin-top: 5px;
+  }
+}
+
+@media (max-width: 380px) {
+  .dashboard-topbar {
+    gap: 6px 6px;
+    padding-inline: 4px;
+  }
+
+  .dashboard-header-start {
+    gap: 6px;
+  }
+
+  .dashboard-header-start .sidebar-inline-toggle,
+  .dashboard-actions .topbar-bell,
+  .dashboard-profile .profile-avatar-sticker {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px;
+    flex-basis: 36px;
+  }
+
+  .dashboard-header-context strong {
+    font-size: 14px;
+  }
+}
+
+html[dir="ltr"] .dashboard-header-start {
+  direction: ltr;
+}
+
+html[dir="ltr"] .dashboard-welcome {
+  direction: ltr;
+}
+
+@media (max-width: 768px) {
+  html[dir="ltr"] .dashboard-header-context {
+    direction: ltr;
+    text-align: left;
+  }
+}
