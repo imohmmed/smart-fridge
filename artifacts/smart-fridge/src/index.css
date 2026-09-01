@@ -9156,7 +9156,9 @@ html[dir="ltr"] .dashboard-welcome {
 .theme-dark .dashboard-footer > .macro-stat,
 .theme-dark .dashboard-footer > .health-tip {
   border-color: rgba(164, 190, 200, .2) !important;
-  background: var(--bg-card) !important;
+  background: #1b2734 !important;
+  background-color: #1b2734 !important;
+  background-image: none !important;
   color: var(--text-primary) !important;
   box-shadow: 0 10px 26px rgba(0, 0, 0, .2) !important;
 }

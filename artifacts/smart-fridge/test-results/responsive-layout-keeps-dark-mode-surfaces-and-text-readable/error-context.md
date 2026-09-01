@@ -104,7 +104,7 @@ Expected: not "rgb(255, 255, 255)"
   287 |         removedNavLabels: Array.from(document.querySelectorAll('.smart-sidebar__link')).map(link => link.textContent?.trim()).filter(label =>
   288 |           label === 'Suggested recipes' || label === 'Favorites' || label === 'وصفات مقترحة' || label === 'المفضلة',
   289 |         ),
-  290 |         logoCount: document.querySelectorAll('.premium-fridge-logo').length,
+  290 |         logoCount: document.querySelectorAll('.smart-sidebar__brand-mark svg, .brand-mark svg').length,
   291 |       };
   292 |     });
   293 | 

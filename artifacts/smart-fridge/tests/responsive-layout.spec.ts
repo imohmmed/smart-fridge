@@ -287,7 +287,7 @@ test('keeps sidebar navigation clean and logout exclusive to its footer', async 
         removedNavLabels: Array.from(document.querySelectorAll('.smart-sidebar__link')).map(link => link.textContent?.trim()).filter(label =>
           label === 'Suggested recipes' || label === 'Favorites' || label === 'وصفات مقترحة' || label === 'المفضلة',
         ),
-        logoCount: document.querySelectorAll('.premium-fridge-logo').length,
+        logoCount: document.querySelectorAll('.smart-sidebar__brand-mark svg, .brand-mark svg').length,
       };
     });
 
