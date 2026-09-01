@@ -10370,6 +10370,28 @@ html[dir="ltr"] .settings-grid .settings-nav button {
   }
 }
 
+/* Keep the mobile site mark centered on content pages in both languages. */
+@media (max-width: 767px) {
+  .mobile-topbar-centered {
+    position: relative;
+    justify-content: center !important;
+    direction: ltr !important;
+  }
+
+  .mobile-topbar-centered .brand {
+    position: absolute;
+    left: 50%;
+    right: auto;
+    gap: 0;
+    margin: 0;
+    transform: translateX(-50%);
+  }
+
+  .mobile-topbar-centered .brand-copy {
+    display: none;
+  }
+}
+
 @media (max-width: 430px) {
   .daily-nutrient-list {
     grid-template-columns: 1fr;

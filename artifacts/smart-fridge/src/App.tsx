@@ -588,7 +588,7 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
         </div>
       </aside>
     <div className="app-shell__content" style={{ minWidth: 0 }}>
-        <header className={`mobile-topbar ${location === '/' ? 'mobile-topbar-dashboard' : ''} ${location.startsWith('/daily-analysis') ? 'mobile-topbar-daily-analysis' : ''}`}>
+        <header className={`mobile-topbar ${location === '/' ? 'mobile-topbar-dashboard' : ''} ${location.startsWith('/daily-analysis') ? 'mobile-topbar-daily-analysis' : ''} ${location.startsWith('/meals') || location.startsWith('/shopping') || location.startsWith('/daily-analysis') ? 'mobile-topbar-centered' : ''}`}>
          {!location.startsWith('/settings') && !location.startsWith('/daily-analysis') && !location.startsWith('/shopping') && !location.startsWith('/meals') && <button className="menu-toggle icon-btn" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-mobile-menu-legacy">{sidebarOpen ? <X size={19} /> : <Menu size={19} />}</button>}
           <div className="brand" aria-label={text(language, 'ثلاجتي الذكية', 'Smart Fridge')}>
             <span className="brand-mark" aria-hidden="true"><Refrigerator size={19} /></span>

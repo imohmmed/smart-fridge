@@ -471,6 +471,34 @@ test('keeps Daily Analysis centered, responsive, and menu-free', async ({ page }
   }
 });
 
+test('centers the mobile site mark on meals, shopping, and analysis', async ({ page }) => {
+  for (const language of ['ar', 'en'] as const) {
+    for (const path of ['/meals', '/shopping', '/daily-analysis']) {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await seedDemoSession(page, language);
+      await page.goto(path);
+
+      await expect(page.locator('.mobile-topbar-centered .brand')).toHaveCount(1);
+      await expect(page.getByTestId('button-mobile-menu-legacy')).toHaveCount(0);
+
+      const header = await page.locator('.mobile-topbar-centered').evaluate(element => {
+        const headerRect = element.getBoundingClientRect();
+        const brandRect = element.querySelector('.brand')!.getBoundingClientRect();
+        return {
+          brandCenter: (brandRect.left + brandRect.right) / 2,
+          headerCenter: (headerRect.left + headerRect.right) / 2,
+          direction: getComputedStyle(element).direction,
+          documentDirection: document.documentElement.dir,
+        };
+      });
+
+      expect(Math.abs(header.brandCenter - header.headerCenter)).toBeLessThanOrEqual(1);
+      expect(header.direction).toBe('ltr');
+      expect(header.documentDirection).toBe(language === 'ar' ? 'rtl' : 'ltr');
+    }
+  }
+});
+
 test('keeps Shopping List compact and aligned in both directions', async ({ page }) => {
   for (const [language, width, darkMode] of [
     ['ar', 390, false],
