@@ -10663,3 +10663,75 @@ html[dir="rtl"] .page-heading-centered .page-heading-copy {
     padding-inline: 0;
   }
 }
+
+/* Notification drawer: fixed to the viewport, never to the scrolling page. */
+.notification-dropdown {
+  top: 12px !important;
+  bottom: auto !important;
+  height: calc(100dvh - 24px) !important;
+  max-height: calc(100dvh - 24px) !important;
+  transition: none !important;
+}
+
+.notification-dropdown.is-open {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: translate3d(0, 0, 0) !important;
+}
+
+html[dir="rtl"] .notification-dropdown {
+  inset: 12px auto 12px 12px !important;
+  right: auto !important;
+  left: 12px !important;
+  transform: translate3d(calc(-100% - 32px), 0, 0) !important;
+  direction: rtl !important;
+}
+
+html[dir="ltr"] .notification-dropdown {
+  inset: 12px 12px 12px auto !important;
+  right: 12px !important;
+  left: auto !important;
+  transform: translate3d(calc(100% + 32px), 0, 0) !important;
+  direction: ltr !important;
+}
+
+html[dir="rtl"] .notification-dropdown.is-open,
+html[dir="ltr"] .notification-dropdown.is-open {
+  transform: translate3d(0, 0, 0) !important;
+}
+
+html[dir="rtl"] .notification-item {
+  border-right-width: 4px;
+  border-left-width: 0;
+}
+
+html[dir="ltr"] .notification-item {
+  border-right-width: 0;
+  border-left-width: 4px;
+}
+
+html[dir="ltr"] .notification-danger {
+  border-left-color: #E74C3C;
+}
+
+html[dir="ltr"] .notification-warning {
+  border-left-color: #F0C674;
+}
+
+html[dir="ltr"] .notification-success {
+  border-left-color: #4A7C59;
+}
+
+html[dir="ltr"] .notification-info {
+  border-left-color: #5D9EC2;
+}
+
+@media (max-width: 767px) {
+  .notification-dropdown {
+    width: min(360px, calc(100vw - 24px)) !important;
+    max-width: calc(100vw - 24px) !important;
+    padding: 14px !important;
+    border-radius: 20px !important;
+  }
+}

@@ -3,3 +3,4 @@
 - [Responsive browser test runtime](responsive-browser-tests.md) — Playwright Chromium needs Nix graphics/runtime libraries in the minimal workspace image.
 - [Dark mode cascade](dark-mode-cascade.md) — final theme overrides need explicit background-color because legacy important shorthands can preserve light surfaces.
 - [Approved visual language](approved-visual-language.md) — preserve the current soft, balanced Smart Fridge look across future page changes.
+- [Notification drawer positioning](notification-drawer-positioning.md) — render viewport-wide notifications outside scrolling page containers so fixed positioning remains reliable.

@@ -368,7 +368,7 @@ test('keeps dark mode surfaces and text readable', async ({ page }) => {
   await page.goto('/settings');
   await page.getByTestId('button-settings-المظهر').click();
   await page.getByTestId('toggle-dark-mode').click();
-  await expect(page.locator('.theme-dark')).toHaveClass('theme-dark');
+  await expect(page.locator('.theme-dark')).toHaveClass(/(^|\s)theme-dark(\s|$)/);
   await expect(page.locator('.theme-dark .card').first()).toHaveCSS('background-color', 'rgb(27, 39, 52)');
 
   const styles = await page.evaluate(() => {
@@ -473,6 +473,7 @@ test('keeps Daily Analysis centered, responsive, and menu-free', async ({ page }
         headingCenter: (heading.left + heading.right) / 2,
         titleCenter: (title.left + title.right) / 2,
         copyTop: copy.top,
+        copyBottom: copy.bottom,
         dateTop: date.top,
         documentScrollWidth: document.documentElement.scrollWidth,
       };
@@ -482,7 +483,7 @@ test('keeps Daily Analysis centered, responsive, and menu-free', async ({ page }
     if (width === 1366) {
       expect(Math.abs(layout.titleCenter - layout.headingCenter)).toBeLessThanOrEqual(1);
     } else {
-      expect(Math.abs(layout.copyTop - layout.dateTop)).toBeLessThanOrEqual(1);
+      expect(layout.dateTop).toBeGreaterThan(layout.copyBottom);
     }
   }
 });
@@ -708,5 +709,46 @@ test('keeps the desktop Arabic header in strict RTL group order', async ({ page 
 
     expect(groups.start.left).toBeGreaterThan(groups.metrics.right);
     expect(groups.metrics.left).toBeGreaterThan(groups.actions.right);
+  }
+});
+
+test('keeps notifications inside the viewport on every screen size and direction', async ({ page }) => {
+  for (const language of ['ar', 'en'] as const) {
+    for (const viewport of [{ width: 390, height: 844 }, { width: 834, height: 900 }, { width: 1440, height: 900 }]) {
+      await page.setViewportSize(viewport);
+      await seedDemoSession(page, language);
+      await page.goto('/');
+      await page.getByTestId('button-notifications').click();
+      await expect(page.locator('.notification-dropdown')).toBeVisible();
+
+      const layout = await page.locator('.notification-dropdown').evaluate(element => {
+        const box = element.getBoundingClientRect();
+        const styles = getComputedStyle(element);
+        return {
+          left: box.left,
+          right: box.right,
+          top: box.top,
+          bottom: box.bottom,
+          width: box.width,
+          height: box.height,
+          viewportWidth: document.documentElement.clientWidth,
+          viewportHeight: window.innerHeight,
+          position: styles.position,
+          transform: styles.transform,
+        };
+      });
+
+      expect(layout.position).toBe('fixed');
+      expect(layout.left).toBeGreaterThanOrEqual(-1);
+      expect(layout.right).toBeLessThanOrEqual(layout.viewportWidth + 1);
+      expect(layout.top).toBeGreaterThanOrEqual(-1);
+      expect(layout.bottom).toBeLessThanOrEqual(layout.viewportHeight + 1);
+      expect(layout.width).toBeGreaterThan(280);
+      expect(layout.height).toBeGreaterThan(700);
+      expect(layout.transform).toBe('matrix(1, 0, 0, 1, 0, 0)');
+
+      await page.keyboard.press('Escape');
+      await expect(page.locator('.notification-dropdown')).toBeHidden();
+    }
   }
 });

@@ -1,4 +1,5 @@
 import { createContext, useContext, type CSSProperties, type Dispatch, type FormEvent, type ReactNode, type SetStateAction, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
@@ -868,8 +869,18 @@ function Dashboard({ user, data, setData, onAdd, setNotice }: { user: User; data
     window.addEventListener('keydown', closeOnEscape);
     return () => window.removeEventListener('keydown', closeOnEscape);
   }, []);
+  const notificationLayer = createPortal(
+    <>
+      <button className={`notification-scrim ${notificationsOpen ? 'is-open' : ''}`} type="button" aria-hidden={!notificationsOpen} tabIndex={notificationsOpen ? 0 : -1} aria-label={text(language, 'إغلاق الإشعارات', 'Close notifications')} onClick={() => setNotificationsOpen(false)} />
+      <div className={`notification-dropdown ${notificationsOpen ? 'is-open' : ''}`} role="dialog" aria-modal="true" aria-label={text(language, 'قائمة التنبيهات', 'Notifications list')} aria-hidden={!notificationsOpen}>
+        <div className="notification-head"><div className="notification-head-copy"><strong>{text(language, 'التنبيهات', 'Notifications')}</strong><span>{unreadCount ? `${toWesternNums(unreadCount)} ${text(language, 'جديدة', 'new')}` : text(language, 'كل التنبيهات مقروءة', 'All caught up')}</span></div><div className="notification-head-actions">{unreadCount > 0 && <button className="link-btn" type="button" onClick={markAllRead}>{text(language, 'تعليم الكل كمقروء', 'Mark all as read')}</button>}<button className="notification-close icon-btn" type="button" onClick={() => setNotificationsOpen(false)} aria-label={text(language, 'إغلاق الإشعارات', 'Close notifications')} data-testid="button-close-notifications"><X size={18} aria-hidden="true" /></button></div></div>
+        <div className="notification-list">{notifications.length ? notifications.map(item => <button type="button" className={`notification-item notification-${item.type} ${readIds.includes(item.id) ? 'is-read' : ''}`} key={item.id} onClick={() => markRead(item.id)} aria-label={`${item.title}: ${item.message}`}><span className="notification-icon" aria-hidden="true">{item.icon}</span><span className="notification-copy"><strong>{item.title}</strong><span>{item.message}</span><small>{item.time}</small></span><span className="notification-arrow" aria-hidden="true"><ChevronLeft size={14} /></span></button>) : <div className="notification-empty">{text(language, 'لا توجد إشعارات جديدة 🎉', 'No new notifications 🎉')}</div>}</div>
+      </div>
+    </>,
+    document.body,
+  );
   return <main className={`app-main dashboard-main ${notificationsOpen ? 'notifications-open' : ''}`}>
-     <button className={`notification-scrim ${notificationsOpen ? 'is-open' : ''}`} type="button" aria-hidden={!notificationsOpen} tabIndex={notificationsOpen ? 0 : -1} aria-label={text(language, 'إغلاق الإشعارات', 'Close notifications')} onClick={() => setNotificationsOpen(false)} />
+     {notificationLayer}
      <div className="dashboard-topbar">
        <div className="dashboard-header-start">
         <button className="sidebar-inline-toggle" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-mobile-menu">
@@ -897,12 +908,8 @@ function Dashboard({ user, data, setData, onAdd, setNotice }: { user: User; data
        </div>
        <div className="dashboard-actions">
           <div className="notification-wrap">
-           <button className="topbar-bell icon-btn" aria-label={`${text(language, 'التنبيهات', 'Notifications')}${unreadCount ? `، ${toWesternNums(unreadCount)} ${text(language, 'جديدة', 'new')}` : ''}`} aria-expanded={notificationsOpen} onClick={() => setNotificationsOpen(value => !value)} data-testid="button-notifications"><Bell size={20} /></button>
+            <button className="topbar-bell icon-btn" type="button" aria-label={`${text(language, 'التنبيهات', 'Notifications')}${unreadCount ? `، ${toWesternNums(unreadCount)} ${text(language, 'جديدة', 'new')}` : ''}`} aria-expanded={notificationsOpen} onClick={() => setNotificationsOpen(value => !value)} data-testid="button-notifications"><Bell size={20} /></button>
            {unreadCount > 0 && <b className="notification-count">{toWesternNums(unreadCount)}</b>}
-            <div className={`notification-dropdown ${notificationsOpen ? 'is-open' : ''}`} role="region" aria-label={text(language, 'قائمة التنبيهات', 'Notifications list')} aria-hidden={!notificationsOpen}>
-               <div className="notification-head"><div className="notification-head-copy"><strong>{text(language, 'التنبيهات', 'Notifications')}</strong><span>{unreadCount ? `${toWesternNums(unreadCount)} ${text(language, 'جديدة', 'new')}` : text(language, 'كل التنبيهات مقروءة', 'All caught up')}</span></div><div className="notification-head-actions">{unreadCount > 0 && <button className="link-btn" onClick={markAllRead}>{text(language, 'تعليم الكل كمقروء', 'Mark all as read')}</button>}<button className="notification-close icon-btn" type="button" onClick={() => setNotificationsOpen(false)} aria-label={text(language, 'إغلاق الإشعارات', 'Close notifications')} data-testid="button-close-notifications"><X size={18} aria-hidden="true" /></button></div></div>
-              <div className="notification-list">{notifications.length ? notifications.map(item => <button type="button" className={`notification-item notification-${item.type} ${readIds.includes(item.id) ? 'is-read' : ''}`} key={item.id} onClick={() => markRead(item.id)} aria-label={`${item.title}: ${item.message}`}><span className="notification-icon" aria-hidden="true">{item.icon}</span><span className="notification-copy"><strong>{item.title}</strong><span>{item.message}</span><small>{item.time}</small></span><span className="notification-arrow" aria-hidden="true"><ChevronLeft size={14} /></span></button>) : <div className="notification-empty">{text(language, 'لا توجد إشعارات جديدة 🎉', 'No new notifications 🎉')}</div>}</div>
-            </div>
          </div>
            <Link href="/settings?section=profile" className="dashboard-profile" aria-label={text(language, 'فتح معلومات الملف الشخصي', 'Open profile information')} data-testid="link-dashboard-profile">
             <ProfileAvatar gender={user.gender} />
