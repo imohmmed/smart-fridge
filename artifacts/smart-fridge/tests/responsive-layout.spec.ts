@@ -314,6 +314,20 @@ test('does not show a sidebar menu launcher on settings', async ({ page }) => {
   }
 });
 
+test('does not show a sidebar menu launcher on meals or shopping', async ({ page }) => {
+  for (const path of ['/meals', '/shopping']) {
+    for (const width of [390, 1440]) {
+      await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
+      await seedDemoSession(page, 'en');
+      await page.goto(path);
+
+      await expect(page.locator('.page-heading')).toBeVisible();
+      await expect(page.getByTestId('button-page-menu')).toHaveCount(0);
+      await expect(page.getByTestId('button-mobile-menu-legacy')).toHaveCount(0);
+    }
+  }
+});
+
 test('keeps settings options free of secondary copy', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await seedDemoSession(page, 'en');

@@ -589,7 +589,7 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
       </aside>
     <div className="app-shell__content" style={{ minWidth: 0 }}>
         <header className={`mobile-topbar ${location === '/' ? 'mobile-topbar-dashboard' : ''} ${location.startsWith('/daily-analysis') ? 'mobile-topbar-daily-analysis' : ''}`}>
-         {!location.startsWith('/settings') && !location.startsWith('/daily-analysis') && <button className="menu-toggle icon-btn" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-mobile-menu-legacy">{sidebarOpen ? <X size={19} /> : <Menu size={19} />}</button>}
+         {!location.startsWith('/settings') && !location.startsWith('/daily-analysis') && !location.startsWith('/shopping') && !location.startsWith('/meals') && <button className="menu-toggle icon-btn" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-mobile-menu-legacy">{sidebarOpen ? <X size={19} /> : <Menu size={19} />}</button>}
           <div className="brand" aria-label={text(language, 'ثلاجتي الذكية', 'Smart Fridge')}>
             <span className="brand-mark" aria-hidden="true"><Refrigerator size={19} /></span>
             <span className="brand-copy"><strong>{text(language, 'ثلاجتي', 'Smart Fridge')}</strong><small>{text(language, 'مساحتك الطازجة', 'Fresh space')}</small></span>
@@ -604,8 +604,10 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
 function PageHeading({ title, description, action, eyebrow, hideMenu = false }: { title: string; description?: string; action?: ReactNode; eyebrow?: string; hideMenu?: boolean }) {
   const { language } = useLanguage();
   const { sidebarOpen, toggleSidebar } = useSidebarControls();
+  const [location] = useLocation();
+  const shouldHideMenu = hideMenu || location === '/meals' || location === '/shopping';
   return <div className="page-heading">
-    {!hideMenu && <button className="sidebar-inline-toggle page-heading-menu" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-page-menu">
+    {!shouldHideMenu && <button className="sidebar-inline-toggle page-heading-menu" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-page-menu">
       {sidebarOpen ? <X size={19} /> : <Menu size={19} />}
     </button>}
     <div className="page-heading-copy"><div className="eyebrow">{eyebrow || text(language, 'مساحتي اليومية', 'My daily space')}</div><h2>{title}</h2>{description && <p>{description}</p>}</div>
