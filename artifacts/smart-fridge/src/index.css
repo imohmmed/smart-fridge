@@ -8161,28 +8161,27 @@ body {
   }
 }
 
-/* Keep the navigation fully hidden until it is requested. The launcher is
-   the only visible affordance on desktop; mobile keeps its topbar menu. */
+/* Sidebar tokens stay neutral and follow the app theme. */
 :root {
-  --smart-sidebar-bg: linear-gradient(180deg, #f8f3e9 0%, #ede6d8 100%);
-  --smart-sidebar-border: rgba(74, 124, 89, .2);
-  --smart-sidebar-text: #315b40;
-  --smart-sidebar-muted: #68756c;
-  --smart-sidebar-hover: rgba(255, 255, 255, .72);
-  --smart-sidebar-active: rgba(127, 166, 111, .19);
-  --smart-sidebar-icon-bg: rgba(127, 166, 111, .12);
-  --smart-sidebar-shadow: 8px 12px 26px rgba(73, 66, 52, .18);
+  --smart-sidebar-bg: rgba(255, 255, 255, .78);
+  --smart-sidebar-border: rgba(100, 116, 139, .24);
+  --smart-sidebar-text: #1f2937;
+  --smart-sidebar-muted: #64748b;
+  --smart-sidebar-hover: rgba(241, 245, 249, .92);
+  --smart-sidebar-active: rgba(22, 163, 74, .1);
+  --smart-sidebar-icon-bg: rgba(22, 163, 74, .09);
+  --smart-sidebar-shadow: 8px 0 26px rgba(15, 23, 42, .08);
 }
 
 .theme-dark {
-  --smart-sidebar-bg: linear-gradient(180deg, #202e2a 0%, #15211e 100%);
-  --smart-sidebar-border: rgba(173, 207, 184, .2);
-  --smart-sidebar-text: #e3f0e3;
-  --smart-sidebar-muted: #adc0b2;
-  --smart-sidebar-hover: rgba(101, 137, 116, .28);
-  --smart-sidebar-active: rgba(111, 156, 120, .34);
-  --smart-sidebar-icon-bg: rgba(164, 205, 169, .16);
-  --smart-sidebar-shadow: 8px 12px 28px rgba(0, 0, 0, .38);
+  --smart-sidebar-bg: rgba(15, 23, 42, .94);
+  --smart-sidebar-border: rgba(148, 163, 184, .24);
+  --smart-sidebar-text: #f1f5f9;
+  --smart-sidebar-muted: #a8b4c5;
+  --smart-sidebar-hover: rgba(51, 65, 85, .72);
+  --smart-sidebar-active: rgba(74, 222, 128, .16);
+  --smart-sidebar-icon-bg: rgba(74, 222, 128, .12);
+  --smart-sidebar-shadow: 8px 0 28px rgba(2, 6, 23, .34);
 }
 
 .smart-sidebar {
@@ -8227,13 +8226,13 @@ html[dir="rtl"] .smart-sidebar {
 }
 
 .smart-sidebar__brand-mark {
-  color: #315b40 !important;
-  background: #e6c36f !important;
+  color: #166534 !important;
+  background: rgba(226, 232, 240, .94) !important;
 }
 
 .theme-dark .smart-sidebar__brand-mark {
-  color: #1f3028 !important;
-  background: #d7ebd6 !important;
+  color: #bbf7d0 !important;
+  background: rgba(30, 41, 59, .96) !important;
 }
 
 .smart-sidebar__toggle {
@@ -8263,13 +8262,13 @@ html[dir="rtl"] .smart-sidebar {
 }
 
 .smart-sidebar__count {
-  color: #315b40 !important;
-  background: #e6c36f !important;
+  color: #ffffff !important;
+  background: #16a34a !important;
 }
 
 .theme-dark .smart-sidebar__count {
-  color: #1f3028 !important;
-  background: #d7ebd6 !important;
+  color: #052e16 !important;
+  background: #86efac !important;
 }
 
 .smart-sidebar-scrim {
@@ -8924,25 +8923,90 @@ html[dir="ltr"] .dashboard-welcome {
   }
 }
 
-/* Desktop drawer anchoring must change with the language as well as its
-   transform. Otherwise an RTL drawer remains left-anchored and opens from
-   the wrong edge even though its hidden transform is positive. */
-@media (min-width: 768px) {
-  .smart-sidebar {
-    left: 0 !important;
-    right: auto !important;
-    transform: translate3d(calc(-100% - 32px), 0, 0) !important;
+/* Gemini-style desktop docking. The sidebar owns a grid column instead of
+   floating above the page; changing the track width pushes the content. */
+@media (min-width: 769px) {
+  .app-shell,
+  .app-shell.sidebar-open,
+  .app-shell.sidebar-collapsed {
+    --smart-sidebar-dock-width: 0px;
+    display: grid !important;
+    grid-template-columns: var(--smart-sidebar-dock-width) minmax(0, 1fr) !important;
+    grid-template-rows: minmax(100dvh, 1fr);
+    align-items: stretch;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 100dvh !important;
+    transition: grid-template-columns .32s cubic-bezier(.22, .61, .36, 1);
+    will-change: grid-template-columns;
   }
 
-  html[dir="rtl"] .smart-sidebar {
-    left: auto !important;
-    right: 0 !important;
-    transform: translate3d(calc(100% + 32px), 0, 0) !important;
+  .app-shell.sidebar-open {
+    --smart-sidebar-dock-width: 286px;
   }
 
-  .app-shell.sidebar-open .smart-sidebar,
-  html[dir="ltr"] .app-shell.sidebar-open .smart-sidebar,
-  html[dir="rtl"] .app-shell.sidebar-open .smart-sidebar {
-    transform: translate3d(0, 0, 0) !important;
+  .app-shell > .smart-sidebar {
+    grid-column: 1;
+    grid-row: 1;
+    position: sticky !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: 100dvh !important;
+    max-height: none !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    overflow: hidden;
+    z-index: 2 !important;
+    transition: opacity .18s ease, background-color .2s ease !important;
+  }
+
+  .app-shell > .app-shell__content {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    overflow: clip;
+  }
+
+  html[dir="rtl"] .app-shell {
+    grid-template-columns: minmax(0, 1fr) var(--smart-sidebar-dock-width) !important;
+  }
+
+  html[dir="rtl"] .app-shell > .smart-sidebar {
+    grid-column: 2;
+  }
+
+  html[dir="rtl"] .app-shell > .app-shell__content {
+    grid-column: 1;
+  }
+
+  .smart-sidebar__inner {
+    border-radius: 0 !important;
+    border: 0 !important;
+    border-inline-end: 1px solid var(--smart-sidebar-border) !important;
+    background: var(--smart-sidebar-bg) !important;
+    box-shadow: var(--smart-sidebar-shadow) !important;
+    backdrop-filter: blur(18px) saturate(1.15);
+  }
+
+  html[dir="rtl"] .smart-sidebar__inner {
+    border-inline-end: 0 !important;
+    border-inline-start: 1px solid var(--smart-sidebar-border) !important;
+  }
+
+  .smart-sidebar-scrim {
+    display: none !important;
+    pointer-events: none !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1100px) {
+  .app-shell.sidebar-open {
+    --smart-sidebar-dock-width: 248px;
   }
 }
