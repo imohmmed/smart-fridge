@@ -10524,3 +10524,53 @@ html[dir="ltr"] .settings-grid .settings-nav button {
 .settings-profile-actions {
   justify-content: flex-start;
 }
+
+/* Keep the English interface genuinely LTR. Several older visual layers
+   intentionally set RTL for the Arabic layout, so these explicit overrides
+   must remain at the end of the cascade. */
+html[dir="ltr"] .fridge-app,
+html[dir="ltr"] .app-shell,
+html[dir="ltr"] .app-shell__content,
+html[dir="ltr"] .app-main,
+html[dir="ltr"] .mobile-topbar,
+html[dir="ltr"] .dashboard-main,
+html[dir="ltr"] .reference-dashboard,
+html[dir="ltr"] .reference-fridge,
+html[dir="ltr"] .reference-rail,
+html[dir="ltr"] .smart-shelf-card,
+html[dir="ltr"] .smart-shelf-section,
+html[dir="ltr"] .page-heading,
+html[dir="ltr"] .page-heading-copy,
+html[dir="ltr"] .card-title,
+html[dir="ltr"] .setting-line,
+html[dir="ltr"] .footer-stat,
+html[dir="ltr"] .macro-stat,
+html[dir="ltr"] .health-tip {
+  direction: ltr !important;
+  text-align: left;
+}
+
+html[dir="ltr"] .dashboard-header-context,
+html[dir="ltr"] .dashboard-metrics,
+html[dir="ltr"] .dashboard-actions,
+html[dir="ltr"] .dashboard-profile,
+html[dir="ltr"] .dashboard-welcome,
+html[dir="ltr"] .shopping-item,
+html[dir="ltr"] .shopping-item label,
+html[dir="ltr"] .fridge-door,
+html[dir="ltr"] .fridge-cabinet,
+html[dir="ltr"] .smart-sidebar__link,
+html[dir="ltr"] .smart-sidebar__logout {
+  direction: ltr !important;
+  text-align: left;
+}
+
+html[dir="ltr"] .dashboard-metrics {
+  justify-content: center;
+}
+
+html[dir="ltr"] .page-heading-copy,
+html[dir="ltr"] .dashboard-header-context,
+html[dir="ltr"] .dashboard-profile {
+  text-align: left !important;
+}
