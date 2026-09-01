@@ -244,8 +244,12 @@ test.describe('Smart Fridge food interactions', () => {
 
     await page.getByTestId('button-notifications').click();
     await expect(page.locator('.notification-dropdown')).toBeVisible();
+    await expect(page.locator('.notification-scrim')).toBeVisible();
+    await expect(page.locator('.notification-dropdown')).toHaveCSS('position', 'fixed');
     await expect(page.locator('.notification-head-copy')).toBeVisible();
     await expect(page.locator('.notification-list')).toBeVisible();
     await expect(page.locator('.notification-item')).not.toHaveCount(0);
+    await page.getByTestId('button-close-notifications').click();
+    await expect(page.locator('.notification-dropdown')).toBeHidden();
   });
 });

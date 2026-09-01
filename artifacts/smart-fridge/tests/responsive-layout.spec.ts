@@ -418,6 +418,18 @@ test('keeps Daily Analysis centered, responsive, and menu-free', async ({ page }
 
     await expect(page.locator('.daily-analysis-page .page-heading h2')).toBeVisible();
     await expect(page.locator('.daily-analysis-page .page-heading-menu')).toHaveCount(0);
+    if (width === 390) {
+      await expect(page.locator('.mobile-topbar-daily-analysis .menu-toggle')).toHaveCount(0);
+      const logoCenter = await page.locator('.mobile-topbar-daily-analysis .brand').evaluate(element => {
+        const rect = element.getBoundingClientRect();
+        return (rect.left + rect.right) / 2;
+      });
+      const barCenter = await page.locator('.mobile-topbar-daily-analysis').evaluate(element => {
+        const rect = element.getBoundingClientRect();
+        return (rect.left + rect.right) / 2;
+      });
+      expect(Math.abs(logoCenter - barCenter)).toBeLessThanOrEqual(1);
+    }
     await expect(page.locator('.daily-analysis-page .daily-analysis-card')).toHaveCount(3);
     await expect(page.locator('.daily-analysis-page .daily-ring')).toHaveCount(3);
     await expect(page.locator('.daily-analysis-page .recharts-area-curve')).toHaveCount(1);
@@ -442,6 +454,44 @@ test('keeps Daily Analysis centered, responsive, and menu-free', async ({ page }
     } else {
       expect(Math.abs(layout.copyTop - layout.dateTop)).toBeLessThanOrEqual(1);
     }
+  }
+});
+
+test('keeps Shopping List compact and aligned in both directions', async ({ page }) => {
+  for (const [language, width, darkMode] of [
+    ['ar', 390, false],
+    ['en', 768, true],
+    ['en', 1366, false],
+  ] as const) {
+    await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
+    await seedDemoSession(page, language);
+    if (darkMode) {
+      await page.addInitScript(() => localStorage.setItem('smart_fridge_data', JSON.stringify({ 'responsive-user': { darkMode: true } })));
+    }
+    await page.goto('/shopping');
+
+    await expect(page.locator('.shopping-page .page-heading h2')).toBeVisible();
+    await expect(page.locator('.shopping-page .page-heading-menu')).toHaveCount(0);
+    await expect(page.locator('.shopping-page [data-testid="button-logout"]')).toHaveCount(0);
+    await expect(page.locator('.shopping-page .shopping-layout')).toBeVisible();
+    await expect(page.locator('.shopping-page #shopping-name')).toHaveAttribute('id', 'shopping-name');
+    await expect(page.locator('.shopping-page label[for="shopping-name"]')).toBeAttached();
+
+    const layout = await page.evaluate(() => {
+      const heading = document.querySelector('.shopping-page .page-heading').getBoundingClientRect();
+      const title = document.querySelector('.shopping-page .page-heading h2').getBoundingClientRect();
+      const listCard = document.querySelector('.shopping-page .shopping-list-card').getBoundingClientRect();
+      return {
+        titleCenter: (title.left + title.right) / 2,
+        headingCenter: (heading.left + heading.right) / 2,
+        listCardHeight: listCard.height,
+        documentScrollWidth: document.documentElement.scrollWidth,
+      };
+    });
+
+    expect(Math.abs(layout.titleCenter - layout.headingCenter)).toBeLessThanOrEqual(1);
+    expect(layout.documentScrollWidth).toBeLessThanOrEqual(width + 1);
+    expect(layout.listCardHeight).toBeLessThan(900);
   }
 });
 

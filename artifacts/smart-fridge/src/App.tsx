@@ -588,8 +588,8 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
         </div>
       </aside>
     <div className="app-shell__content" style={{ minWidth: 0 }}>
-        <header className={`mobile-topbar ${location === '/' ? 'mobile-topbar-dashboard' : ''}`}>
-         {!location.startsWith('/settings') && <button className="menu-toggle icon-btn" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-mobile-menu-legacy">{sidebarOpen ? <X size={19} /> : <Menu size={19} />}</button>}
+        <header className={`mobile-topbar ${location === '/' ? 'mobile-topbar-dashboard' : ''} ${location.startsWith('/daily-analysis') ? 'mobile-topbar-daily-analysis' : ''}`}>
+         {!location.startsWith('/settings') && !location.startsWith('/daily-analysis') && <button className="menu-toggle icon-btn" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-mobile-menu-legacy">{sidebarOpen ? <X size={19} /> : <Menu size={19} />}</button>}
           <div className="brand" aria-label={text(language, 'ثلاجتي الذكية', 'Smart Fridge')}>
             <span className="brand-mark" aria-hidden="true"><Refrigerator size={19} /></span>
             <span className="brand-copy"><strong>{text(language, 'ثلاجتي', 'Smart Fridge')}</strong><small>{text(language, 'مساحتك الطازجة', 'Fresh space')}</small></span>
@@ -859,7 +859,15 @@ function Dashboard({ user, data, setData, onAdd, setNotice }: { user: User; data
       return next;
     });
   };
-  return <main className="app-main dashboard-main">
+  useEffect(() => {
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setNotificationsOpen(false);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, []);
+  return <main className={`app-main dashboard-main ${notificationsOpen ? 'notifications-open' : ''}`}>
+     <button className={`notification-scrim ${notificationsOpen ? 'is-open' : ''}`} type="button" aria-hidden={!notificationsOpen} tabIndex={notificationsOpen ? 0 : -1} aria-label={text(language, 'إغلاق الإشعارات', 'Close notifications')} onClick={() => setNotificationsOpen(false)} />
      <div className="dashboard-topbar">
        <div className="dashboard-header-start">
         <button className="sidebar-inline-toggle" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-mobile-menu">
@@ -889,10 +897,10 @@ function Dashboard({ user, data, setData, onAdd, setNotice }: { user: User; data
           <div className="notification-wrap">
            <button className="topbar-bell icon-btn" aria-label={`${text(language, 'التنبيهات', 'Notifications')}${unreadCount ? `، ${toWesternNums(unreadCount)} ${text(language, 'جديدة', 'new')}` : ''}`} aria-expanded={notificationsOpen} onClick={() => setNotificationsOpen(value => !value)} data-testid="button-notifications"><Bell size={20} /></button>
            {unreadCount > 0 && <b className="notification-count">{toWesternNums(unreadCount)}</b>}
-           {notificationsOpen && <div className="notification-dropdown" role="region" aria-label={text(language, 'قائمة التنبيهات', 'Notifications list')}>
-              <div className="notification-head"><div className="notification-head-copy"><strong>{text(language, 'التنبيهات', 'Notifications')}</strong><span>{unreadCount ? `${toWesternNums(unreadCount)} ${text(language, 'جديدة', 'new')}` : text(language, 'كل التنبيهات مقروءة', 'All caught up')}</span></div>{unreadCount > 0 && <button className="link-btn" onClick={markAllRead}>{text(language, 'تعليم الكل كمقروء', 'Mark all as read')}</button>}</div>
+            <div className={`notification-dropdown ${notificationsOpen ? 'is-open' : ''}`} role="region" aria-label={text(language, 'قائمة التنبيهات', 'Notifications list')} aria-hidden={!notificationsOpen}>
+               <div className="notification-head"><div className="notification-head-copy"><strong>{text(language, 'التنبيهات', 'Notifications')}</strong><span>{unreadCount ? `${toWesternNums(unreadCount)} ${text(language, 'جديدة', 'new')}` : text(language, 'كل التنبيهات مقروءة', 'All caught up')}</span></div><div className="notification-head-actions">{unreadCount > 0 && <button className="link-btn" onClick={markAllRead}>{text(language, 'تعليم الكل كمقروء', 'Mark all as read')}</button>}<button className="notification-close icon-btn" type="button" onClick={() => setNotificationsOpen(false)} aria-label={text(language, 'إغلاق الإشعارات', 'Close notifications')} data-testid="button-close-notifications"><X size={18} aria-hidden="true" /></button></div></div>
               <div className="notification-list">{notifications.length ? notifications.map(item => <button type="button" className={`notification-item notification-${item.type} ${readIds.includes(item.id) ? 'is-read' : ''}`} key={item.id} onClick={() => markRead(item.id)} aria-label={`${item.title}: ${item.message}`}><span className="notification-icon" aria-hidden="true">{item.icon}</span><span className="notification-copy"><strong>{item.title}</strong><span>{item.message}</span><small>{item.time}</small></span><span className="notification-arrow" aria-hidden="true"><ChevronLeft size={14} /></span></button>) : <div className="notification-empty">{text(language, 'لا توجد إشعارات جديدة 🎉', 'No new notifications 🎉')}</div>}</div>
-           </div>}
+            </div>
          </div>
            <Link href="/settings?section=profile" className="dashboard-profile" aria-label={text(language, 'فتح معلومات الملف الشخصي', 'Open profile information')} data-testid="link-dashboard-profile">
             <ProfileAvatar gender={user.gender} />
@@ -1025,7 +1033,72 @@ function ShoppingPage({ data, setData, setNotice, onAdd }: { data: UserData; set
   const add = () => { if (!input.trim()) return; setData(prev => ({ ...prev, shopping: [...prev.shopping, { id: `s-${Date.now()}`, name: input.trim(), quantity, done: false }] })); setInput(''); flash(setNotice, text(language, 'أضيفت للقائمة', 'Added to the list')); };
   const exportList = async () => { const listText = data.shopping.filter(item => !item.done).map(item => `- ${item.name} (${item.quantity})`).join('\n'); try { await navigator.clipboard.writeText(listText); flash(setNotice, text(language, 'تم نسخ قائمة التسوق', 'Shopping list copied')); } catch { flash(setNotice, text(language, 'حدّد القائمة وانسخها', 'Select the list and copy it')); } };
   const lowStock = data.items.filter(item => item.quantity <= 1 && !data.shopping.some(row => row.name === item.name));
-  return <main className="app-main"><PageHeading title={text(language, 'قائمة التسوق', 'Shopping list')} description={text(language, 'كل ما تحتاجه رحلتك القادمة، في مكان واحد.', 'Everything you need for your next trip, in one place.')} action={<div className="page-actions"><button className="secondary-btn" onClick={exportList} data-testid="button-copy-shopping"><ClipboardCopy size={16} />{text(language, 'نسخ القائمة', 'Copy list')}</button><button className="primary-btn" onClick={onAdd} data-testid="button-shopping-add-food"><Plus size={17} />{text(language, 'إضافة للثلاجة', 'Add to fridge')}</button></div>} /><div className="dashboard-grid"><div className="card card-pad"><div className="card-title"><div><h3>{text(language, 'قائمتك', 'Your list')}</h3><p>{data.shopping.filter(item => !item.done).length} {text(language, 'عناصر متبقية', 'items remaining')}</p></div><button className="icon-btn" onClick={() => setData(prev => ({ ...prev, shopping: prev.shopping.filter(item => !item.done) }))} aria-label={text(language, 'حذف العناصر المكتملة', 'Clear completed items')} data-testid="button-clear-done"><Trash2 size={16} /></button></div><div className="shopping-list">{data.shopping.map(item => <div className={`shopping-item ${item.done ? 'done' : ''}`} key={item.id}><input type="checkbox" checked={item.done} onChange={() => setData(prev => ({ ...prev, shopping: prev.shopping.map(row => row.id === item.id ? { ...row, done: !row.done } : row) }))} data-testid={`checkbox-shopping-full-${item.id}`} /><label>{displayFoodName(item.name, language)}</label><span className="item-quantity">{displayShoppingQuantity(item.quantity, language)}</span><button className="icon-btn" style={{ width: 28, height: 28 }} onClick={() => setData(prev => ({ ...prev, shopping: prev.shopping.filter(row => row.id !== item.id) }))} aria-label={text(language, 'حذف العنصر', 'Delete item')} data-testid={`button-delete-shopping-${item.id}`}><X size={13} /></button></div>)}{!data.shopping.length && <div className="empty-state"><ShoppingBasket size={30} /><strong>{text(language, 'السلة فارغة الآن', 'Your basket is empty')}</strong><span>{text(language, 'أضف شيئاً قبل أن تنساه.', 'Add something before you forget.')}</span></div>}</div><div className="shopping-add-row"><input className="search-box" style={{ minWidth: 0 }} value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && add()} placeholder={text(language, 'أضف عنصراً...', 'Add an item...')} data-testid="input-shopping-name" /><input className="search-box" style={{ maxWidth: 90, minWidth: 70 }} value={quantity} onChange={e => setQuantity(e.target.value)} placeholder={text(language, 'الكمية', 'Quantity')} data-testid="input-shopping-quantity" /><button className="primary-btn" onClick={add} data-testid="button-add-shopping" aria-label={text(language, 'إضافة عنصر', 'Add item')}><Plus size={17} /></button></div></div><div className="stack"><div className="card card-pad"><div className="card-title"><div><h3>{text(language, 'اقتراحات ذكية', 'Smart suggestions')}</h3><p>{text(language, 'أصناف قاربت على النفاد', 'Items running low')}</p></div><Sparkles size={18} color="hsl(var(--accent-foreground))" /></div>{lowStock.length ? <div className="shopping-list">{lowStock.map(item => <div className="shopping-item" key={item.id}><FoodArt item={item} size={31} /><label>{displayFoodName(item.name, language)}</label><button className="secondary-btn" style={{ padding: '7px 10px', fontSize: 11 }} onClick={() => setData(prev => ({ ...prev, shopping: [...prev.shopping, { id: `s-${Date.now()}`, name: item.name, quantity: item.unit, done: false }] }))} data-testid={`button-suggest-${item.id}`} aria-label={`${text(language, 'إضافة', 'Add')} ${displayFoodName(item.name, language)}`}><Plus size={13} />{text(language, 'أضف', 'Add')}</button></div>)}</div> : <div className="empty-state" style={{ padding: 18 }}><CheckCircle2 size={25} /><strong>{text(language, 'مخزونك بخير', 'Your stock is healthy')}</strong><span>{text(language, 'لا توجد اقتراحات عاجلة.', 'No urgent suggestions.')}</span></div>}</div><div className="card card-pad"><div className="card-title"><h3>{text(language, 'ملاحظة للمتجر', 'Note for the store')}</h3><Pencil size={16} /></div><textarea className="field" style={{ width: '100%', border: 0, borderRadius: 11, padding: 10, background: 'hsl(39 33% 94%)', minHeight: 90 }} placeholder={text(language, 'مثال: اختر الطماطم الناضجة...', 'Example: choose ripe tomatoes...')} data-testid="textarea-shopping-note" /></div></div></div></main>;
+  return <main className="app-main shopping-page">
+    <PageHeading
+      title={text(language, 'قائمة التسوق', 'Shopping list')}
+      description={text(language, 'كل ما تحتاجه رحلتك القادمة، في مكان واحد.', 'Everything you need for your next trip, in one place.')}
+      hideMenu
+      action={<div className="page-actions">
+        <button className="secondary-btn" onClick={exportList} data-testid="button-copy-shopping"><ClipboardCopy size={16} />{text(language, 'نسخ القائمة', 'Copy list')}</button>
+        <button className="primary-btn" onClick={onAdd} data-testid="button-shopping-add-food"><Plus size={17} />{text(language, 'إضافة للثلاجة', 'Add to fridge')}</button>
+      </div>}
+    />
+    <div className="shopping-layout">
+      <section className="card card-pad shopping-list-card" aria-labelledby="shopping-list-heading">
+        <div className="shopping-section-heading">
+          <div>
+            <h3 id="shopping-list-heading">{text(language, 'قائمتك', 'Your list')}</h3>
+            <p>{toWesternNums(data.shopping.filter(item => !item.done).length)} {text(language, 'عناصر متبقية', 'items remaining')}</p>
+          </div>
+          <button className="icon-btn shopping-clear-button" onClick={() => setData(prev => ({ ...prev, shopping: prev.shopping.filter(item => !item.done) }))} aria-label={text(language, 'حذف العناصر المكتملة', 'Clear completed items')} data-testid="button-clear-done"><Trash2 size={16} /></button>
+        </div>
+        <div className="shopping-list shopping-list-primary">
+          {data.shopping.map(item => <div className={`shopping-item shopping-item-main ${item.done ? 'done' : ''}`} key={item.id}>
+            <label className="shopping-check">
+              <input type="checkbox" checked={item.done} onChange={() => setData(prev => ({ ...prev, shopping: prev.shopping.map(row => row.id === item.id ? { ...row, done: !row.done } : row) }))} aria-label={`${text(language, 'تحديد', 'Mark')} ${displayFoodName(item.name, language)}`} data-testid={`checkbox-shopping-full-${item.id}`} />
+              <span className="shopping-checkmark" aria-hidden="true"><Check size={15} /></span>
+            </label>
+            <span className="shopping-item-copy"><strong>{displayFoodName(item.name, language)}</strong><small>{displayShoppingQuantity(item.quantity, language)}</small></span>
+            <button className="icon-btn shopping-delete" onClick={() => setData(prev => ({ ...prev, shopping: prev.shopping.filter(row => row.id !== item.id) }))} aria-label={`${text(language, 'حذف العنصر', 'Delete item')}: ${displayFoodName(item.name, language)}`} data-testid={`button-delete-shopping-${item.id}`}><X size={14} /></button>
+          </div>)}
+          {!data.shopping.length && <div className="empty-state shopping-empty-state"><ShoppingBasket size={28} /><strong>{text(language, 'السلة فارغة الآن', 'Your basket is empty')}</strong><span>{text(language, 'أضف شيئاً قبل أن تنساه.', 'Add something before you forget.')}</span></div>}
+        </div>
+        <form className="shopping-add-row shopping-add-form" onSubmit={event => { event.preventDefault(); add(); }}>
+          <label className="sr-only" htmlFor="shopping-name">{text(language, 'اسم العنصر', 'Item name')}</label>
+          <input id="shopping-name" className="search-box" value={input} onChange={e => setInput(e.target.value)} placeholder={text(language, 'أضف عنصراً...', 'Add an item...')} data-testid="input-shopping-name" />
+          <label className="sr-only" htmlFor="shopping-quantity">{text(language, 'الكمية', 'Quantity')}</label>
+          <input id="shopping-quantity" className="search-box" value={quantity} onChange={e => setQuantity(e.target.value)} placeholder={text(language, 'الكمية', 'Qty')} data-testid="input-shopping-quantity" />
+          <button className="primary-btn shopping-add-button" type="submit" data-testid="button-add-shopping" aria-label={text(language, 'إضافة عنصر', 'Add item')}><Plus size={17} /></button>
+        </form>
+      </section>
+
+      <div className="shopping-side-column">
+        <section className="card card-pad shopping-suggestions-card" aria-labelledby="shopping-suggestions-heading">
+          <div className="shopping-section-heading">
+            <div>
+              <h3 id="shopping-suggestions-heading">{text(language, 'اقتراحات ذكية', 'Smart suggestions')}</h3>
+              <p>{text(language, 'أصناف قاربت على النفاد', 'Items running low')}</p>
+            </div>
+            <span className="shopping-section-icon"><Sparkles size={16} aria-hidden="true" /></span>
+          </div>
+          {lowStock.length ? <div className="shopping-suggestions">{lowStock.map(item => <div className="shopping-suggestion" key={item.id}>
+            <span className="shopping-suggestion-art"><FoodArt item={item} size={25} /></span>
+            <span className="shopping-item-copy"><strong>{displayFoodName(item.name, language)}</strong><small>{text(language, 'اقتراح لإعادة التخزين', 'Restock suggestion')}</small></span>
+            <button className="secondary-btn shopping-suggestion-button" onClick={() => setData(prev => ({ ...prev, shopping: [...prev.shopping, { id: `s-${Date.now()}`, name: item.name, quantity: item.unit, done: false }] }))} data-testid={`button-suggest-${item.id}`} aria-label={`${text(language, 'إضافة', 'Add')} ${displayFoodName(item.name, language)}`}><Plus size={13} />{text(language, 'أضف', 'Add')}</button>
+          </div>)}</div> : <div className="empty-state shopping-small-empty"><CheckCircle2 size={24} /><strong>{text(language, 'مخزونك بخير', 'Your stock is healthy')}</strong><span>{text(language, 'لا توجد اقتراحات عاجلة.', 'No urgent suggestions.')}</span></div>}
+        </section>
+
+        <section className="card card-pad shopping-note-card" aria-labelledby="shopping-note-heading">
+          <div className="shopping-section-heading">
+            <div><h3 id="shopping-note-heading">{text(language, 'ملاحظة للمتجر', 'Note for the store')}</h3></div>
+            <Pencil size={16} aria-hidden="true" />
+          </div>
+          <label className="sr-only" htmlFor="shopping-note">{text(language, 'ملاحظة للمتجر', 'Note for the store')}</label>
+          <textarea id="shopping-note" value={data.note} onChange={e => setData(prev => ({ ...prev, note: e.target.value }))} placeholder={text(language, 'مثال: اختر الطماطم الناضجة...', 'Example: choose ripe tomatoes...')} data-testid="textarea-shopping-note" />
+        </section>
+      </div>
+    </div>
+  </main>;
 }
 
 function RecipesPage({ data, setData }: { data: UserData; setData: Dispatch<SetStateAction<UserData>> }) {
