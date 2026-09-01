@@ -85,7 +85,9 @@ for (const viewport of viewports) {
       initial.viewportWidth + 1,
     );
     expect(initial.bodyScrollWidth, `${viewport.name} body width`).toBeLessThanOrEqual(initial.viewportWidth + 1);
-    expect(initial.sidebarPosition, `${viewport.name} dock positioning`).toBe('fixed');
+    expect(initial.sidebarPosition, `${viewport.name} dock positioning`).toBe(
+      viewport.name === 'phone' ? 'fixed' : 'sticky',
+    );
     expect(initial.sidebarLabels.every(display => display === 'none')).toBe(true);
 
     expectContained([initial.main!], initial.viewportWidth, `${viewport.name} dashboard`);
@@ -184,27 +186,31 @@ test('desktop sidebar slides from the correct edge in both languages', async ({ 
       await testPage.setViewportSize({ width, height: width === 834 ? 1112 : 900 });
       await seedDemoSession(testPage, language);
       await testPage.goto('/');
+
+      const closed = await measureLayout(testPage);
+      expect(closed.sidebarPosition).toBe('sticky');
+      expect(closed.sidebar?.width).toBe(0);
+      expect(
+        await testPage.locator('.smart-sidebar-scrim').evaluate(element => getComputedStyle(element).display),
+      ).toBe('none');
+      await expect(testPage.getByTestId('button-sidebar-toggle')).toBeHidden();
+
       await testPage.getByTestId('button-mobile-menu').click();
       await testPage.waitForTimeout(350);
+      const open = await measureLayout(testPage);
+      expect(open.sidebar?.width).toBeGreaterThan(200);
+      expect(open.main?.width).toBeLessThan((closed.main?.width ?? width) - 100);
+      expect(open.sidebar?.left).toBeGreaterThanOrEqual(0);
+      expect(open.sidebar?.right).toBeLessThanOrEqual(width);
+      expect(open.sidebar?.left).toBeCloseTo(language === 'ar' ? width - (open.sidebar?.width ?? 0) : 0, 0);
+      expect(open.sidebar?.right).toBeCloseTo(language === 'ar' ? width : open.sidebar?.width ?? 0, 0);
+      await expect(testPage.getByTestId('button-sidebar-toggle')).toBeHidden();
 
-      const openBox = await testPage.locator('.smart-sidebar').evaluate(element => {
-        const box = element.getBoundingClientRect();
-        return { left: box.left, right: box.right };
-      });
-      expect(openBox.left).toBeGreaterThanOrEqual(0);
-      expect(openBox.right).toBeLessThanOrEqual(width);
-
-      await testPage.getByTestId('button-sidebar-toggle').click();
+      await testPage.getByTestId('button-mobile-menu').click();
       await testPage.waitForTimeout(350);
-      const closedBox = await testPage.locator('.smart-sidebar').evaluate(element => {
-        const box = element.getBoundingClientRect();
-        return { left: box.left, right: box.right };
-      });
-      if (language === 'ar') {
-        expect(closedBox.left).toBeGreaterThanOrEqual(width);
-      } else {
-        expect(closedBox.right).toBeLessThanOrEqual(0);
-      }
+      const collapsed = await measureLayout(testPage);
+      expect(collapsed.sidebar?.width).toBe(0);
+      expect(collapsed.main?.width).toBeCloseTo(closed.main?.width ?? 0, 0);
       await testPage.close();
     }
   }

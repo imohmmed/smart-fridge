@@ -8964,6 +8964,18 @@ html[dir="ltr"] .dashboard-welcome {
     transition: opacity .18s ease, background-color .2s ease !important;
   }
 
+  .app-shell.sidebar-collapsed > .smart-sidebar {
+    width: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  /* Desktop uses the header launcher to close the dock. The internal X
+     remains available to the mobile drawer below this breakpoint. */
+  .smart-sidebar__toggle {
+    display: none !important;
+  }
+
   .app-shell > .app-shell__content {
     grid-column: 2;
     grid-row: 1;
