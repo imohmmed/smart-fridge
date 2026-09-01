@@ -177,6 +177,39 @@ test('mobile sidebar slides from the correct edge in both languages', async ({ p
   }
 });
 
+test('desktop sidebar slides from the correct edge in both languages', async ({ page }) => {
+  for (const language of ['en', 'ar'] as const) {
+    for (const width of [834, 1440]) {
+      const testPage = await page.context().newPage();
+      await testPage.setViewportSize({ width, height: width === 834 ? 1112 : 900 });
+      await seedDemoSession(testPage, language);
+      await testPage.goto('/');
+      await testPage.getByTestId('button-mobile-menu').click();
+      await testPage.waitForTimeout(350);
+
+      const openBox = await testPage.locator('.smart-sidebar').evaluate(element => {
+        const box = element.getBoundingClientRect();
+        return { left: box.left, right: box.right };
+      });
+      expect(openBox.left).toBeGreaterThanOrEqual(0);
+      expect(openBox.right).toBeLessThanOrEqual(width);
+
+      await testPage.getByTestId('button-sidebar-toggle').click();
+      await testPage.waitForTimeout(350);
+      const closedBox = await testPage.locator('.smart-sidebar').evaluate(element => {
+        const box = element.getBoundingClientRect();
+        return { left: box.left, right: box.right };
+      });
+      if (language === 'ar') {
+        expect(closedBox.left).toBeGreaterThanOrEqual(width);
+      } else {
+        expect(closedBox.right).toBeLessThanOrEqual(0);
+      }
+      await testPage.close();
+    }
+  }
+});
+
 test('keeps sidebar icons and labels adjacent in RTL and LTR', async ({ page }) => {
   for (const [index, language] of ['en', 'ar'].entries()) {
     const testPage = index === 0 ? page : await page.context().newPage();

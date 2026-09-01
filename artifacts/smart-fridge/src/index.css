@@ -8923,3 +8923,26 @@ html[dir="ltr"] .dashboard-welcome {
     display: grid !important;
   }
 }
+
+/* Desktop drawer anchoring must change with the language as well as its
+   transform. Otherwise an RTL drawer remains left-anchored and opens from
+   the wrong edge even though its hidden transform is positive. */
+@media (min-width: 768px) {
+  .smart-sidebar {
+    left: 0 !important;
+    right: auto !important;
+    transform: translate3d(calc(-100% - 32px), 0, 0) !important;
+  }
+
+  html[dir="rtl"] .smart-sidebar {
+    left: auto !important;
+    right: 0 !important;
+    transform: translate3d(calc(100% + 32px), 0, 0) !important;
+  }
+
+  .app-shell.sidebar-open .smart-sidebar,
+  html[dir="ltr"] .app-shell.sidebar-open .smart-sidebar,
+  html[dir="rtl"] .app-shell.sidebar-open .smart-sidebar {
+    transform: translate3d(0, 0, 0) !important;
+  }
+}
