@@ -1,12 +1,12 @@
-import { createContext, useContext, type CSSProperties, type Dispatch, type FormEvent, type ReactNode, type SetStateAction, useEffect, useRef, useState } from 'react';
+import { createContext, useContext, type CSSProperties, type Dispatch, type FormEvent, type ReactNode, type SetStateAction, useEffect, useId, useRef, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import {
-  Apple, ArrowLeft, Bell, BookOpen, Check, CheckCircle2, ChevronLeft, CircleHelp,
+  Apple, ArrowLeft, Bell, Check, CheckCircle2, ChevronLeft, CircleHelp,
   ClipboardCopy, Droplets, Egg, Fish, Flame, Heart, Home, Leaf, LogOut, Minus,
-  Menu, Package, Pencil, Plus, Refrigerator, Search, Settings, ShoppingBasket, Sparkles,
+  Menu, Package, Pencil, Plus, Search, Settings, ShoppingBasket, Sparkles,
   Trash2, UserRound, Utensils, X, Zap, Eye, EyeOff, Globe2, LockKeyhole, Mail,
 } from 'lucide-react';
 import { Link, Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
@@ -432,6 +432,43 @@ function FoodArt({ item, size = 40 }: { item?: FridgeItem; size?: number }) {
   return <div className={`food-art art-${art}`} style={{ ...style, width: size, height: size }}><span className="food-shadow" aria-hidden="true" /><TransparentFoodImage src={photo} alt="" width={size * 1.5} height={size * 1.5} /></div>;
 }
 
+function PremiumFridgeLogo({ className = '' }: { className?: string }) {
+  const id = useId().replace(/:/g, '');
+  const shellGradient = `premium-logo-shell-${id}`;
+  const glassGradient = `premium-logo-glass-${id}`;
+  const shineGradient = `premium-logo-shine-${id}`;
+
+  return <svg className={`premium-fridge-logo ${className}`} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id={shellGradient} x1="9" y1="7" x2="56" y2="59" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#163E4A" />
+        <stop offset=".52" stopColor="#0C2936" />
+        <stop offset="1" stopColor="#071A26" />
+      </linearGradient>
+      <linearGradient id={glassGradient} x1="17" y1="19" x2="48" y2="52" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#B9F4F0" stopOpacity=".96" />
+        <stop offset=".45" stopColor="#4BA8B5" stopOpacity=".92" />
+        <stop offset="1" stopColor="#164C63" stopOpacity=".96" />
+      </linearGradient>
+      <linearGradient id={shineGradient} x1="14" y1="10" x2="48" y2="42" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#FFFFFF" stopOpacity=".8" />
+        <stop offset=".46" stopColor="#A9F3F1" stopOpacity=".16" />
+        <stop offset="1" stopColor="#A9F3F1" stopOpacity="0" />
+      </linearGradient>
+    </defs>
+    <rect x="3.5" y="3.5" width="57" height="57" rx="18" fill={`url(#${shellGradient})`} stroke="#75D9D3" strokeOpacity=".44" />
+    <path d="M17 15.5C17 12.4624 19.4624 10 22.5 10H41.5C44.5376 10 47 12.4624 47 15.5V48.5C47 51.5376 44.5376 54 41.5 54H22.5C19.4624 54 17 51.5376 17 48.5V15.5Z" fill={`url(#${glassGradient})`} stroke="#B9F4F0" strokeOpacity=".6" />
+    <path d="M17 25.5H47V29H17V25.5Z" fill="#071F2E" fillOpacity=".58" />
+    <path d="M21 14H43C45.2091 14 47 15.7909 47 18V21.5H17V18C17 15.7909 18.7909 14 21 14Z" fill={`url(#${shineGradient})`} />
+    <path d="M21 33.5H43" stroke="#D5FFFA" strokeOpacity=".44" strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M21 39H38" stroke="#D5FFFA" strokeOpacity=".28" strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M21 44.5H33" stroke="#D5FFFA" strokeOpacity=".2" strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M51.5 19V29" stroke="#F2D28A" strokeWidth="2.5" strokeLinecap="round" />
+    <path d="M51.5 35V45" stroke="#F2D28A" strokeOpacity=".56" strokeWidth="2.5" strokeLinecap="round" />
+    <circle cx="22" cy="18" r="1.5" fill="#F2D28A" />
+  </svg>;
+}
+
 function LanguageSwitcher() {
   const { language, setLanguage } = useLanguage();
   const next = language === 'ar' ? 'en' : 'ar';
@@ -542,8 +579,6 @@ const navItems = [
   { href: '/meals', ar: 'وجباتي', en: 'My meals', icon: Utensils },
   { href: '/daily-analysis', ar: 'تحليل يومي', en: 'Daily analysis', icon: Flame },
   { href: '/shopping', ar: 'قائمة التسوق', en: 'Shopping list', icon: ShoppingBasket },
-  { href: '/recipes', ar: 'وصفات مقترحة', en: 'Suggested recipes', icon: BookOpen },
-  { href: '/favorites', ar: 'المفضلة', en: 'Favorites', icon: Heart },
 ];
 
 function AppShell({ user, shoppingCount, children, onLogout }: { user: User; shoppingCount: number; children: ReactNode; onLogout: () => void }) {
@@ -574,7 +609,7 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
         <div className="smart-sidebar__inner">
           <div className="smart-sidebar__head">
             <div className="smart-sidebar__brand" aria-label={text(language, 'ثلاجتي الذكية', 'Smart Fridge')}>
-              <span className="smart-sidebar__brand-mark" aria-hidden="true"><Refrigerator size={18} /></span>
+              <span className="smart-sidebar__brand-mark" aria-hidden="true"><PremiumFridgeLogo /></span>
               <span className="smart-sidebar__brand-copy"><strong>{text(language, 'ثلاجتي', 'Smart Fridge')}</strong><small>{text(language, 'مساحتك الطازجة', 'Fresh space')}</small></span>
             </div>
             <button className="smart-sidebar__toggle" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-sidebar-toggle">{sidebarOpen ? <X size={18} /> : <Menu size={18} />}</button>
@@ -592,10 +627,9 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
         <header className={`mobile-topbar ${location === '/' ? 'mobile-topbar-dashboard' : ''}`}>
          <button className="menu-toggle icon-btn" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-mobile-menu-legacy">{sidebarOpen ? <X size={19} /> : <Menu size={19} />}</button>
           <div className="brand" aria-label={text(language, 'ثلاجتي الذكية', 'Smart Fridge')}>
-            <span className="brand-mark" aria-hidden="true"><Refrigerator size={19} /></span>
+            <span className="brand-mark" aria-hidden="true"><PremiumFridgeLogo /></span>
             <span className="brand-copy"><strong>{text(language, 'ثلاجتي', 'Smart Fridge')}</strong><small>{text(language, 'مساحتك الطازجة', 'Fresh space')}</small></span>
           </div>
-         <button className="icon-btn" onClick={onLogout} aria-label={text(language, 'تسجيل الخروج', 'Sign out')} data-testid="button-mobile-logout"><LogOut size={17} /></button>
        </header>
       {children}
     </div>
@@ -980,7 +1014,7 @@ function FavoritesPage({ data, setData }: { data: UserData; setData: Dispatch<Se
   return <main className="app-main"><PageHeading title="المفضلة" description="الوصفات التي نالت إعجابك، قريبة دائماً." /><div className="card card-pad">{favorites.length ? <div className="recipe-grid">{favorites.map(recipe => <RecipeCard key={recipe.id} recipe={recipe} favorite onFavorite={() => setData(prev => ({ ...prev, favorites: prev.favorites.filter(id => id !== recipe.id) }))} />)}</div> : <div className="empty-state"><Heart size={35} /><strong>لم تختر مفضلات بعد</strong><span>اضغط على القلب بجانب أي وصفة لحفظها هنا.</span><Link href="/recipes" className="primary-btn" style={{ marginTop: 18 }} data-testid="link-empty-favorites">تصفح الوصفات</Link></div>}</div></main>;
 }
 
-function SettingsPage({ user, data, setData, setNotice, onLogout, onUserUpdate }: { user: User; data: UserData; setData: Dispatch<SetStateAction<UserData>>; setNotice: (v: string) => void; onLogout: () => void; onUserUpdate: (updates: UserProfileUpdate) => void }) {
+function SettingsPage({ user, data, setData, setNotice, onUserUpdate }: { user: User; data: UserData; setData: Dispatch<SetStateAction<UserData>>; setNotice: (v: string) => void; onUserUpdate: (updates: UserProfileUpdate) => void }) {
   const { language } = useLanguage();
    const sections = [
      ['عام', 'General'],
@@ -1061,7 +1095,6 @@ function SettingsPage({ user, data, setData, setNotice, onLogout, onUserUpdate }
         </>}
         {section === 'الخصوصية' && <><div className="card-title"><div><h3>{text(language, 'خصوصيتك أولاً', 'Privacy first')}</h3><p>{text(language, 'لا نرسل بياناتك إلى أي مكان', 'Your data is not sent anywhere')}</p></div><CircleHelp size={20} color="hsl(var(--primary))" /></div>
           <div className="empty-state" style={{ padding: 30 }}><CheckCircle2 size={32} /><strong>{text(language, 'بياناتك محلية تماماً', 'Your data is fully local')}</strong><span>{text(language, 'يتم حفظ حسابك ومحتويات ثلاجتك في هذا المتصفح فقط.', 'Your account and fridge contents are saved only in this browser.')}</span></div>
-          <button className="danger-btn" onClick={onLogout} data-testid="button-settings-logout"><LogOut size={15} style={{ verticalAlign: 'middle', marginInlineEnd: 5 }} />{text(language, 'تسجيل الخروج من هذا الجهاز', 'Sign out on this device')}</button>
         </>}
       </div>
     </div>
@@ -1071,7 +1104,7 @@ function SettingsPage({ user, data, setData, setNotice, onLogout, onUserUpdate }
 function RoutedPages({ user, data, setData, onLogout, setNotice, onUserUpdate }: { user: User; data: UserData; setData: Dispatch<SetStateAction<UserData>>; onLogout: () => void; setNotice: (v: string) => void; onUserUpdate: (updates: UserProfileUpdate) => void }) {
   const { language } = useLanguage();
   const [addOpen, setAddOpen] = useState(false);
-  return <AppShell user={user} shoppingCount={data.shopping.filter(item => !item.done).length} onLogout={onLogout}><Switch><Route path="/"><Dashboard user={user} data={data} setData={setData} onAdd={() => setAddOpen(true)} setNotice={setNotice} /></Route><Route path="/meals"><MealsPage data={data} setData={setData} setNotice={setNotice} /></Route><Route path="/daily-analysis"><DailyAnalysis data={data} /></Route><Route path="/shopping"><ShoppingPage data={data} setData={setData} setNotice={setNotice} onAdd={() => setAddOpen(true)} /></Route><Route path="/recipes"><RecipesPage data={data} setData={setData} /></Route><Route path="/favorites"><FavoritesPage data={data} setData={setData} /></Route><Route path="/settings"><SettingsPage user={user} data={data} setData={setData} setNotice={setNotice} onLogout={onLogout} onUserUpdate={onUserUpdate} /></Route><Route component={NotFound} /></Switch>{addOpen && <AddFoodModal onClose={() => setAddOpen(false)} onAdd={item => { setData(prev => ({ ...prev, items: [...prev.items, { ...item, id: `food-${Date.now()}` }] })); flash(setNotice, text(language, 'أضيف الطعام إلى ثلاجتك', 'Food added to your fridge')); }} />}</AppShell>;
+  return <AppShell user={user} shoppingCount={data.shopping.filter(item => !item.done).length} onLogout={onLogout}><Switch><Route path="/"><Dashboard user={user} data={data} setData={setData} onAdd={() => setAddOpen(true)} setNotice={setNotice} /></Route><Route path="/meals"><MealsPage data={data} setData={setData} setNotice={setNotice} /></Route><Route path="/daily-analysis"><DailyAnalysis data={data} /></Route><Route path="/shopping"><ShoppingPage data={data} setData={setData} setNotice={setNotice} onAdd={() => setAddOpen(true)} /></Route><Route path="/recipes"><RecipesPage data={data} setData={setData} /></Route><Route path="/favorites"><FavoritesPage data={data} setData={setData} /></Route><Route path="/settings"><SettingsPage user={user} data={data} setData={setData} setNotice={setNotice} onUserUpdate={onUserUpdate} /></Route><Route component={NotFound} /></Switch>{addOpen && <AddFoodModal onClose={() => setAddOpen(false)} onAdd={item => { setData(prev => ({ ...prev, items: [...prev.items, { ...item, id: `food-${Date.now()}` }] })); flash(setNotice, text(language, 'أضيف الطعام إلى ثلاجتك', 'Food added to your fridge')); }} />}</AppShell>;
 }
 
 function App() {

@@ -268,6 +268,40 @@ test('keeps sidebar icons and labels adjacent in RTL and LTR', async ({ page }) 
   }
 });
 
+test('keeps sidebar navigation clean and logout exclusive to its footer', async ({ page }) => {
+  for (const [index, language] of ['ar', 'en'].entries()) {
+    const testPage = index === 0 ? page : await page.context().newPage();
+    await testPage.setViewportSize({ width: 390, height: 844 });
+    await seedDemoSession(testPage, language);
+    await testPage.goto('/');
+
+    const cleanup = await testPage.evaluate(() => {
+      const sidebarFooter = document.querySelector('.smart-sidebar__footer');
+      return {
+        sidebarLogoutCount: document.querySelectorAll('.smart-sidebar__logout').length,
+        footerLogoutCount: document.querySelectorAll('.smart-sidebar__footer .smart-sidebar__logout').length,
+        footerLastChildIsLogout: sidebarFooter?.lastElementChild?.classList.contains('smart-sidebar__logout') ?? false,
+        topLogoutCount: document.querySelectorAll(
+          '[data-testid="button-mobile-logout"], [data-testid="button-settings-logout"], .dashboard-topbar [aria-label*="Sign out"], .dashboard-topbar [aria-label*="تسجيل الخروج"]',
+        ).length,
+        removedNavLabels: Array.from(document.querySelectorAll('.smart-sidebar__link')).map(link => link.textContent?.trim()).filter(label =>
+          label === 'Suggested recipes' || label === 'Favorites' || label === 'وصفات مقترحة' || label === 'المفضلة',
+        ),
+        logoCount: document.querySelectorAll('.premium-fridge-logo').length,
+      };
+    });
+
+    expect(cleanup.sidebarLogoutCount).toBe(1);
+    expect(cleanup.footerLogoutCount).toBe(1);
+    expect(cleanup.footerLastChildIsLogout).toBe(true);
+    expect(cleanup.topLogoutCount).toBe(0);
+    expect(cleanup.removedNavLabels).toEqual([]);
+    expect(cleanup.logoCount).toBe(2);
+
+    if (index > 0) await testPage.close();
+  }
+});
+
 test('keeps the active sidebar item flat without shadow artifacts', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await seedDemoSession(page, 'ar');

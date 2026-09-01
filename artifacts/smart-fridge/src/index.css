@@ -9099,3 +9099,35 @@ html[dir="ltr"] .dashboard-welcome {
   margin: 0 !important;
   border-radius: 50% !important;
 }
+
+/* Shared premium mark: the same glossy vector is used by the sidebar and
+   mobile masthead without inheriting the old pale icon tile treatment. */
+.premium-fridge-logo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.smart-sidebar__brand-mark,
+.brand-mark {
+  display: grid !important;
+  place-items: center;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: inherit;
+}
+
+.smart-sidebar__brand-mark .premium-fridge-logo,
+.brand-mark .premium-fridge-logo {
+  width: 100%;
+  height: 100%;
+}
+
+.theme-dark .smart-sidebar__brand-mark,
+.theme-dark .brand-mark {
+  background: transparent !important;
+  box-shadow: none !important;
+}

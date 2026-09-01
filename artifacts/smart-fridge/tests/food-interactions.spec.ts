@@ -186,8 +186,6 @@ test.describe('Smart Fridge food interactions', () => {
       ['link-nav-وجباتي', '/meals'],
       ['link-nav-تحليل يومي', '/daily-analysis'],
       ['link-nav-قائمة التسوق', '/shopping'],
-      ['link-nav-وصفات مقترحة', '/recipes'],
-      ['link-nav-المفضلة', '/favorites'],
       ['link-nav-settings', '/settings'],
     ] as const) {
       await page.getByTestId('button-mobile-menu').click();
@@ -202,6 +200,18 @@ test.describe('Smart Fridge food interactions', () => {
       await expect(page.locator('main.app-main')).toHaveCount(1);
       await expect(page.locator('.app-shell.sidebar-open')).toHaveCount(0);
     }
+  });
+
+  test('does not expose removed recipe tabs or topbar logout', async ({ page }) => {
+    await seedDemoSession(page);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+
+    await expect(page.getByTestId('link-nav-وصفات مقترحة')).toHaveCount(0);
+    await expect(page.getByTestId('link-nav-المفضلة')).toHaveCount(0);
+    await expect(page.getByTestId('button-logout')).toHaveCount(1);
+    await expect(page.getByTestId('button-mobile-logout')).toHaveCount(0);
+    await expect(page.getByTestId('button-settings-logout')).toHaveCount(0);
   });
 
   test('opens editable account settings from the dashboard profile', async ({ page }) => {
