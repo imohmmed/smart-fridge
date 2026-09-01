@@ -768,8 +768,10 @@ test('keeps the login screen compact and readable in both languages and themes',
       await expect(page.locator('.auth-redesign')).toBeVisible();
       await expect(page.locator('.auth-card-logo')).toBeVisible();
       await expect(page.locator('.auth-options .link-btn')).toHaveCount(1);
+      await expect(page.getByTestId('button-demo-login')).toHaveCount(0);
       await page.getByTestId('tab-register').click();
       await expect(page.locator('.auth-options .link-btn')).toHaveCount(0);
+      await expect(page.getByTestId('button-demo-login')).toHaveCount(1);
       await page.getByTestId('tab-login').click();
       await expect(page.locator('.auth-options .link-btn')).toHaveCount(1);
       const layout = await page.evaluate(() => {
@@ -792,5 +794,29 @@ test('keeps the login screen compact and readable in both languages and themes',
       await expect(page.locator('.auth-redesign')).toHaveClass(/auth-theme-dark/);
       await expect(page.locator('#auth-email')).toHaveCSS('background-color', 'rgb(29, 41, 36)');
     }
+  }
+});
+
+test('keeps demo visitors as guests with a sign-in action', async ({ page }) => {
+  for (const language of ['ar', 'en'] as const) {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/');
+    await page.evaluate(({ language }) => {
+      localStorage.clear();
+      localStorage.setItem('smart_fridge_language', language);
+      localStorage.setItem('smart_fridge_auth_theme', 'light');
+    }, { language });
+    await page.reload();
+
+    await page.getByTestId('tab-register').click();
+    await page.getByTestId('button-demo-login').click();
+    await page.getByTestId('button-mobile-menu').click();
+    await expect(page.locator('.app-shell.sidebar-open')).toHaveCount(1);
+    await expect(page.getByTestId('button-logout')).toHaveCount(0);
+    await expect(page.getByTestId('button-guest-login')).toHaveCount(1);
+    await expect(page.getByTestId('button-guest-login')).toContainText(language === 'ar' ? 'تسجيل الدخول' : 'Sign in');
+
+    await page.getByTestId('button-guest-login').click();
+    await expect(page.locator('.auth-redesign')).toBeVisible();
   }
 });

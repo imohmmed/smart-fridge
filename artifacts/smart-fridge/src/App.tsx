@@ -7,7 +7,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import {
   Apple, ArrowLeft, Bell, Check, CheckCircle2, ChevronLeft, CircleHelp,
   ClipboardCopy, Droplets, Egg, Fish, Flame, Heart, Home, Leaf, LogOut, Minus,
-  Menu, Package, Pencil, Plus, Refrigerator, Search, Settings, ShoppingBasket, Sparkles,
+  LogIn, Menu, Package, Pencil, Plus, Refrigerator, Search, Settings, ShoppingBasket, Sparkles,
   Trash2, UserRound, Utensils, X, Zap, Eye, EyeOff, Globe2, LockKeyhole, Mail, Moon, Sun,
 } from 'lucide-react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
@@ -153,6 +153,8 @@ const USERS_KEY = 'smart_fridge_users';
 const SESSION_KEY = 'smart_fridge_session';
 const DATA_KEY = 'smart_fridge_data';
 const AUTH_THEME_KEY = 'smart_fridge_auth_theme';
+const DEMO_USER_ID = 'demo-user';
+const DEMO_USER: User = { id: DEMO_USER_ID, name: 'سارة', email: 'demo@thalajati.local', password: 'demo', gender: 'female' };
 const readStoredUsers = (): User[] => {
   try {
     const stored = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
@@ -441,7 +443,7 @@ function LanguageSwitcher() {
   return <div className="language-switcher" aria-label={text(language, 'تغيير اللغة إلى الإنجليزية', 'Switch language to Arabic')}><Globe2 size={16} /><button type="button" onClick={() => setLanguage(next)} aria-label={text(language, 'English', 'العربية')}>{text(language, 'English', 'العربية')}</button></div>;
 }
 
-function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
+function AuthScreen({ onLogin }: { onLogin: (user: User, isGuest?: boolean) => void }) {
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [name, setName] = useState('');
   const [gender, setGender] = useState<'' | 'female' | 'male'>('');
@@ -478,10 +480,7 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
     }
   };
   const demo = () => {
-    const user: User = { id: 'demo-user', name: 'سارة', email: 'demo@thalajati.local', password: 'demo', gender: 'female' };
-    const users: User[] = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
-    if (!users.some(item => item.id === user.id)) localStorage.setItem(USERS_KEY, JSON.stringify([...users, user]));
-    onLogin(user);
+    onLogin(DEMO_USER, true);
   };
   const forgotPassword = () => setError(text(language, 'سنرسل لك رابط استعادة كلمة المرور قريباً.', 'We will send a password reset link soon.'));
   const toggleAuthTheme = () => setDarkMode(value => {
@@ -537,7 +536,7 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
           <div className="auth-options"><label htmlFor="remember-me"><input id="remember-me" type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} /> <span>{text(language, 'تذكرني', 'Remember me')}</span></label>{mode === 'login' && <button type="button" className="link-btn" onClick={forgotPassword}>{text(language, 'نسيت كلمة المرور؟', 'Forgot password?')}</button>}</div>
          <button className="primary-btn auth-submit" type="submit" data-testid="button-auth-submit">{mode === 'login' ? text(language, 'دخول إلى ثلاجتي', 'Enter my fridge') : text(language, 'إنشاء مساحتي', 'Create my space')}<ArrowLeft size={17} /></button>
          <div className="auth-divider"><span>{text(language, 'أو', 'or')}</span></div>
-         <button className="secondary-btn auth-demo" type="button" onClick={demo} data-testid="button-demo-login"><Sparkles size={16} /> {text(language, 'تجربة ثلاجتي الآن', 'Try Smart Fridge')}</button>
+          {mode === 'register' && <button className="secondary-btn auth-demo" type="button" onClick={demo} data-testid="button-demo-login"><Sparkles size={16} /> {text(language, 'تجربة ثلاجتي الآن', 'Try Smart Fridge')}</button>}
          <p className="create-account">{mode === 'login' ? text(language, 'ليس لديك حساب؟', 'Don’t have an account?') : text(language, 'لديك حساب بالفعل؟', 'Already have an account?')} <button type="button" className="link-btn" onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(''); }}>{mode === 'login' ? text(language, 'أنشئ حساباً', 'Create one') : text(language, 'تسجيل الدخول', 'Sign in')}</button></p>
          <div className="auth-note"><LockKeyhole size={12} /> {text(language, 'بياناتك تبقى في هذا الجهاز، ومساحتك لك وحدك.', 'Your data stays on this device, and your space is private.')}</div>
       </form>
@@ -552,7 +551,7 @@ const navItems = [
   { href: '/shopping', ar: 'قائمة التسوق', en: 'Shopping list', icon: ShoppingBasket },
 ];
 
-function AppShell({ user, shoppingCount, children, onLogout }: { user: User; shoppingCount: number; children: ReactNode; onLogout: () => void }) {
+function AppShell({ user, shoppingCount, children, onLogout, isGuest }: { user: User; shoppingCount: number; children: ReactNode; onLogout: () => void; isGuest: boolean }) {
   const [location] = useLocation();
   const { language } = useLanguage();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -590,7 +589,7 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
           </nav>
           <div className="smart-sidebar__footer">
               <Link href="/settings" onClick={closeSidebar} aria-label={text(language, 'الإعدادات', 'Settings')} data-tooltip={text(language, 'الإعدادات', 'Settings')} className={`smart-sidebar__link ${location === '/settings' ? 'active' : ''}`} data-testid="link-nav-settings"><span className="smart-sidebar__icon"><Settings size={18} aria-hidden="true" /></span><span className="smart-sidebar__label">{text(language, 'الإعدادات', 'Settings')}</span></Link>
-             <button className="smart-sidebar__logout" onClick={onLogout} data-tooltip={text(language, 'تسجيل الخروج', 'Sign out')} aria-label={text(language, 'تسجيل الخروج', 'Sign out')} data-testid="button-logout"><span className="smart-sidebar__icon"><LogOut size={15} aria-hidden="true" /></span><span className="smart-sidebar__label">{text(language, 'تسجيل الخروج', 'Sign out')}</span></button>
+              <button className="smart-sidebar__logout" onClick={onLogout} data-tooltip={isGuest ? text(language, 'تسجيل الدخول', 'Sign in') : text(language, 'تسجيل الخروج', 'Sign out')} aria-label={isGuest ? text(language, 'تسجيل الدخول', 'Sign in') : text(language, 'تسجيل الخروج', 'Sign out')} data-testid={isGuest ? 'button-guest-login' : 'button-logout'}><span className="smart-sidebar__icon">{isGuest ? <LogIn size={15} aria-hidden="true" /> : <LogOut size={15} aria-hidden="true" />}</span><span className="smart-sidebar__label">{isGuest ? text(language, 'تسجيل الدخول', 'Sign in') : text(language, 'تسجيل الخروج', 'Sign out')}</span></button>
           </div>
         </div>
       </aside>
@@ -1216,22 +1215,23 @@ function SettingsPage({ user, data, setData, setNotice, onUserUpdate }: { user: 
   </main>;
 }
 
-function RoutedPages({ user, data, setData, onLogout, setNotice, onUserUpdate }: { user: User; data: UserData; setData: Dispatch<SetStateAction<UserData>>; onLogout: () => void; setNotice: (v: string) => void; onUserUpdate: (updates: UserProfileUpdate) => void }) {
+function RoutedPages({ user, data, setData, onLogout, setNotice, onUserUpdate, isGuest }: { user: User; data: UserData; setData: Dispatch<SetStateAction<UserData>>; onLogout: () => void; setNotice: (v: string) => void; onUserUpdate: (updates: UserProfileUpdate) => void; isGuest: boolean }) {
   const { language } = useLanguage();
   const [addOpen, setAddOpen] = useState(false);
-  return <AppShell user={user} shoppingCount={data.shopping.filter(item => !item.done).length} onLogout={onLogout}><Switch><Route path="/"><Dashboard user={user} data={data} setData={setData} onAdd={() => setAddOpen(true)} setNotice={setNotice} /></Route><Route path="/meals"><MealsPage data={data} setData={setData} setNotice={setNotice} /></Route><Route path="/daily-analysis"><DailyAnalysis data={data} /></Route><Route path="/shopping"><ShoppingPage data={data} setData={setData} setNotice={setNotice} onAdd={() => setAddOpen(true)} /></Route><Route path="/recipes"><RecipesPage data={data} setData={setData} /></Route><Route path="/favorites"><FavoritesPage data={data} setData={setData} /></Route><Route path="/settings"><SettingsPage user={user} data={data} setData={setData} setNotice={setNotice} onUserUpdate={onUserUpdate} /></Route><Route component={NotFound} /></Switch>{addOpen && <AddFoodModal onClose={() => setAddOpen(false)} onAdd={item => { setData(prev => ({ ...prev, items: [...prev.items, { ...item, id: `food-${Date.now()}` }] })); flash(setNotice, text(language, 'أضيف الطعام إلى ثلاجتك', 'Food added to your fridge')); }} />}</AppShell>;
+  return <AppShell user={user} shoppingCount={data.shopping.filter(item => !item.done).length} onLogout={onLogout} isGuest={isGuest}><Switch><Route path="/"><Dashboard user={user} data={data} setData={setData} onAdd={() => setAddOpen(true)} setNotice={setNotice} /></Route><Route path="/meals"><MealsPage data={data} setData={setData} setNotice={setNotice} /></Route><Route path="/daily-analysis"><DailyAnalysis data={data} /></Route><Route path="/shopping"><ShoppingPage data={data} setData={setData} setNotice={setNotice} onAdd={() => setAddOpen(true)} /></Route><Route path="/recipes"><RecipesPage data={data} setData={setData} /></Route><Route path="/favorites"><FavoritesPage data={data} setData={setData} /></Route><Route path="/settings"><SettingsPage user={user} data={data} setData={setData} setNotice={setNotice} onUserUpdate={onUserUpdate} /></Route><Route component={NotFound} /></Switch>{addOpen && <AddFoodModal onClose={() => setAddOpen(false)} onAdd={item => { setData(prev => ({ ...prev, items: [...prev.items, { ...item, id: `food-${Date.now()}` }] })); flash(setNotice, text(language, 'أضيف الطعام إلى ثلاجتك', 'Food added to your fridge')); }} />}</AppShell>;
 }
 
 function App() {
   const { language } = useLanguage();
   const [session, setSession] = useState<string | null>(() => localStorage.getItem(SESSION_KEY));
   const [users, setUsers] = useState<User[]>(readStoredUsers);
+  const [guestUser, setGuestUser] = useState<User | null>(() => localStorage.getItem(SESSION_KEY) === DEMO_USER_ID ? DEMO_USER : null);
   const [notice, setNotice] = useState('');
   const [data, setData] = useState<UserData>(() => loadData(session || ''));
-  const user = users.find(item => item.id === session);
+  const user = guestUser || users.find(item => item.id === session);
   useEffect(() => { if (session && user) { setData(loadData(session)); } }, [session]);
   useEffect(() => { if (session) saveData(session, data); }, [data, session]);
-  const login = (nextUser: User) => { setUsers(readStoredUsers()); localStorage.setItem(SESSION_KEY, nextUser.id); setSession(nextUser.id); setData(loadData(nextUser.id)); };
+  const login = (nextUser: User, isGuest = false) => { setGuestUser(isGuest ? nextUser : null); if (!isGuest) setUsers(readStoredUsers()); localStorage.setItem(SESSION_KEY, nextUser.id); setSession(nextUser.id); setData(loadData(nextUser.id)); };
   const updateUser = (updates: UserProfileUpdate) => {
     setUsers(previous => {
       const next = previous.map(candidate => candidate.id === session ? { ...candidate, ...updates } : candidate);
@@ -1239,9 +1239,9 @@ function App() {
       return next;
     });
   };
-  const logout = () => { localStorage.removeItem(SESSION_KEY); setSession(null); setNotice(''); };
+  const logout = () => { localStorage.removeItem(SESSION_KEY); setGuestUser(null); setSession(null); setNotice(''); };
   if (!session || !user) return <AuthScreen onLogin={login} />;
-  return <div className={`fridge-app ${data.darkMode ? 'theme-dark' : ''}`} dir={language} data-theme={data.darkMode ? 'dark' : undefined}><RoutedPages user={user} data={data} setData={setData} onLogout={logout} setNotice={setNotice} onUserUpdate={updateUser} />{notice && <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 60, padding: '12px 17px', borderRadius: 12, background: 'hsl(var(--sidebar))', color: 'hsl(var(--card))', boxShadow: '0 10px 25px hsl(155 22% 17% / .2)', animation: 'modal-in .2s ease-out' }} role="status" data-testid="status-notice"><CheckCircle2 size={16} style={{ verticalAlign: 'middle', marginLeft: 7, color: 'hsl(var(--accent))' }} />{notice}</div>}</div>;
+  return <div className={`fridge-app ${data.darkMode ? 'theme-dark' : ''}`} dir={language} data-theme={data.darkMode ? 'dark' : undefined}><RoutedPages user={user} data={data} setData={setData} onLogout={logout} setNotice={setNotice} onUserUpdate={updateUser} isGuest={user.id === DEMO_USER_ID} />{notice && <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 60, padding: '12px 17px', borderRadius: 12, background: 'hsl(var(--sidebar))', color: 'hsl(var(--card))', boxShadow: '0 10px 25px hsl(155 22% 17% / .2)', animation: 'modal-in .2s ease-out' }} role="status" data-testid="status-notice"><CheckCircle2 size={16} style={{ verticalAlign: 'middle', marginLeft: 7, color: 'hsl(var(--accent))' }} />{notice}</div>}</div>;
 }
 
 export default function AppWithProviders() {
