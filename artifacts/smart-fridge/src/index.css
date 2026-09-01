@@ -9388,3 +9388,55 @@ html[dir="ltr"] .settings-grid .settings-nav button {
     flex-wrap: wrap;
   }
 }
+
+/* Quick Stats: a balanced center strip with consistent breathing room. */
+.dashboard-topbar .dashboard-metrics {
+  display: flex !important;
+  align-items: stretch !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  min-width: 0;
+  padding-inline: 4px;
+}
+
+.dashboard-topbar .dashboard-metrics .dashboard-stat {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 10px 12px !important;
+  border: 1px solid rgba(74, 124, 89, .16) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 6px 16px rgba(32, 48, 36, .06) !important;
+}
+
+.theme-dark .dashboard-topbar .dashboard-metrics .dashboard-stat {
+  border-color: rgba(164, 190, 200, .22) !important;
+  border-radius: 18px !important;
+  background: #22313f !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .2) !important;
+}
+
+@media (max-width: 768px) {
+  .dashboard-topbar .dashboard-metrics {
+    gap: 10px !important;
+    padding-inline: 0;
+  }
+
+  .dashboard-topbar .dashboard-metrics .dashboard-stat {
+    min-height: 88px;
+    padding: 10px !important;
+  }
+}
+
+/* Give the bottom summary cards a little breathing room from the content
+   edges while keeping the pair visually centered. */
+.dashboard-footer {
+  width: calc(100% - 24px) !important;
+  margin-inline: auto !important;
+}
+
+@media (max-width: 768px) {
+  .dashboard-footer {
+    width: calc(100% - 12px) !important;
+  }
+}

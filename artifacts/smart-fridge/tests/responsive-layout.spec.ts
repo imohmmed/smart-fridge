@@ -384,6 +384,46 @@ test('keeps dark mode surfaces softly rounded', async ({ page }) => {
   }
 });
 
+test('keeps Quick Stats spaced and softly rounded', async ({ page }) => {
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
+    await seedDemoSession(page, 'en');
+    await page.goto('/');
+
+    await expect(page.locator('.dashboard-metrics')).toBeVisible();
+    await expect(page.locator('.dashboard-metrics .dashboard-stat')).toHaveCount(3);
+    await expect(page.locator('.dashboard-metrics')).toHaveCSS('gap', width === 390 ? '10px' : '12px');
+    for (const stat of await page.locator('.dashboard-metrics .dashboard-stat').all()) {
+      await expect(stat).toHaveCSS('border-radius', '18px');
+    }
+  }
+});
+
+test('keeps bottom summary cards slightly inset and centered', async ({ page }) => {
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
+    await seedDemoSession(page, 'en');
+    await page.goto('/');
+
+    const layout = await page.evaluate(() => {
+      const main = document.querySelector<HTMLElement>('.dashboard-main')!.getBoundingClientRect();
+      const footer = document.querySelector<HTMLElement>('.dashboard-footer')!.getBoundingClientRect();
+      return {
+        mainLeft: main.left,
+        mainRight: main.right,
+        footerLeft: footer.left,
+        footerRight: footer.right,
+        footerWidth: footer.width,
+        mainWidth: main.width,
+      };
+    });
+
+    expect(layout.footerWidth).toBeLessThan(layout.mainWidth);
+    expect(layout.footerLeft).toBeGreaterThan(layout.mainLeft);
+    expect(layout.footerRight).toBeLessThan(layout.mainRight);
+  }
+});
+
 test('keeps the active sidebar item flat without shadow artifacts', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await seedDemoSession(page, 'ar');
