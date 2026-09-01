@@ -1031,7 +1031,7 @@ function ShoppingPage({ data, setData, setNotice, onAdd }: { data: UserData; set
   const { language } = useLanguage();
   const [input, setInput] = useState(''); const [quantity, setQuantity] = useState('1');
   const add = () => { if (!input.trim()) return; setData(prev => ({ ...prev, shopping: [...prev.shopping, { id: `s-${Date.now()}`, name: input.trim(), quantity, done: false }] })); setInput(''); flash(setNotice, text(language, 'أضيفت للقائمة', 'Added to the list')); };
-  const exportList = async () => { const listText = data.shopping.filter(item => !item.done).map(item => `- ${item.name} (${item.quantity})`).join('\n'); try { await navigator.clipboard.writeText(listText); flash(setNotice, text(language, 'تم نسخ قائمة التسوق', 'Shopping list copied')); } catch { flash(setNotice, text(language, 'حدّد القائمة وانسخها', 'Select the list and copy it')); } };
+  const exportList = async () => { const listText = data.shopping.filter(item => !item.done).map(item => `- ${item.name} (${item.quantity})`).join('\n'); try { await navigator.clipboard.writeText(listText); flash(setNotice, text(language, 'تم نسخ العناصر المتبقية كنص', 'Remaining items copied as text')); } catch { flash(setNotice, text(language, 'حدّد القائمة وانسخها', 'Select the list and copy it')); } };
   const lowStock = data.items.filter(item => item.quantity <= 1 && !data.shopping.some(row => row.name === item.name));
   return <main className="app-main shopping-page">
     <PageHeading
@@ -1039,7 +1039,7 @@ function ShoppingPage({ data, setData, setNotice, onAdd }: { data: UserData; set
       description={text(language, 'كل ما تحتاجه رحلتك القادمة، في مكان واحد.', 'Everything you need for your next trip, in one place.')}
       hideMenu
       action={<div className="page-actions">
-        <button className="secondary-btn" onClick={exportList} data-testid="button-copy-shopping"><ClipboardCopy size={16} />{text(language, 'نسخ القائمة', 'Copy list')}</button>
+        <button className="secondary-btn" onClick={exportList} title={text(language, 'ينسخ العناصر غير المكتملة كنص للمشاركة أو اللصق', 'Copy unfinished items as text to share or paste')} aria-label={text(language, 'نسخ العناصر غير المكتملة كنص للمشاركة أو اللصق', 'Copy unfinished items as text to share or paste')} data-testid="button-copy-shopping"><ClipboardCopy size={16} />{text(language, 'نسخ كنص', 'Copy as text')}</button>
         <button className="primary-btn" onClick={onAdd} data-testid="button-shopping-add-food"><Plus size={17} />{text(language, 'إضافة للثلاجة', 'Add to fridge')}</button>
       </div>}
     />

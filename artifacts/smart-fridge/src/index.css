@@ -9156,7 +9156,7 @@ html[dir="ltr"] .notification-dropdown.is-open {
   }
 
   .shopping-page .page-actions {
-    width: min(100%, 340px);
+    width: min(100%, 280px);
   }
 
   .shopping-page .page-actions button {
@@ -10343,6 +10343,30 @@ html[dir="ltr"] .settings-grid .settings-nav button {
   .daily-analysis-page .daily-metric {
     min-height: 86px;
     padding: 13px;
+  }
+}
+
+/* Keep Shopping List actions below its centered title on larger screens. */
+.shopping-page .page-heading {
+  min-height: 0;
+}
+
+.shopping-page .page-heading-action {
+  position: static;
+  inset: auto;
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
+  transform: none;
+}
+
+.shopping-page .page-actions {
+  justify-content: center;
+}
+
+@media (max-width: 767px) {
+  .shopping-page .page-actions {
+    width: min(100%, 280px);
   }
 }
 

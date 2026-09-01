@@ -480,16 +480,23 @@ test('keeps Shopping List compact and aligned in both directions', async ({ page
     const layout = await page.evaluate(() => {
       const heading = document.querySelector('.shopping-page .page-heading').getBoundingClientRect();
       const title = document.querySelector('.shopping-page .page-heading h2').getBoundingClientRect();
+      const description = document.querySelector('.shopping-page .page-heading p').getBoundingClientRect();
+      const actions = document.querySelector('.shopping-page .page-actions').getBoundingClientRect();
       const listCard = document.querySelector('.shopping-page .shopping-list-card').getBoundingClientRect();
       return {
         titleCenter: (title.left + title.right) / 2,
         headingCenter: (heading.left + heading.right) / 2,
+        actionsTop: actions.top,
+        descriptionBottom: description.bottom,
+        actionsWidth: actions.width,
         listCardHeight: listCard.height,
         documentScrollWidth: document.documentElement.scrollWidth,
       };
     });
 
     expect(Math.abs(layout.titleCenter - layout.headingCenter)).toBeLessThanOrEqual(1);
+    expect(layout.actionsTop).toBeGreaterThan(layout.descriptionBottom);
+    if (width === 390) expect(layout.actionsWidth).toBeLessThanOrEqual(281);
     expect(layout.documentScrollWidth).toBeLessThanOrEqual(width + 1);
     expect(layout.listCardHeight).toBeLessThan(900);
   }
