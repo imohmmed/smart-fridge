@@ -268,6 +268,38 @@ test('keeps sidebar icons and labels adjacent in RTL and LTR', async ({ page }) 
   }
 });
 
+test('keeps the active sidebar item flat without shadow artifacts', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await seedDemoSession(page, 'ar');
+  await page.goto('/');
+
+  const activeItem = page.getByTestId('link-nav-ثلاجتي');
+  const styles = await activeItem.evaluate(element => {
+    const computed = getComputedStyle(element);
+    const before = getComputedStyle(element, '::before');
+    const after = getComputedStyle(element, '::after');
+    return {
+      boxShadow: computed.boxShadow,
+      filter: computed.filter,
+      borderStyle: computed.borderStyle,
+      backgroundImage: computed.backgroundImage,
+      backgroundColor: computed.backgroundColor,
+      beforeContent: before.content,
+      afterBoxShadow: after.boxShadow,
+      afterFilter: after.filter,
+    };
+  });
+
+  expect(styles.boxShadow).toBe('none');
+  expect(styles.filter).toBe('none');
+  expect(styles.borderStyle).toBe('none');
+  expect(styles.backgroundImage).toBe('none');
+  expect(styles.backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
+  expect(styles.beforeContent).toBe('none');
+  expect(styles.afterBoxShadow).toBe('none');
+  expect(styles.afterFilter).toBe('none');
+});
+
 test('keeps the responsive header greeting and profile avatar contained', async ({ page }) => {
   for (const viewport of viewports) {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });

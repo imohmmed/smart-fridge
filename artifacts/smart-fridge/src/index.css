@@ -9035,3 +9035,39 @@ html[dir="ltr"] .dashboard-welcome {
     --smart-sidebar-dock-width: 248px;
   }
 }
+
+/* Active navigation items stay flat: no inset rails, glow, or shadow
+   from any of the older sidebar styling layers. */
+.smart-sidebar__link,
+.smart-sidebar__link:hover,
+.smart-sidebar__link:focus,
+.smart-sidebar__link:focus-visible,
+.smart-sidebar__link:active,
+.smart-sidebar__link.active,
+.smart-sidebar__link.active:hover,
+.smart-sidebar__link.active:focus,
+.smart-sidebar__link.active:focus-visible,
+.smart-sidebar__link.active:active {
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.smart-sidebar__link.active,
+.smart-sidebar__link.active:hover,
+.smart-sidebar__link.active:focus,
+.smart-sidebar__link.active:focus-visible,
+.smart-sidebar__link.active:active {
+  border: none !important;
+  border-color: transparent !important;
+  background: var(--smart-sidebar-active) !important;
+}
+
+.smart-sidebar__link.active::before {
+  content: none !important;
+  display: none !important;
+}
+
+.smart-sidebar__link.active::after {
+  box-shadow: none !important;
+  filter: none !important;
+}
