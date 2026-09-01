@@ -9285,6 +9285,38 @@ html[dir="ltr"] .dashboard-welcome {
   color: #e8f6f1 !important;
 }
 
+/* Preserve the product's soft geometry when dark surfaces replace the
+   light-theme fills. The dock itself remains square by design. */
+.theme-dark .settings-grid > .card,
+.theme-dark .dashboard-topbar,
+.theme-dark .dashboard-footer > .macro-stat,
+.theme-dark .dashboard-footer > .health-tip,
+.theme-dark .item-detail-panel,
+.theme-dark .shopping-panel,
+.theme-dark .notification-dropdown {
+  border-radius: 22px !important;
+}
+
+.theme-dark .smart-food-card,
+.theme-dark .notification-item,
+.theme-dark .food-details-card,
+.theme-dark .food-details-summary,
+.theme-dark .theme-preview {
+  border-radius: 16px !important;
+}
+
+.theme-dark input,
+.theme-dark select,
+.theme-dark textarea,
+.theme-dark .primary-btn,
+.theme-dark .secondary-btn,
+.theme-dark .icon-btn,
+.theme-dark .sidebar-inline-toggle,
+.theme-dark .settings-nav button,
+.theme-dark .status-pill {
+  border-radius: 12px !important;
+}
+
 /* Settings stay intentionally quiet: one title, one control, one clear row. */
 .settings-grid > .card.card-pad {
   min-width: 0;

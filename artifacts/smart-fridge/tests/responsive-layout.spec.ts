@@ -366,6 +366,24 @@ test('keeps dark mode surfaces and text readable', async ({ page }) => {
   expect(styles.cardBorder).not.toBe('rgba(0, 0, 0, 0)');
 });
 
+test('keeps dark mode surfaces softly rounded', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await seedDemoSession(page, 'en');
+  await page.goto('/settings');
+  await page.getByTestId('button-settings-المظهر').click();
+  await page.getByTestId('toggle-dark-mode').click();
+  await page.getByTestId('button-settings-عام').click();
+
+  for (const [selector, expectedRadius] of [
+    ['.settings-grid > .card.card-pad', '22px'],
+    ['.settings-nav', '22px'],
+    ['.settings-nav button', '12px'],
+    ['.search-box', '12px'],
+  ] as const) {
+    await expect(page.locator(`.theme-dark ${selector}`).first()).toHaveCSS('border-radius', expectedRadius);
+  }
+});
+
 test('keeps the active sidebar item flat without shadow artifacts', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await seedDemoSession(page, 'ar');
