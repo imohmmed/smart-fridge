@@ -32,3 +32,9 @@ For the mobile drawer, define separate final transforms for `html[dir="ltr"]` an
 **Why:** A single negative translate value makes the Arabic drawer animate in from the wrong side, while a small offset can leave part of the hidden drawer interactive or visible.
 
 **How to apply:** Keep direction-specific drawer positioning and transforms in the final CSS override block, and test both the open and fully closed bounding boxes.
+
+Desktop navigation is intentionally a docked grid column from 769px upward, while the mobile navigation remains a fixed overlay drawer; the desktop header launcher is the only close control.
+
+**Why:** Mixing the two interaction models caused floating desktop panels, duplicate close controls, and content that failed to resize with the dock.
+
+**How to apply:** Keep desktop track sizing, edge borders, and header-only toggling in the final desktop block; keep scrim, transforms, and the internal close control scoped to 768px and below.

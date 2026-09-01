@@ -198,12 +198,22 @@ test('desktop sidebar slides from the correct edge in both languages', async ({ 
       await testPage.getByTestId('button-mobile-menu').click();
       await testPage.waitForTimeout(350);
       const open = await measureLayout(testPage);
+      const shellBox = await testPage.locator('.app-shell').evaluate(element => {
+        const box = element.getBoundingClientRect();
+        return { left: box.left, right: box.right };
+      });
       expect(open.sidebar?.width).toBeGreaterThan(200);
       expect(open.main?.width).toBeLessThan((closed.main?.width ?? width) - 100);
       expect(open.sidebar?.left).toBeGreaterThanOrEqual(0);
-      expect(open.sidebar?.right).toBeLessThanOrEqual(width);
-      expect(open.sidebar?.left).toBeCloseTo(language === 'ar' ? width - (open.sidebar?.width ?? 0) : 0, 0);
-      expect(open.sidebar?.right).toBeCloseTo(language === 'ar' ? width : open.sidebar?.width ?? 0, 0);
+      expect(open.sidebar?.right).toBeLessThanOrEqual(shellBox.right);
+      expect(open.sidebar?.left).toBeCloseTo(
+        language === 'ar' ? shellBox.right - (open.sidebar?.width ?? 0) : shellBox.left,
+        0,
+      );
+      expect(open.sidebar?.right).toBeCloseTo(
+        language === 'ar' ? shellBox.right : shellBox.left + (open.sidebar?.width ?? 0),
+        0,
+      );
       await expect(testPage.getByTestId('button-sidebar-toggle')).toBeHidden();
 
       await testPage.getByTestId('button-mobile-menu').click();
