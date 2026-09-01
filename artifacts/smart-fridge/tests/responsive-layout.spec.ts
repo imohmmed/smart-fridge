@@ -767,6 +767,11 @@ test('keeps the login screen compact and readable in both languages and themes',
 
       await expect(page.locator('.auth-redesign')).toBeVisible();
       await expect(page.locator('.auth-card-logo')).toBeVisible();
+      await expect(page.locator('.auth-options .link-btn')).toHaveCount(1);
+      await page.getByTestId('tab-register').click();
+      await expect(page.locator('.auth-options .link-btn')).toHaveCount(0);
+      await page.getByTestId('tab-login').click();
+      await expect(page.locator('.auth-options .link-btn')).toHaveCount(1);
       const layout = await page.evaluate(() => {
         const shell = document.querySelector('.auth-shell')!.getBoundingClientRect();
         const card = document.querySelector('.auth-card')!.getBoundingClientRect();
