@@ -9,6 +9,7 @@ import {
   Menu, Package, Pencil, Plus, Refrigerator, Search, Settings, ShoppingBasket, Sparkles,
   Trash2, UserRound, Utensils, X, Zap, Eye, EyeOff, Globe2, LockKeyhole, Mail,
 } from 'lucide-react';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Link, Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
 import NotFound from '@/pages/not-found';
 import milkPhoto from '@assets/generated_images/fridge-milk.png';
@@ -951,10 +952,71 @@ function MealsPage({ data, setData, setNotice }: { data: UserData; setData: Disp
 
 function DailyAnalysis({ data }: { data: UserData }) {
   const { language } = useLanguage();
-  const total = data.items.reduce((sum, item) => sum + item.calories * item.quantity, 0); const goal = data.calorieGoal;
-  const bars = [42, 58, 36, 72, 64, Math.min(92, total / goal * 100), 28];
+  const total = data.items.reduce((sum, item) => sum + item.calories * item.quantity, 0);
+  const goal = data.calorieGoal;
   const days = language === 'ar' ? ['س', 'ح', 'ن', 'ث', 'ر', 'خ', 'ج'] : ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-  return <main className="app-main"><PageHeading title={text(language, 'تحليل يومي', 'Daily analysis')} description={text(language, 'نظرة هادئة على اختياراتك، بدون أحكام.', 'A calm look at your choices, without judgment.')} action={<div className="date-chip">{formatArabicDate(language)}</div>} /><div className="dashboard-grid"><div className="card card-pad"><div className="card-title"><div><h3>{text(language, 'إيقاع السعرات', 'Calorie rhythm')}</h3><p>{text(language, 'آخر سبعة أيام', 'Last seven days')}</p></div><Flame size={20} color="hsl(var(--accent-foreground))" /></div><div style={{ height: 200, display: 'flex', alignItems: 'end', gap: 12, padding: '20px 4px 0' }}>{bars.map((height, index) => <div key={index} style={{ flex: 1, display: 'grid', gap: 8, justifyItems: 'center' }}><div style={{ width: '100%', maxWidth: 45, height: `${height * 1.55}px`, background: index === 5 ? 'hsl(var(--primary))' : 'hsl(35 71% 65% / .54)', borderRadius: '8px 8px 3px 3px', transition: 'height .4s' }} /><small className="muted">{days[index]}</small></div>)}</div></div><div className="card card-pad"><div className="card-title"><h3>{text(language, 'توزيع المغذيات', 'Nutrients')}</h3><Sparkles size={19} color="hsl(var(--primary))" /></div>{[['بروتين', 32, 'hsl(var(--primary))', 'Protein'], ['كربوهيدرات', 46, 'hsl(35 71% 65%)', 'Carbohydrates'], ['دهون صحية', 22, 'hsl(196 48% 51%)', 'Healthy fats']].map(([label, value, color, english]) => <div key={label as string} style={{ marginBottom: 18 }}><div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}><span>{text(language, label as string, english as string)}</span><strong>{toWesternNums(value as number)}%</strong></div><div className="progress"><i style={{ width: `${value}%`, background: color as string }} /></div></div>)}</div><div className="card card-pad full-card"><div className="card-title"><div><h3>{text(language, 'ملخص لطيف', 'A gentle summary')}</h3><p>{text(language, 'مقارنة بهدفك اليومي', 'Compared with your daily goal')}</p></div><CheckCircle2 color="hsl(var(--primary))" /></div><div className="metric-row"><div className="metric"><Flame size={18} className="metric-icon" /><strong>{toWesternNums(total.toLocaleString('en-US'))}</strong><span>{text(language, 'السعرات المتاحة في الثلاجة', 'Calories in your fridge')}</span></div><div className="metric"><Droplets size={18} className="metric-icon" /><strong>{toWesternNums(data.water)} / 8</strong><span>{text(language, 'أكواب الماء اليوم', 'Water cups today')}</span></div><div className="metric"><Leaf size={18} className="metric-icon" /><strong>{toWesternNums(data.items.filter(item => item.category === 'خضروات').length)}</strong><span>{text(language, 'أصناف نباتية', 'Plant-based items')}</span></div><div className="metric"><Zap size={18} className="metric-icon" /><strong>{toWesternNums(Math.max(0, goal - total))}</strong><span>{text(language, 'سعرة متبقية للهدف', 'kcal left to goal')}</span></div></div></div></div></main>;
+  const chartPercents = [42, 58, 36, 72, 64, Math.min(92, goal > 0 ? total / goal * 100 : 0), 28];
+  const chartData = chartPercents.map((percent, index) => ({ day: days[index], calories: Math.round(goal * percent / 100) }));
+  const nutrients = [
+    { ar: 'بروتين', en: 'Protein', value: 32, color: 'var(--daily-sage)' },
+    { ar: 'كربوهيدرات', en: 'Carbohydrates', value: 46, color: 'var(--daily-gold)' },
+    { ar: 'دهون صحية', en: 'Healthy fats', value: 22, color: 'var(--daily-water)' },
+  ];
+  return <main className="app-main daily-analysis-page">
+    <PageHeading title={text(language, 'تحليل يومي', 'Daily analysis')} description={text(language, 'نظرة هادئة على اختياراتك، بدون أحكام.', 'A calm look at your choices, without judgment.')} hideMenu action={<div className="date-chip">{formatArabicDate(language)}</div>} />
+    <div className="daily-analysis-grid">
+      <section className="card card-pad daily-analysis-card daily-chart-card" aria-labelledby="daily-calorie-heading">
+        <div className="card-title">
+          <div><h3 id="daily-calorie-heading">{text(language, 'إيقاع السعرات', 'Calorie rhythm')}</h3><p>{text(language, 'آخر سبعة أيام', 'Last seven days')}</p></div>
+          <span className="daily-card-icon"><Flame size={18} aria-hidden="true" /></span>
+        </div>
+        <div className="daily-chart" role="img" aria-label={text(language, 'رسم يوضح إيقاع السعرات خلال آخر سبعة أيام', 'Chart showing your calorie rhythm over the last seven days')}>
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={chartData} margin={{ top: 12, right: 4, left: -24, bottom: 0 }}>
+              <defs>
+                <linearGradient id="daily-area-fill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.22} />
+                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.015} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid vertical={false} stroke="hsl(var(--border) / .58)" strokeDasharray="3 6" />
+              <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }} dy={10} />
+              <YAxis hide domain={[0, 'dataMax + 260']} />
+              <Tooltip cursor={{ stroke: 'hsl(var(--primary) / .24)', strokeWidth: 1 }} contentStyle={{ background: 'hsl(var(--card) / .92)', border: '1px solid hsl(var(--border) / .75)', borderRadius: 12, boxShadow: '0 10px 24px hsl(155 20% 26% / .12)', color: 'hsl(var(--foreground))', direction: language === 'ar' ? 'rtl' : 'ltr' }} labelStyle={{ color: 'hsl(var(--muted-foreground))', marginBottom: 3 }} />
+              <Area type="monotone" dataKey="calories" name={text(language, 'السعرات', 'Calories')} stroke="hsl(var(--primary))" strokeWidth={2.5} fill="url(#daily-area-fill)" dot={{ r: 3, fill: 'hsl(var(--card))', stroke: 'hsl(var(--primary))', strokeWidth: 2 }} activeDot={{ r: 5, fill: 'hsl(var(--primary))', stroke: 'hsl(var(--card))', strokeWidth: 2 }} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="daily-chart-legend"><span><i className="daily-legend-dot" />{text(language, 'هدفك اليومي', 'Your daily goal')}</span><strong>{toWesternNums(goal)} {text(language, 'سعرة', 'kcal')}</strong></div>
+      </section>
+      <section className="card card-pad daily-analysis-card daily-nutrients-card" aria-labelledby="daily-nutrients-heading">
+        <div className="card-title">
+          <div><h3 id="daily-nutrients-heading">{text(language, 'توزيع المغذيات', 'Nutrients')}</h3><p>{text(language, 'نسب متوازنة ليومك', 'Balanced portions for your day')}</p></div>
+          <span className="daily-card-icon daily-card-icon-gold"><Sparkles size={17} aria-hidden="true" /></span>
+        </div>
+        <div className="daily-nutrient-list">
+          {nutrients.map(nutrient => <div className="daily-nutrient-row" key={nutrient.en}>
+            <span className="daily-ring" style={{ '--ring-progress': `${nutrient.value}%`, '--ring-color': nutrient.color } as CSSProperties} aria-label={`${toWesternNums(nutrient.value)}%`}>
+              <strong>{toWesternNums(nutrient.value)}%</strong>
+            </span>
+            <span className="daily-nutrient-copy"><b>{text(language, nutrient.ar, nutrient.en)}</b><small>{text(language, 'من احتياجك اليومي', 'of your daily balance')}</small></span>
+          </div>)}
+        </div>
+      </section>
+      <section className="card card-pad full-card daily-analysis-card daily-summary-card" aria-labelledby="daily-summary-heading">
+        <div className="card-title">
+          <div><h3 id="daily-summary-heading">{text(language, 'ملخص لطيف', 'A gentle summary')}</h3><p>{text(language, 'مقارنة بهدفك اليومي', 'Compared with your daily goal')}</p></div>
+          <span className="daily-card-icon daily-card-icon-check"><CheckCircle2 size={18} aria-hidden="true" /></span>
+        </div>
+        <div className="metric-row daily-metric-row">
+          <div className="metric daily-metric"><Flame size={18} className="metric-icon" /><strong>{toWesternNums(total.toLocaleString('en-US'))}</strong><span>{text(language, 'السعرات المتاحة في الثلاجة', 'Calories in your fridge')}</span></div>
+          <div className="metric daily-metric"><Droplets size={18} className="metric-icon" /><strong>{toWesternNums(data.water)} / 8</strong><span>{text(language, 'أكواب الماء اليوم', 'Water cups today')}</span></div>
+          <div className="metric daily-metric"><Leaf size={18} className="metric-icon" /><strong>{toWesternNums(data.items.filter(item => item.category === 'خضروات').length)}</strong><span>{text(language, 'أصناف نباتية', 'Plant-based items')}</span></div>
+          <div className="metric daily-metric"><Zap size={18} className="metric-icon" /><strong>{toWesternNums(Math.max(0, goal - total))}</strong><span>{text(language, 'سعرة متبقية للهدف', 'kcal left to goal')}</span></div>
+        </div>
+      </section>
+    </div>
+  </main>;
 }
 
 function ShoppingPage({ data, setData, setNotice, onAdd }: { data: UserData; setData: Dispatch<SetStateAction<UserData>>; setNotice: (v: string) => void; onAdd: () => void }) {

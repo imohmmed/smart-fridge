@@ -385,7 +385,7 @@ test('keeps dark mode surfaces softly rounded', async ({ page }) => {
 });
 
 test('keeps Quick Stats spaced and softly rounded', async ({ page }) => {
-  for (const width of [390, 1440]) {
+  for (const width of [390, 1366]) {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
     await seedDemoSession(page, 'en');
     await page.goto('/');
@@ -393,34 +393,55 @@ test('keeps Quick Stats spaced and softly rounded', async ({ page }) => {
     await expect(page.locator('.dashboard-metrics')).toBeVisible();
     await expect(page.locator('.dashboard-metrics .dashboard-stat')).toHaveCount(3);
     await expect(page.locator('.dashboard-metrics')).toHaveCSS('gap', width === 390 ? '10px' : '12px');
+    const metricsWidth = await page.locator('.dashboard-metrics').evaluate((element) => element.getBoundingClientRect().width);
+    if (width === 1366) {
+      expect(metricsWidth).toBeLessThanOrEqual(680);
+    } else {
+      const topbarWidth = await page.locator('.dashboard-topbar').evaluate((element) => element.getBoundingClientRect().width);
+      expect(metricsWidth).toBeLessThan(topbarWidth);
+    }
     for (const stat of await page.locator('.dashboard-metrics .dashboard-stat').all()) {
       await expect(stat).toHaveCSS('border-radius', '18px');
     }
   }
 });
 
-test('keeps bottom summary cards slightly inset and centered', async ({ page }) => {
-  for (const width of [390, 1440]) {
+test('keeps Daily Analysis centered, responsive, and menu-free', async ({ page }) => {
+  for (const [language, width] of [
+    ['ar', 390],
+    ['en', 390],
+    ['en', 1366],
+  ] as const) {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
-    await seedDemoSession(page, 'en');
-    await page.goto('/');
+    await seedDemoSession(page, language);
+    await page.goto('/daily-analysis');
+
+    await expect(page.locator('.daily-analysis-page .page-heading h2')).toBeVisible();
+    await expect(page.locator('.daily-analysis-page .page-heading-menu')).toHaveCount(0);
+    await expect(page.locator('.daily-analysis-page .daily-analysis-card')).toHaveCount(3);
+    await expect(page.locator('.daily-analysis-page .daily-ring')).toHaveCount(3);
+    await expect(page.locator('.daily-analysis-page .recharts-area-curve')).toHaveCount(1);
 
     const layout = await page.evaluate(() => {
-      const main = document.querySelector<HTMLElement>('.dashboard-main')!.getBoundingClientRect();
-      const footer = document.querySelector<HTMLElement>('.dashboard-footer')!.getBoundingClientRect();
+      const heading = document.querySelector('.daily-analysis-page .page-heading').getBoundingClientRect();
+      const title = document.querySelector('.daily-analysis-page .page-heading h2').getBoundingClientRect();
+      const copy = document.querySelector('.daily-analysis-page .page-heading-copy').getBoundingClientRect();
+      const date = document.querySelector('.daily-analysis-page .page-heading-action').getBoundingClientRect();
       return {
-        mainLeft: main.left,
-        mainRight: main.right,
-        footerLeft: footer.left,
-        footerRight: footer.right,
-        footerWidth: footer.width,
-        mainWidth: main.width,
+        headingCenter: (heading.left + heading.right) / 2,
+        titleCenter: (title.left + title.right) / 2,
+        copyTop: copy.top,
+        dateTop: date.top,
+        documentScrollWidth: document.documentElement.scrollWidth,
       };
     });
 
-    expect(layout.footerWidth).toBeLessThan(layout.mainWidth);
-    expect(layout.footerLeft).toBeGreaterThan(layout.mainLeft);
-    expect(layout.footerRight).toBeLessThan(layout.mainRight);
+    expect(layout.documentScrollWidth).toBeLessThanOrEqual(width + 1);
+    if (width === 1366) {
+      expect(Math.abs(layout.titleCenter - layout.headingCenter)).toBeLessThanOrEqual(1);
+    } else {
+      expect(Math.abs(layout.copyTop - layout.dateTop)).toBeLessThanOrEqual(1);
+    }
   }
 });
 
