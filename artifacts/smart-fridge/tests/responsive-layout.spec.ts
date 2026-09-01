@@ -752,3 +752,40 @@ test('keeps notifications inside the viewport on every screen size and direction
     }
   }
 });
+
+test('keeps the login screen compact and readable in both languages and themes', async ({ page }) => {
+  for (const language of ['ar', 'en'] as const) {
+    for (const viewport of [{ width: 390, height: 844 }, { width: 834, height: 900 }, { width: 1440, height: 900 }]) {
+      await page.setViewportSize(viewport);
+      await page.goto('/');
+      await page.evaluate(({ language }) => {
+        localStorage.clear();
+        localStorage.setItem('smart_fridge_language', language);
+        localStorage.setItem('smart_fridge_auth_theme', 'light');
+      }, { language });
+      await page.reload();
+
+      await expect(page.locator('.auth-redesign')).toBeVisible();
+      await expect(page.locator('.auth-card-logo')).toBeVisible();
+      const layout = await page.evaluate(() => {
+        const shell = document.querySelector('.auth-shell')!.getBoundingClientRect();
+        const card = document.querySelector('.auth-card')!.getBoundingClientRect();
+        return {
+          direction: document.documentElement.dir,
+          shellHeight: shell.height,
+          cardWidth: card.width,
+          scrollWidth: document.documentElement.scrollWidth,
+          viewportWidth: window.innerWidth,
+        };
+      });
+      expect(layout.direction).toBe(language === 'ar' ? 'rtl' : 'ltr');
+      expect(layout.cardWidth).toBeLessThanOrEqual(layout.viewportWidth);
+      expect(layout.scrollWidth).toBeLessThanOrEqual(layout.viewportWidth + 1);
+      expect(layout.shellHeight).toBeGreaterThan(0);
+
+      await page.getByTestId('button-auth-theme').click();
+      await expect(page.locator('.auth-redesign')).toHaveClass(/auth-theme-dark/);
+      await expect(page.locator('#auth-email')).toHaveCSS('background-color', 'rgb(29, 41, 36)');
+    }
+  }
+});

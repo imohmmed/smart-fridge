@@ -8,7 +8,7 @@ import {
   Apple, ArrowLeft, Bell, Check, CheckCircle2, ChevronLeft, CircleHelp,
   ClipboardCopy, Droplets, Egg, Fish, Flame, Heart, Home, Leaf, LogOut, Minus,
   Menu, Package, Pencil, Plus, Refrigerator, Search, Settings, ShoppingBasket, Sparkles,
-  Trash2, UserRound, Utensils, X, Zap, Eye, EyeOff, Globe2, LockKeyhole, Mail,
+  Trash2, UserRound, Utensils, X, Zap, Eye, EyeOff, Globe2, LockKeyhole, Mail, Moon, Sun,
 } from 'lucide-react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Link, Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
@@ -152,6 +152,7 @@ const queryClient = new QueryClient();
 const USERS_KEY = 'smart_fridge_users';
 const SESSION_KEY = 'smart_fridge_session';
 const DATA_KEY = 'smart_fridge_data';
+const AUTH_THEME_KEY = 'smart_fridge_auth_theme';
 const readStoredUsers = (): User[] => {
   try {
     const stored = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
@@ -449,6 +450,11 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(() => localStorage.getItem('smart_fridge_remember') === 'true');
+  const [darkMode, setDarkMode] = useState(() => {
+    const stored = localStorage.getItem(AUTH_THEME_KEY);
+    if (stored === 'dark' || stored === 'light') return stored === 'dark';
+    return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
+  });
   const { language } = useLanguage();
   const submit = (event: FormEvent) => {
     event.preventDefault(); setError('');
@@ -478,10 +484,15 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
     onLogin(user);
   };
   const forgotPassword = () => setError(text(language, 'سنرسل لك رابط استعادة كلمة المرور قريباً.', 'We will send a password reset link soon.'));
-  return <main className="auth-shell auth-redesign">
+  const toggleAuthTheme = () => setDarkMode(value => {
+    const next = !value;
+    localStorage.setItem(AUTH_THEME_KEY, next ? 'dark' : 'light');
+    return next;
+  });
+  return <main className={`auth-shell auth-redesign ${darkMode ? 'auth-theme-dark' : ''}`}>
     <section className="auth-art auth-visual-panel">
       <div className="auth-visual-inner">
-       <div className="visual-topline"><span><i className="live-dot" /> {text(language, 'نظام ثلاجتي الذكي', 'Smart Fridge system')}</span></div>
+       <div className="visual-topline"><span><i className="live-dot" /> {text(language, 'ثلاجتي الذكية', 'Smart Fridge')}</span></div>
         <div className="auth-visual-content">
            <div className="fridge-stage" aria-label={text(language, 'رسم توضيحي لثلاجة ذكية', 'Illustration of a smart fridge')}>
             <div className="fridge-halo" />
@@ -505,22 +516,17 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
             <span className="stage-shadow" />
           </div>
           <div className="auth-copy">
-             <div className="copy-kicker"><Sparkles size={14} /> {text(language, 'طازج، مرتب، على طريقتك', 'Fresh, organized, your way')}</div>
-              <h2>{text(language, 'ثلاجتك الذكية..', 'Your smart fridge..')}<br /><em>{text(language, 'طعامك دائماً طازج', 'Your food, always fresh')}</em></h2>
-             <p>{text(language, 'إدارة ذكية لمحتويات ثلاجتك، للحفاظ على طعامك طازجًا وحياتك أسهل.', 'Smartly manage your fridge contents to keep food fresh and life easier.')}</p>
-            <div className="auth-benefits">
-                <div className="benefit-item"><span><Leaf size={17} /></span><div><strong>{text(language, 'تتبع ذكي للمحتويات والصلاحية', 'Smart inventory and expiry tracking')}</strong></div></div>
-                <div className="benefit-item"><span><ShoppingBasket size={17} /></span><div><strong>{text(language, 'قائمة تسوق أذكى وأسرع', 'A smarter, faster shopping list')}</strong></div></div>
-                <div className="benefit-item"><span><Bell size={17} /></span><div><strong>{text(language, 'تنبيهات انتهاء صلاحية الطعام', 'Food expiry reminders')}</strong></div></div>
-            </div>
+             <div className="copy-kicker"><Sparkles size={14} /> {text(language, 'أبسط. أهدأ. أذكى.', 'Simple. Calm. Smart.')}</div>
+              <h2>{text(language, 'ثلاجتك، بشكل أذكى', 'A smarter fridge')}<br /><em>{text(language, 'طعامك، دائماً جاهز', 'Fresh food, less effort')}</em></h2>
+             <p>{text(language, 'كل ما تحتاجه في مساحة واحدة.', 'Everything you need in one calm space.')}</p>
           </div>
         </div>
-         <div className="visual-footer"><span><LockKeyhole size={13} /> {text(language, 'بياناتك محفوظة على هذا الجهاز', 'Your data is saved on this device')}</span><span>{text(language, 'ثلاجتك، بإيقاع يومك', 'Your fridge, your rhythm')}</span></div>
       </div>
     </section>
     <section className="auth-form-wrap">
       <form className="auth-form auth-card" onSubmit={submit}>
-         <LanguageSwitcher />
+         <div className="auth-utility-row"><LanguageSwitcher /><button type="button" className="auth-theme-toggle" onClick={toggleAuthTheme} aria-label={darkMode ? text(language, 'تفعيل الوضع النهاري', 'Use light mode') : text(language, 'تفعيل الوضع الليلي', 'Use dark mode')} title={darkMode ? text(language, 'الوضع النهاري', 'Light mode') : text(language, 'الوضع الليلي', 'Dark mode')} data-testid="button-auth-theme">{darkMode ? <Sun size={15} aria-hidden="true" /> : <Moon size={15} aria-hidden="true" />}<span>{darkMode ? text(language, 'نهاري', 'Light') : text(language, 'ليلي', 'Dark')}</span></button></div>
+         <div className="auth-card-logo"><span className="auth-card-mark" aria-hidden="true"><Refrigerator size={18} /></span><span><strong>{text(language, 'ثلاجتي', 'Smart Fridge')}</strong><small>{text(language, 'مساحتك الطازجة', 'Fresh space')}</small></span></div>
          <div className="auth-card-heading"><h2>{mode === 'login' ? text(language, 'أهلاً بعودتك', 'Welcome back') : text(language, 'لنبدأ معاً', 'Let’s get started')}</h2><p>{mode === 'login' ? text(language, 'سجّل دخولك لثلاجتك الذكية', 'Sign in to your Smart Fridge') : text(language, 'أنشئ مساحتك الخاصة في دقائق.', 'Create your own space in minutes.')}</p></div>
          <div className="auth-tabs"><button type="button" className={`auth-tab ${mode === 'login' ? 'active' : ''}`} onClick={() => { setMode('login'); setError(''); }} data-testid="tab-login">{text(language, 'تسجيل الدخول', 'Sign in')}</button><button type="button" className={`auth-tab ${mode === 'register' ? 'active' : ''}`} onClick={() => { setMode('register'); setError(''); }} data-testid="tab-register">{text(language, 'حساب جديد', 'Create account')}</button></div>
          {mode === 'register' && <div className="field auth-field"><label htmlFor="auth-name">{text(language, 'الاسم', 'Name')}</label><input id="auth-name" data-testid="input-auth-name" value={name} onChange={e => setName(e.target.value)} /></div>}
