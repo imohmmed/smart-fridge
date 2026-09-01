@@ -300,6 +300,44 @@ test('keeps the active sidebar item flat without shadow artifacts', async ({ pag
   expect(styles.afterFilter).toBe('none');
 });
 
+test('anchors the sidebar close button to the opposite header corner', async ({ page }) => {
+  for (const [index, language] of ['ar', 'en'].entries()) {
+    const testPage = index === 0 ? page : await page.context().newPage();
+    await testPage.setViewportSize({ width: 390, height: 844 });
+    await seedDemoSession(testPage, language);
+    await testPage.goto('/');
+    await testPage.getByTestId('button-mobile-menu').click();
+
+    const layout = await testPage.locator('.smart-sidebar__head').evaluate(head => {
+      const button = head.querySelector<HTMLElement>('.smart-sidebar__toggle')!;
+      const box = head.getBoundingClientRect();
+      const buttonBox = button.getBoundingClientRect();
+      const styles = getComputedStyle(button);
+      return {
+        headLeft: box.left,
+        headRight: box.right,
+        buttonLeft: buttonBox.left,
+        buttonRight: buttonBox.right,
+        width: buttonBox.width,
+        height: buttonBox.height,
+        justifyContent: getComputedStyle(head).justifyContent,
+        borderRadius: styles.borderRadius,
+      };
+    });
+
+    expect(layout.justifyContent).toBe('space-between');
+    expect(layout.borderRadius).toBe('50%');
+    expect(layout.width).toBe(layout.height);
+    if (language === 'ar') {
+      expect(layout.buttonLeft - layout.headLeft).toBeCloseTo(0, 0);
+    } else {
+      expect(layout.headRight - layout.buttonRight).toBeCloseTo(0, 0);
+    }
+
+    if (index > 0) await testPage.close();
+  }
+});
+
 test('keeps the responsive header greeting and profile avatar contained', async ({ page }) => {
   for (const viewport of viewports) {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });

@@ -9071,3 +9071,31 @@ html[dir="ltr"] .dashboard-welcome {
   box-shadow: none !important;
   filter: none !important;
 }
+
+/* Keep the sidebar header actions pinned to opposite corners. The explicit
+   zero margin overrides the older auto-margin rule on the toggle. */
+.smart-sidebar__head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px;
+}
+
+.smart-sidebar__brand {
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+.smart-sidebar__toggle,
+.smart-sidebar__toggle:hover,
+.smart-sidebar__toggle:focus,
+.smart-sidebar__toggle:focus-visible,
+.smart-sidebar__toggle:active {
+  flex: 0 0 38px !important;
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  min-height: 38px !important;
+  margin: 0 !important;
+  border-radius: 50% !important;
+}
