@@ -9100,34 +9100,186 @@ html[dir="ltr"] .dashboard-welcome {
   border-radius: 50% !important;
 }
 
-/* Shared premium mark: the same glossy vector is used by the sidebar and
-   mobile masthead without inheriting the old pale icon tile treatment. */
-.premium-fridge-logo {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
+/* Calm night mode: keep the interface dark without crushing surfaces,
+   borders, or secondary text into one unreadable black layer. */
+.theme-dark {
+  filter: none !important;
+  min-height: 100vh;
+  --background: 222 26% 13%;
+  --foreground: 210 28% 93%;
+  --card: 218 24% 19%;
+  --card-foreground: 210 28% 93%;
+  --border: 215 18% 32%;
+  --input: 215 18% 32%;
+  --muted: 218 21% 24%;
+  --muted-foreground: 212 16% 73%;
+  --popover: 218 24% 19%;
+  --popover-foreground: 210 28% 93%;
+  --secondary: 216 21% 25%;
+  --secondary-foreground: 210 28% 93%;
+  --accent: 43 76% 63%;
+  --accent-foreground: 35 42% 14%;
+  --bg-main: #111a25;
+  --bg-card: #1b2734;
+  --bg-fridge-interior: #263844;
+  --green-primary: #75c989;
+  --green-light: #29483b;
+  --green-text: #a7e2b2;
+  --gold-button: #d9b45e;
+  --gold-light: #4b3e25;
+  --water-blue: #85c9ef;
+  --text-primary: #eef5f2;
+  --text-secondary: #c1cecb;
+  --text-muted: #8e9e9b;
+  --shadow-dark: rgba(0, 0, 0, .28);
+  --shadow-light: rgba(255, 255, 255, .04);
+  --bg-kitchen: #183027;
 }
 
-.smart-sidebar__brand-mark,
-.brand-mark {
-  display: grid !important;
-  place-items: center;
-  padding: 0 !important;
-  border: 0 !important;
+.theme-dark,
+.theme-dark .app-shell,
+.theme-dark .app-shell__content,
+.theme-dark .app-main {
+  background: var(--bg-main) !important;
+  color: var(--text-primary) !important;
+}
+
+.theme-dark .card,
+.theme-dark .recipe-card,
+.theme-dark .quick-link,
+.theme-dark .dashboard-topbar,
+.theme-dark .date-chip,
+.theme-dark .item-detail-panel,
+.theme-dark .shopping-panel,
+.theme-dark .settings-nav,
+.theme-dark .smart-shelf-card,
+.theme-dark .dashboard-footer > .macro-stat,
+.theme-dark .dashboard-footer > .health-tip {
+  border-color: rgba(164, 190, 200, .2) !important;
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .2) !important;
+}
+
+.theme-dark .dashboard-footer {
   background: transparent !important;
   box-shadow: none !important;
-  color: inherit;
 }
 
-.smart-sidebar__brand-mark .premium-fridge-logo,
-.brand-mark .premium-fridge-logo {
-  width: 100%;
-  height: 100%;
+.theme-dark h1,
+.theme-dark h2,
+.theme-dark h3,
+.theme-dark h4,
+.theme-dark strong,
+.theme-dark .page-heading h2,
+.theme-dark .card-title h3,
+.theme-dark .card-title strong,
+.theme-dark .recipe-body h3,
+.theme-dark .dashboard-header-context strong,
+.theme-dark .dashboard-footer strong,
+.theme-dark .setting-line strong {
+  color: var(--text-primary) !important;
 }
 
-.theme-dark .smart-sidebar__brand-mark,
-.theme-dark .brand-mark {
-  background: transparent !important;
-  box-shadow: none !important;
+.theme-dark p,
+.theme-dark .page-heading p,
+.theme-dark .card-title p,
+.theme-dark .setting-line p,
+.theme-dark .muted,
+.theme-dark .eyebrow,
+.theme-dark .recipe-body p,
+.theme-dark .recipe-meta,
+.theme-dark .item-quantity,
+.theme-dark .notification-item small,
+.theme-dark .notification-empty {
+  color: var(--text-secondary) !important;
 }
+
+.theme-dark input,
+.theme-dark select,
+.theme-dark textarea,
+.theme-dark .search-box,
+.theme-dark .field input,
+.theme-dark .field select {
+  border-color: rgba(164, 190, 200, .3) !important;
+  background: #121d29 !important;
+  color: var(--text-primary) !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, .18) !important;
+}
+
+.theme-dark input::placeholder,
+.theme-dark textarea::placeholder {
+  color: #91a29f !important;
+}
+
+.theme-dark .primary-btn,
+.theme-dark .floating-add {
+  background: #5fb97a !important;
+  color: #102018 !important;
+  box-shadow: 0 7px 16px rgba(0, 0, 0, .25) !important;
+}
+
+.theme-dark .primary-btn:hover,
+.theme-dark .floating-add:hover {
+  background: #82d898 !important;
+}
+
+.theme-dark .secondary-btn,
+.theme-dark .auth-demo {
+  background: #cda951 !important;
+  color: #1e241d !important;
+  border-color: transparent !important;
+}
+
+.theme-dark .icon-btn,
+.theme-dark .sidebar-inline-toggle,
+.theme-dark .date-chip,
+.theme-dark .status-pill,
+.theme-dark .theme-preview,
+.theme-dark .settings-nav button {
+  border-color: rgba(164, 190, 200, .22) !important;
+  background: #22313f !important;
+  color: var(--text-secondary) !important;
+}
+
+.theme-dark .settings-nav button.active,
+.theme-dark .settings-nav button:hover,
+.theme-dark .settings-nav button:focus-visible {
+  background: #315646 !important;
+  color: #e3f7e7 !important;
+}
+
+.theme-dark .smart-shelf-section,
+.theme-dark .smart-food-card,
+.theme-dark .dashboard-stat,
+.theme-dark .notification-dropdown,
+.theme-dark .notification-item,
+.theme-dark .recipe-card,
+.theme-dark .food-details-card,
+.theme-dark .food-details-summary {
+  border-color: rgba(164, 190, 200, .2) !important;
+  background: #22313f !important;
+  color: var(--text-primary) !important;
+}
+
+.theme-dark .smart-food-card:hover,
+.theme-dark .smart-food-card.selected,
+.theme-dark .smart-food-card:focus-visible,
+.theme-dark .notification-item:hover {
+  border-color: rgba(117, 201, 137, .58) !important;
+  background: #2a3d4b !important;
+}
+
+.theme-dark .smart-sidebar__inner {
+  background: var(--smart-sidebar-bg) !important;
+}
+
+.theme-dark .theme-preview.night {
+  background: linear-gradient(135deg, #263c4a, #172634) !important;
+  color: #dfeeea !important;
+}
+
+.theme-dark .theme-preview.night strong {
+  color: #e8f6f1 !important;
+}
+

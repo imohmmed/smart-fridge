@@ -302,6 +302,50 @@ test('keeps sidebar navigation clean and logout exclusive to its footer', async 
   }
 });
 
+test('does not show a sidebar menu launcher on settings', async ({ page }) => {
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
+    await seedDemoSession(page, 'en');
+    await page.goto('/settings');
+
+    await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible();
+    await expect(page.getByTestId('button-page-menu')).toHaveCount(0);
+    await expect(page.getByTestId('button-mobile-menu-legacy')).toHaveCount(0);
+  }
+});
+
+test('keeps dark mode surfaces and text readable', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await seedDemoSession(page, 'en');
+  await page.goto('/settings');
+  await page.getByTestId('button-settings-المظهر').click();
+  await page.getByTestId('toggle-dark-mode').click();
+
+  const styles = await page.evaluate(() => {
+    const app = document.querySelector('.theme-dark')!;
+    const card = document.querySelector('.theme-dark .card')!;
+    const heading = document.querySelector('.theme-dark .card-title h3')!;
+    const paragraph = document.querySelector('.theme-dark .card-title p')!;
+    return {
+      filter: getComputedStyle(app).filter,
+      appBackground: getComputedStyle(app).backgroundColor,
+      cardBackground: getComputedStyle(card).backgroundColor,
+      cardColor: getComputedStyle(card).color,
+      headingColor: getComputedStyle(heading).color,
+      paragraphColor: getComputedStyle(paragraph).color,
+      cardBorder: getComputedStyle(card).borderTopColor,
+    };
+  });
+
+  expect(styles.filter).toBe('none');
+  expect(styles.appBackground).not.toBe('rgba(0, 0, 0, 0)');
+  expect(styles.cardBackground).not.toBe('rgb(255, 255, 255)');
+  expect(styles.cardColor).not.toBe('rgb(32, 48, 36)');
+  expect(styles.headingColor).not.toBe('rgb(32, 48, 36)');
+  expect(styles.paragraphColor).not.toBe('rgb(170, 170, 170)');
+  expect(styles.cardBorder).not.toBe('rgba(0, 0, 0, 0)');
+});
+
 test('keeps the active sidebar item flat without shadow artifacts', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await seedDemoSession(page, 'ar');
