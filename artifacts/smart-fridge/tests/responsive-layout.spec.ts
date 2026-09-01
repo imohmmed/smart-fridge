@@ -333,8 +333,12 @@ test('keeps the responsive header greeting and profile avatar contained', async 
   }
 });
 
-test('keeps the desktop Arabic header in strict RTL group order', async ({ page }) => {
-  for (const viewport of [{ width: 834, height: 1112 }, { width: 1440, height: 900 }]) {
+test('keeps the Arabic menu launcher opposite the notification actions', async ({ page }) => {
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 834, height: 1112 },
+    { width: 1440, height: 900 },
+  ]) {
     await page.setViewportSize(viewport);
     await seedDemoSession(page, 'ar');
     await page.goto('/');
@@ -348,10 +352,12 @@ test('keeps the desktop Arabic header in strict RTL group order', async ({ page 
         start: getBox('.dashboard-header-start'),
         metrics: getBox('.dashboard-metrics'),
         actions: getBox('.dashboard-actions'),
+        menu: getBox('.sidebar-inline-toggle'),
+        notifications: getBox('.topbar-bell'),
       };
     });
 
-    expect(groups.start.left).toBeGreaterThan(groups.metrics.right);
-    expect(groups.metrics.left).toBeGreaterThan(groups.actions.right);
+    expect(groups.start.left).toBeLessThan(groups.actions.left);
+    expect(groups.menu.right).toBeLessThanOrEqual(groups.notifications.left);
   }
 });

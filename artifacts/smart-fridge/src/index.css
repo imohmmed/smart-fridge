@@ -9036,6 +9036,23 @@ html[dir="ltr"] .dashboard-welcome {
   }
 }
 
+/* Keep the menu launcher on the same physical side as English. The Arabic
+   copy remains RTL inside its own context, while the header groups stay
+   consistently separated from the notification actions. */
+.dashboard-topbar {
+  direction: ltr !important;
+}
+
+html[dir="rtl"] .dashboard-header-start {
+  direction: ltr !important;
+}
+
+html[dir="rtl"] .dashboard-header-context,
+html[dir="rtl"] .dashboard-welcome {
+  direction: rtl;
+  text-align: right;
+}
+
 /* Active navigation items stay flat: no inset rails, glow, or shadow
    from any of the older sidebar styling layers. */
 .smart-sidebar__link,
