@@ -314,25 +314,45 @@ test('does not show a sidebar menu launcher on settings', async ({ page }) => {
   }
 });
 
+test('keeps settings options free of secondary copy', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await seedDemoSession(page, 'en');
+  await page.goto('/settings');
+
+  for (const sectionTestId of [
+    'button-settings-عام',
+    'button-settings-معلومات الملف الشخصي',
+    'button-settings-المظهر',
+    'button-settings-التنبيهات',
+    'button-settings-الخصوصية',
+  ]) {
+    await page.getByTestId(sectionTestId).click();
+    await expect(page.locator('.page-heading p')).toHaveCount(0);
+    await expect(page.locator('.settings-grid .card-title p, .settings-grid .setting-line p, .settings-grid .settings-profile-heading p, .settings-grid .settings-profile-actions > span')).toHaveCount(0);
+  }
+});
+
 test('keeps dark mode surfaces and text readable', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await seedDemoSession(page, 'en');
   await page.goto('/settings');
   await page.getByTestId('button-settings-المظهر').click();
   await page.getByTestId('toggle-dark-mode').click();
+  await expect(page.locator('.theme-dark')).toHaveClass('theme-dark');
+  await expect(page.locator('.theme-dark .card').first()).toHaveCSS('background-color', 'rgb(27, 39, 52)');
 
   const styles = await page.evaluate(() => {
     const app = document.querySelector('.theme-dark')!;
-    const card = document.querySelector('.theme-dark .card')!;
-    const heading = document.querySelector('.theme-dark .card-title h3')!;
-    const paragraph = document.querySelector('.theme-dark .card-title p')!;
+    const card = document.querySelector('.theme-dark .settings-grid > .card.card-pad')!;
+    const heading = document.querySelector('.theme-dark .settings-grid .card-title h3')!;
+    const settingTitle = document.querySelector('.theme-dark .settings-grid .setting-line strong')!;
     return {
       filter: getComputedStyle(app).filter,
       appBackground: getComputedStyle(app).backgroundColor,
       cardBackground: getComputedStyle(card).backgroundColor,
       cardColor: getComputedStyle(card).color,
       headingColor: getComputedStyle(heading).color,
-      paragraphColor: getComputedStyle(paragraph).color,
+      settingTitleColor: getComputedStyle(settingTitle).color,
       cardBorder: getComputedStyle(card).borderTopColor,
     };
   });
@@ -342,7 +362,7 @@ test('keeps dark mode surfaces and text readable', async ({ page }) => {
   expect(styles.cardBackground).not.toBe('rgb(255, 255, 255)');
   expect(styles.cardColor).not.toBe('rgb(32, 48, 36)');
   expect(styles.headingColor).not.toBe('rgb(32, 48, 36)');
-  expect(styles.paragraphColor).not.toBe('rgb(170, 170, 170)');
+  expect(styles.settingTitleColor).not.toBe('rgb(32, 48, 36)');
   expect(styles.cardBorder).not.toBe('rgba(0, 0, 0, 0)');
 });
 

@@ -9284,3 +9284,75 @@ html[dir="ltr"] .dashboard-welcome {
 .theme-dark .theme-preview.night strong {
   color: #e8f6f1 !important;
 }
+
+/* Settings stay intentionally quiet: one title, one control, one clear row. */
+.settings-grid > .card.card-pad {
+  min-width: 0;
+}
+
+.settings-grid .card-title {
+  align-items: center;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+}
+
+.settings-grid .card-title p,
+.settings-grid .setting-line p,
+.settings-grid .settings-profile-heading p,
+.settings-grid .settings-profile-actions > span {
+  display: none !important;
+}
+
+.settings-grid .setting-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  min-height: 58px;
+  padding: 13px 0;
+}
+
+.settings-grid .setting-line > strong {
+  min-width: 0;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.settings-grid .setting-control {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+}
+
+.settings-grid .setting-line > .toggle,
+.settings-grid .setting-line > .status-pill,
+.settings-grid .setting-line > .language-switcher,
+.settings-grid .setting-control {
+  justify-self: end;
+}
+
+.settings-grid .settings-profile-heading {
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.settings-grid .settings-profile-actions {
+  justify-content: flex-end;
+}
+
+html[dir="ltr"] .settings-grid .settings-nav button {
+  text-align: left;
+}
+
+@media (max-width: 640px) {
+  .settings-grid .setting-line {
+    gap: 12px;
+    min-height: 54px;
+  }
+
+  .settings-grid .setting-control {
+    flex-wrap: wrap;
+  }
+}
