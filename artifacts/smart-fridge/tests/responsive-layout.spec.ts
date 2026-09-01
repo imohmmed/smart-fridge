@@ -489,7 +489,7 @@ test('keeps Daily Analysis centered, responsive, and menu-free', async ({ page }
 
 test('centers the mobile site mark on meals, shopping, and analysis', async ({ page }) => {
   for (const language of ['ar', 'en'] as const) {
-    for (const path of ['/meals', '/shopping', '/daily-analysis']) {
+    for (const path of ['/meals', '/shopping', '/daily-analysis', '/settings']) {
       await page.setViewportSize({ width: 390, height: 844 });
       await seedDemoSession(page, language);
       await page.goto(path);
@@ -511,6 +511,31 @@ test('centers the mobile site mark on meals, shopping, and analysis', async ({ p
       expect(Math.abs(header.brandCenter - header.headerCenter)).toBeLessThanOrEqual(1);
       expect(header.direction).toBe('ltr');
       expect(header.documentDirection).toBe(language === 'ar' ? 'rtl' : 'ltr');
+    }
+  }
+});
+
+test('keeps inner-page headings centered in both languages', async ({ page }) => {
+  for (const language of ['ar', 'en'] as const) {
+    for (const path of ['/settings', '/meals', '/shopping', '/daily-analysis']) {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await seedDemoSession(page, language);
+      await page.goto(path);
+
+      const layout = await page.locator('.page-heading-centered').evaluate(element => {
+        const heading = element.getBoundingClientRect();
+        const title = element.querySelector('h2')!.getBoundingClientRect();
+        return {
+          titleCenter: (title.left + title.right) / 2,
+          headingCenter: (heading.left + heading.right) / 2,
+          textAlign: getComputedStyle(element.querySelector('.page-heading-copy')!).textAlign,
+          direction: getComputedStyle(element).direction,
+        };
+      });
+
+      expect(Math.abs(layout.titleCenter - layout.headingCenter)).toBeLessThanOrEqual(1);
+      expect(layout.textAlign).toBe('center');
+      expect(layout.direction).toBe(language === 'ar' ? 'rtl' : 'ltr');
     }
   }
 });

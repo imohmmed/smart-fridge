@@ -10574,3 +10574,92 @@ html[dir="ltr"] .dashboard-header-context,
 html[dir="ltr"] .dashboard-profile {
   text-align: left !important;
 }
+
+html[dir="ltr"] .auth-shell,
+html[dir="ltr"] .auth-redesign,
+html[dir="ltr"] .auth-visual-panel,
+html[dir="ltr"] .auth-form-wrap,
+html[dir="ltr"] .auth-copy,
+html[dir="ltr"] .auth-form,
+html[dir="ltr"] .auth-tabs,
+html[dir="ltr"] .benefit-item {
+  direction: ltr !important;
+  text-align: left;
+}
+
+html[dir="ltr"] .benefit-item strong {
+  text-align: left;
+}
+
+/* Content pages share a centered title treatment; the dashboard keeps its
+   existing information-dense header. */
+.page-heading-centered {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) !important;
+}
+
+.page-heading-centered .page-heading-copy {
+  grid-column: 2 !important;
+  justify-self: center;
+  width: max-content;
+  max-width: 100%;
+  text-align: center !important;
+}
+
+.page-heading-centered .page-heading-menu {
+  grid-column: 1 !important;
+  justify-self: start;
+}
+
+.page-heading-centered .page-heading-action {
+  grid-column: 3 !important;
+  justify-self: end;
+}
+
+html[dir="ltr"] .page-heading-centered .page-heading-copy,
+html[dir="rtl"] .page-heading-centered .page-heading-copy {
+  text-align: center !important;
+}
+
+html[dir="rtl"] .page-heading-centered,
+html[dir="rtl"] .page-heading-centered .page-heading-copy {
+  direction: rtl !important;
+}
+
+@media (max-width: 767px) {
+  html[dir="ltr"] .page-heading-centered,
+  html[dir="rtl"] .page-heading-centered,
+  html[dir="ltr"] .daily-analysis-page .page-heading-centered,
+  html[dir="rtl"] .daily-analysis-page .page-heading-centered {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center !important;
+    text-align: center;
+  }
+
+  html[dir="ltr"] .page-heading-centered .page-heading-copy,
+  html[dir="rtl"] .page-heading-centered .page-heading-copy {
+    order: 1;
+    width: 100%;
+    text-align: center !important;
+  }
+
+  html[dir="ltr"] .page-heading-centered .page-heading-menu,
+  html[dir="rtl"] .page-heading-centered .page-heading-menu {
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0;
+    order: 0;
+  }
+
+  html[dir="ltr"] .page-heading-centered .page-heading-action,
+  html[dir="rtl"] .page-heading-centered .page-heading-action {
+    order: 2;
+    width: auto;
+    justify-self: center;
+  }
+
+  html[dir="ltr"] .daily-analysis-page .page-heading-centered .page-heading-copy,
+  html[dir="rtl"] .daily-analysis-page .page-heading-centered .page-heading-copy {
+    padding-inline: 0;
+  }
+}

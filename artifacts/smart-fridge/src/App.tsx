@@ -588,7 +588,7 @@ function AppShell({ user, shoppingCount, children, onLogout }: { user: User; sho
         </div>
       </aside>
     <div className="app-shell__content" style={{ minWidth: 0 }}>
-        <header className={`mobile-topbar ${location === '/' ? 'mobile-topbar-dashboard' : ''} ${location.startsWith('/daily-analysis') ? 'mobile-topbar-daily-analysis' : ''} ${location.startsWith('/meals') || location.startsWith('/shopping') || location.startsWith('/daily-analysis') ? 'mobile-topbar-centered' : ''}`}>
+        <header className={`mobile-topbar ${location === '/' ? 'mobile-topbar-dashboard' : ''} ${location.startsWith('/daily-analysis') ? 'mobile-topbar-daily-analysis' : ''} ${location !== '/' ? 'mobile-topbar-centered' : ''}`}>
          {!location.startsWith('/settings') && !location.startsWith('/daily-analysis') && !location.startsWith('/shopping') && !location.startsWith('/meals') && <button className="menu-toggle icon-btn" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-mobile-menu-legacy">{sidebarOpen ? <X size={19} /> : <Menu size={19} />}</button>}
           <div className="brand" aria-label={text(language, 'ثلاجتي الذكية', 'Smart Fridge')}>
             <span className="brand-mark" aria-hidden="true"><Refrigerator size={19} /></span>
@@ -606,7 +606,7 @@ function PageHeading({ title, description, action, eyebrow, hideMenu = false }: 
   const { sidebarOpen, toggleSidebar } = useSidebarControls();
   const [location] = useLocation();
   const shouldHideMenu = hideMenu || location === '/meals' || location === '/shopping';
-  return <div className="page-heading">
+  return <div className={`page-heading ${location !== '/' ? 'page-heading-centered' : ''}`}>
     {!shouldHideMenu && <button className="sidebar-inline-toggle page-heading-menu" type="button" onClick={toggleSidebar} aria-label={sidebarOpen ? text(language, 'إغلاق القائمة', 'Close menu') : text(language, 'فتح القائمة', 'Open menu')} aria-expanded={sidebarOpen} data-testid="button-page-menu">
       {sidebarOpen ? <X size={19} /> : <Menu size={19} />}
     </button>}
@@ -1104,14 +1104,16 @@ function ShoppingPage({ data, setData, setNotice, onAdd }: { data: UserData; set
 }
 
 function RecipesPage({ data, setData }: { data: UserData; setData: Dispatch<SetStateAction<UserData>> }) {
+  const { language } = useLanguage();
   const [query, setQuery] = useState(''); const filtered = recipes.filter(recipe => recipe.name.includes(query) || recipe.description.includes(query) || recipe.tags.some(tag => tag.includes(query)));
   const toggle = (id: string) => setData(prev => ({ ...prev, favorites: prev.favorites.includes(id) ? prev.favorites.filter(item => item !== id) : [...prev.favorites, id] }));
-  return <main className="app-main"><PageHeading title="وصفات مقترحة" description="أفكار لذيذة، تبدأ مما هو موجود عندك." action={<Link href="/favorites" className="secondary-btn" data-testid="link-recipes-favorites"><Heart size={16} />مفضلاتي</Link>} /><div className="toolbar"><div className="search-box"><Search size={17} /><input value={query} onChange={e => setQuery(e.target.value)} placeholder="ابحثي عن وصفة..." data-testid="input-recipe-search" /></div><span className="date-chip">{toWesternNums(filtered.length)} وصفات</span></div><div className="recipe-grid">{filtered.map(recipe => <RecipeCard key={recipe.id} recipe={recipe} favorite={data.favorites.includes(recipe.id)} onFavorite={() => toggle(recipe.id)} />)}</div>{!filtered.length && <div className="card empty-state"><Search size={30} /><strong>لم نجد هذه المرة</strong><span>جربي كلمة أخرى أو تصفحي كل الوصفات.</span></div>}</main>;
+  return <main className="app-main"><PageHeading title={text(language, 'وصفات مقترحة', 'Suggested recipes')} description={text(language, 'أفكار لذيذة، تبدأ مما هو موجود عندك.', 'Delicious ideas, starting with what you have.')} action={<Link href="/favorites" className="secondary-btn" data-testid="link-recipes-favorites"><Heart size={16} />{text(language, 'مفضلاتي', 'My favorites')}</Link>} /><div className="toolbar"><div className="search-box"><Search size={17} /><input value={query} onChange={e => setQuery(e.target.value)} placeholder={text(language, 'ابحثي عن وصفة...', 'Search for a recipe...')} data-testid="input-recipe-search" /></div><span className="date-chip">{toWesternNums(filtered.length)} {text(language, 'وصفات', 'recipes')}</span></div><div className="recipe-grid">{filtered.map(recipe => <RecipeCard key={recipe.id} recipe={recipe} favorite={data.favorites.includes(recipe.id)} onFavorite={() => toggle(recipe.id)} />)}</div>{!filtered.length && <div className="card empty-state"><Search size={30} /><strong>{text(language, 'لم نجد هذه المرة', 'Nothing found this time')}</strong><span>{text(language, 'جربي كلمة أخرى أو تصفحي كل الوصفات.', 'Try another word or browse all recipes.')}</span></div>}</main>;
 }
 
 function FavoritesPage({ data, setData }: { data: UserData; setData: Dispatch<SetStateAction<UserData>> }) {
+  const { language } = useLanguage();
   const favorites = recipes.filter(recipe => data.favorites.includes(recipe.id));
-  return <main className="app-main"><PageHeading title="المفضلة" description="الوصفات التي نالت إعجابك، قريبة دائماً." /><div className="card card-pad">{favorites.length ? <div className="recipe-grid">{favorites.map(recipe => <RecipeCard key={recipe.id} recipe={recipe} favorite onFavorite={() => setData(prev => ({ ...prev, favorites: prev.favorites.filter(id => id !== recipe.id) }))} />)}</div> : <div className="empty-state"><Heart size={35} /><strong>لم تختر مفضلات بعد</strong><span>اضغط على القلب بجانب أي وصفة لحفظها هنا.</span><Link href="/recipes" className="primary-btn" style={{ marginTop: 18 }} data-testid="link-empty-favorites">تصفح الوصفات</Link></div>}</div></main>;
+  return <main className="app-main"><PageHeading title={text(language, 'المفضلة', 'Favorites')} description={text(language, 'الوصفات التي نالت إعجابك، قريبة دائماً.', 'Recipes you love, always close by.')} /><div className="card card-pad">{favorites.length ? <div className="recipe-grid">{favorites.map(recipe => <RecipeCard key={recipe.id} recipe={recipe} favorite onFavorite={() => setData(prev => ({ ...prev, favorites: prev.favorites.filter(id => id !== recipe.id) }))} />)}</div> : <div className="empty-state"><Heart size={35} /><strong>{text(language, 'لم تختر مفضلات بعد', 'No favorites yet')}</strong><span>{text(language, 'اضغط على القلب بجانب أي وصفة لحفظها هنا.', 'Press the heart beside a recipe to save it here.')}</span><Link href="/recipes" className="primary-btn" style={{ marginTop: 18 }} data-testid="link-empty-favorites">{text(language, 'تصفح الوصفات', 'Browse recipes')}</Link></div>}</div></main>;
 }
 
 function SettingsPage({ user, data, setData, setNotice, onUserUpdate }: { user: User; data: UserData; setData: Dispatch<SetStateAction<UserData>>; setNotice: (v: string) => void; onUserUpdate: (updates: UserProfileUpdate) => void }) {
@@ -1208,6 +1210,7 @@ function RoutedPages({ user, data, setData, onLogout, setNotice, onUserUpdate }:
 }
 
 function App() {
+  const { language } = useLanguage();
   const [session, setSession] = useState<string | null>(() => localStorage.getItem(SESSION_KEY));
   const [users, setUsers] = useState<User[]>(readStoredUsers);
   const [notice, setNotice] = useState('');
@@ -1225,7 +1228,7 @@ function App() {
   };
   const logout = () => { localStorage.removeItem(SESSION_KEY); setSession(null); setNotice(''); };
   if (!session || !user) return <AuthScreen onLogin={login} />;
-  return <div className={data.darkMode ? 'theme-dark' : ''} data-theme={data.darkMode ? 'dark' : undefined}><RoutedPages user={user} data={data} setData={setData} onLogout={logout} setNotice={setNotice} onUserUpdate={updateUser} />{notice && <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 60, padding: '12px 17px', borderRadius: 12, background: 'hsl(var(--sidebar))', color: 'hsl(var(--card))', boxShadow: '0 10px 25px hsl(155 22% 17% / .2)', animation: 'modal-in .2s ease-out' }} role="status" data-testid="status-notice"><CheckCircle2 size={16} style={{ verticalAlign: 'middle', marginLeft: 7, color: 'hsl(var(--accent))' }} />{notice}</div>}</div>;
+  return <div className={`fridge-app ${data.darkMode ? 'theme-dark' : ''}`} dir={language} data-theme={data.darkMode ? 'dark' : undefined}><RoutedPages user={user} data={data} setData={setData} onLogout={logout} setNotice={setNotice} onUserUpdate={updateUser} />{notice && <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 60, padding: '12px 17px', borderRadius: 12, background: 'hsl(var(--sidebar))', color: 'hsl(var(--card))', boxShadow: '0 10px 25px hsl(155 22% 17% / .2)', animation: 'modal-in .2s ease-out' }} role="status" data-testid="status-notice"><CheckCircle2 size={16} style={{ verticalAlign: 'middle', marginLeft: 7, color: 'hsl(var(--accent))' }} />{notice}</div>}</div>;
 }
 
 export default function AppWithProviders() {
